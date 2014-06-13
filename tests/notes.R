@@ -10,6 +10,9 @@ library(XML)
 
 file=paste(getwd(),"/tests/testdata/test.ods",sep="")
 file=paste(getwd(),"/tests/testdata/multisheet.ods",sep="")
+file=paste(getwd(),"/tests/testdata/sum.ods",sep="")
+readODS(file)
+readODS(file)
 readODS(file)
 
 
@@ -17,6 +20,11 @@ readODS(file)
 
 
 
+
+for(i in 1:10){
+  if(i==4)next
+  print(i)
+}
 
 
 
