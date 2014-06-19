@@ -5,7 +5,9 @@ library(XML)
 # TODO add cheats
 # TODO check images and formats and stufff....
 # if formula... take value...
-
+# todo: â€â€ turns into ""   libre office version.
+# probably an encoding thingy... 
+# 
 
 
 #' readODS
@@ -16,7 +18,7 @@ library(XML)
 #' ALSO number-columns-repeated
 #' 
 #' @export
-readODS=function(file=NULL, sheet=NULL){
+readODS=function(file=NULL, sheet=NULL, includeFormulaValues=TRUE){
   root=getODSRoot(file)
   body=root[["body"]]
   sheets=body[["spreadsheet"]]
@@ -28,29 +30,34 @@ readODS=function(file=NULL, sheet=NULL){
     sheetIndex=sheetIndex+1
     #sheet=sheets[[3]]
 
-    # check if it's not an empty sheet 
     
-    # if(!any(names(xmlAttrs(sheet[["table-column"]])) %in% "number-columns-repeated") ){# bugs out if only 1 col
-    if(){
-      print("empty sheet")
-      returnValue[[sheetIndex]]=data.frame()
-      next
-    }
     
-    # determine size
-    #<table:table-column style-name="co1" number-columns-repeated="7" default-cell-style-name="Default"/>
-    nrOfCols=as.integer(xmlAttrs(sheet[["table-column"]])[["number-columns-repeated"]])
-    nrOfRows=sum(names(sheet)=="table-row") # nr of rows in XML
-    for(row in sheet[names(sheet)=="table-row"]){
-      #<table:table-row style-name="ro1" number-rows-repeated="3">
-      if(!is.na(xmlAttrs(row)["number-rows-repeated"])){
-        nrOfRows=nrOfRows+as.integer(xmlAttrs(row)[["number-rows-repeated"]])-1
-      }
-    }
     
-    # create the data.frame
-    d=data.frame(matrix(data="",nrow=nrOfRows ,ncol=nrOfCols), stringsAsFactors=F)
+#     # determine size
+#     #<table:table-column style-name="co1" number-columns-repeated="7" default-cell-style-name="Default"/>
+#     nrOfCols=0
+#     if(!any(names(xmlAttrs(sheet[["table-column"]])) %in% "number-columns-repeated") ){# bugs out if only 1 col
+#       # if that attribute does not exist it could be an empty sheet, or a 1 column sheet.
+# #       print("empty sheet")
+# #       returnValue[[sheetIndex]]=data.frame()
+# #       next
+#       nrOfCols=1
+#     } else {
+#       nrOfCols=as.integer(xmlAttrs(sheet[["table-column"]])[["number-columns-repeated"]])
+#     }
+#     
+#     nrOfRows=sum(names(sheet)=="table-row") # nr of rows in XML
+#     for(row in sheet[names(sheet)=="table-row"]){
+#       #<table:table-row style-name="ro1" number-rows-repeated="3">
+#       if(!is.na(xmlAttrs(row)["number-rows-repeated"])){
+#         nrOfRows=nrOfRows+as.integer(xmlAttrs(row)[["number-rows-repeated"]])-1
+#       }
+#     }
     
+    # storage object
+    
+
+    d=list()
     # fill it
     rowIndex=0
     for(row in sheet[names(sheet)=="table-row"]){
@@ -60,6 +67,9 @@ readODS=function(file=NULL, sheet=NULL){
         rowIndex=rowIndex+as.integer(xmlAttrs(row)[["number-rows-repeated"]])-1
         next
       }
+#       d[[rowIndex]]=list()
+      d[[rowIndex]]=""
+      
       colIndex=0
       for(cell in row[names(row)=="table-cell"] ) {# <table:table-cell>
         colIndex=colIndex+1
@@ -74,12 +84,41 @@ readODS=function(file=NULL, sheet=NULL){
           colIndex=colIndex+as.integer(xmlAttrs(cell)[["number-columns-repeated"]])-1
           next
         }
-        d[rowIndex,colIndex]=xmlValue(cell[["p"]]) # <text:p>
+        d[[rowIndex]][[colIndex]]=xmlValue(cell[["p"]])# <text:p>
+#         d[rowIndex,colIndex]=xmlValue(cell[["p"]]) # <text:p>
       }# col/cell
+#       if (d[[rowIndex]]==list()){
+#         print("HERE!!!!!!!!!!!!")
+#       }
     }# row
 #     print(d)
-    returnValue[[sheetIndex]]=d
+    # convert it into a data.frame
+    nrOfRows=length(d)
+    nrOfCols=max(sapply(X=d,FUN=length))
+  
+#     print(d)
+
+    l=data.frame(matrix(data="",nrow=nrOfRows ,ncol=nrOfCols), stringsAsFactors=F)
+    for(i in 1:nrOfRows){
+#       print("row")
+#       print(i)
+#       print(length(d[[i]]))
+#       print(d[[i]])
+      for(j in 1:length(d[[i]])){
+#         print(j)
+#         print(d[[i]][[j]])
+        if(!is.null(d[[i]][[j]]) && !is.na(d[[i]][[j]])) {
+          l[i,j]=d[[i]][[j]]
+        }
+#         print("here?")
+      }
+    }    
+#     print(l)
+
+    returnValue[[sheetIndex]]=l
   }# sheet
+  
+
   return (returnValue)
 }
 
@@ -102,8 +141,9 @@ getNrOfSheetsInODS = function(file=NULL){
 getODSRoot = function(file=NULL){
   if(is.null(file)) stop("no filename given")
   if(!file.exists(file)) stop("file does not exist")
-  
   con=unz(file,filename="content.xml")
+#   con=unz(file,filename="content.xml", encoding="ANSI") # encoding is ingnored...
+#   con=unz(file,filename="content.xml", encoding="LALALALALA") # encoding is ingnored...
   open(con)
   #incomplete final line found on
 #   XML=xmlTreeParse((readLines(con)))

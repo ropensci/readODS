@@ -11,6 +11,9 @@ library(XML)
 file=paste(getwd(),"/tests/testdata/test.ods",sep="")
 file=paste(getwd(),"/tests/testdata/multisheet.ods",sep="")
 file=paste(getwd(),"/tests/testdata/sum.ods",sep="")
+file=paste(getwd(),"/tests/testdata/readODS test file google docs created.ods",sep="")
+
+
 readODS(file)
 readODS(file)
 readODS(file)
@@ -19,6 +22,18 @@ readODS(file)
 
 
 
+d=list()
+d[10]=list()
+d[10][2]="a"
+d
+
+
+d=list()
+d[[10]]=list()
+d[[10]][[2]]="a"
+d
+
+e=data.frame(d)
 
 
 for(i in 1:10){
