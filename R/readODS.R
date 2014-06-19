@@ -1,11 +1,8 @@
 library(XML)
 ##
 # http://www.omegahat.org/RSXML/Tour.pdf
-# TODO add dependencies
-# TODO add cheats
 # TODO check images and formats and stufff....
-# if formula... take value...
-# todo: â€â€ turns into ""   libre office version.
+# todo: â€â€ turns into ""  libre office -- windows only....
 # probably an encoding thingy... 
 # 
 
@@ -14,11 +11,17 @@ library(XML)
 #' 
 #' returns a list of data.frames 1 data.frame per sheet
 #' 
+#' formulaAsFormula
+#' return "SUM(A1:A3)" instead of something like "3"
+#' 
+#' sheet give a single  number to get a data.frame of that sheet
+#' give multiple to make a selection.... you shoudln't, cause it will still parse all
+#' 
 #' TODO: check if emtpy rows are the only ones with "number-rows-repeated"...
 #' ALSO number-columns-repeated
 #' 
 #' @export
-readODS=function(file=NULL, sheet=NULL, includeFormulaValues=TRUE){
+readODS=function(file=NULL, sheet=NULL, formulaAsFormula=F){
   root=getODSRoot(file)
   body=root[["body"]]
   sheets=body[["spreadsheet"]]
@@ -26,48 +29,22 @@ readODS=function(file=NULL, sheet=NULL, includeFormulaValues=TRUE){
   
   returnValue=list()
   sheetIndex=0
-  for(sheet in sheets[names(sheets)=="table"]){
+  for(sheeti in sheets[names(sheets)=="table"]){
     sheetIndex=sheetIndex+1
-    #sheet=sheets[[3]]
-
-    
-    
-    
-#     # determine size
-#     #<table:table-column style-name="co1" number-columns-repeated="7" default-cell-style-name="Default"/>
-#     nrOfCols=0
-#     if(!any(names(xmlAttrs(sheet[["table-column"]])) %in% "number-columns-repeated") ){# bugs out if only 1 col
-#       # if that attribute does not exist it could be an empty sheet, or a 1 column sheet.
-# #       print("empty sheet")
-# #       returnValue[[sheetIndex]]=data.frame()
-# #       next
-#       nrOfCols=1
-#     } else {
-#       nrOfCols=as.integer(xmlAttrs(sheet[["table-column"]])[["number-columns-repeated"]])
-#     }
-#     
-#     nrOfRows=sum(names(sheet)=="table-row") # nr of rows in XML
-#     for(row in sheet[names(sheet)=="table-row"]){
-#       #<table:table-row style-name="ro1" number-rows-repeated="3">
-#       if(!is.na(xmlAttrs(row)["number-rows-repeated"])){
-#         nrOfRows=nrOfRows+as.integer(xmlAttrs(row)[["number-rows-repeated"]])-1
-#       }
-#     }
-    
-    # storage object
-    
+    #sheeti=sheets[[3]]
 
     d=list()
+    d[1]="" # avoid bug later on if no rows
     # fill it
     rowIndex=0
-    for(row in sheet[names(sheet)=="table-row"]){
+    for(row in sheeti[names(sheeti)=="table-row"]){
       rowIndex=rowIndex+1
       if(!is.na(xmlAttrs(row)["number-rows-repeated"])){
         # only on empty rows???
         rowIndex=rowIndex+as.integer(xmlAttrs(row)[["number-rows-repeated"]])-1
         next
       }
-#       d[[rowIndex]]=list()
+#       d[[rowIndex]]=list() # causes bugs if it remains empty...
       d[[rowIndex]]=""
       
       colIndex=0
@@ -84,41 +61,65 @@ readODS=function(file=NULL, sheet=NULL, includeFormulaValues=TRUE){
           colIndex=colIndex+as.integer(xmlAttrs(cell)[["number-columns-repeated"]])-1
           next
         }
-        d[[rowIndex]][[colIndex]]=xmlValue(cell[["p"]])# <text:p>
-#         d[rowIndex,colIndex]=xmlValue(cell[["p"]]) # <text:p>
+
+#         print("here...")
+        if (formulaAsFormula){
+          if(!is.na(xmlAttrs(cell)["formula"])){ #office:formula ... but parser is weird...
+            d[[rowIndex]][[colIndex]]=xmlAttrs(cell)[["formula"]]
+            next
+          }
+        }
+        
+        # show numbers instead of formula
+        # so SUM(A1:A3) become something like 18... or 5.. 
+        if(length(xmlValue(cell[["p"]]))>0){
+          # <text:p> anything <text:p/>
+          d[[rowIndex]][[colIndex]]=xmlValue(cell[["p"]])
+        } else {
+          # <text:p/>
+          # libre office can have a value as an attribute
+#           print(xmlAttrs(cell))
+          if(!is.na(xmlAttrs(cell)["value"])){ #office:value ... but parser is weird...
+            d[[rowIndex]][[colIndex]]=xmlAttrs(cell)[["value"]]
+          } else {
+            # no value... weird... do nothing!
+            print(paste("maybe make me a warning... but found no value for defined cell at sheet:",sheetIndex, "row:",rowIndex,"col:",colIndex ,sep=" "))
+          }
+        }
+       
+
+
       }# col/cell
-#       if (d[[rowIndex]]==list()){
-#         print("HERE!!!!!!!!!!!!")
-#       }
     }# row
+
 #     print(d)
-    # convert it into a data.frame
     nrOfRows=length(d)
+#     print("here")
     nrOfCols=max(sapply(X=d,FUN=length))
-  
-#     print(d)
+#     print("or here?")
+
 
     l=data.frame(matrix(data="",nrow=nrOfRows ,ncol=nrOfCols), stringsAsFactors=F)
     for(i in 1:nrOfRows){
-#       print("row")
-#       print(i)
-#       print(length(d[[i]]))
-#       print(d[[i]])
       for(j in 1:length(d[[i]])){
-#         print(j)
-#         print(d[[i]][[j]])
-        if(!is.null(d[[i]][[j]]) && !is.na(d[[i]][[j]])) {
+        if(!is.null(d[[i]][[j]]) && !is.na(d[[i]][[j]])) 
           l[i,j]=d[[i]][[j]]
-        }
-#         print("here?")
-      }
-    }    
+      }#col
+    }#row
+    colnames(l)=numberToLetters(1:nrOfCols)
+    rownames(l)=1:nrOfRows
 #     print(l)
-
     returnValue[[sheetIndex]]=l
   }# sheet
-  
 
+  if (!is.null(sheet)){
+    if(length(sheet)>1){
+      return(returnValue[sheet])
+    } else {
+      return(returnValue[[sheet]])
+    }
+   
+  }
   return (returnValue)
 }
 
@@ -150,5 +151,43 @@ getODSRoot = function(file=NULL){
   XML=xmlTreeParse((suppressWarnings(readLines(con))))
   close(con)
   return(xmlRoot(XML))
+}
+
+
+
+
+numberToLetters=function(listOfNumbers=NULL){
+  returnValue=NULL
+  for(i in 1:length(listOfNumbers)){
+    remainder=listOfNumbers[[i]]
+    returnLetters=""
+    while(T){
+      if(remainder==0){
+        break
+      }
+      if(remainder%%26!=0){
+        returnLetters=paste(LETTERS[remainder%%26],returnLetters,sep = "")
+        remainder=remainder%/%26  
+      }else{
+        returnLetters=paste("Z",returnLetters,sep = "")
+        remainder=(remainder%/%26)-1
+      }
+    }
+    returnValue[[i]]=returnLetters
+  }
+  return(returnValue)
+}
+
+
+lettersToNumber=function( listOfStrings=NULL){
+  total=NULL
+  for(i in 1:length(listOfStrings)){ # for each string
+    total[i]=0
+    for (j in 1:nchar(listOfStrings[i])){ # for each char in the string
+      current=match(casefold(substring(listOfStrings[i],j,j)),letters)
+      total[i]=total[i]+(current*26^(nchar(listOfStrings[i])-j))
+    }
+  }
+  return(total)
 }
 

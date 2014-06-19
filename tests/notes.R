@@ -17,9 +17,7 @@ file=paste(getwd(),"/tests/testdata/readODS test file google docs created.ods",s
 readODS(file)
 readODS(file)
 readODS(file)
-
-
-
+readODS(file,formulaAsFormula = T)
 
 
 d=list()
