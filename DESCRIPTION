@@ -11,5 +11,5 @@ Description: read ODS files and puts them into a list of data.frames unless a
     specific sheet is specified then it will be put into a normal data.frame.
 Depends:
     XML
-Recommended: testthat, roxygen2
+Recommended: testthat, devtools, roxygen2
 License: GPL-3

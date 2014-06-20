@@ -4,9 +4,17 @@
 #
 ## http://www.omegahat.org/RSXML/Tour.pdf
 #
+#
+# 
 
 library(XML)
+library(testthat)
 
+# this actually works!
+testPath=paste(getwd(),"/tests/R/",sep="")
+codePath=paste(getwd(),"/R/",sep="")
+auto_test(test_path=testPath, code_path=codePath)
+test_dir(testPath)# does not work..
 
 file=paste(getwd(),"/tests/testdata/test.ods",sep="")
 file=paste(getwd(),"/tests/testdata/multisheet.ods",sep="")
@@ -18,6 +26,13 @@ readODS(file)
 readODS(file)
 readODS(file)
 readODS(file,formulaAsFormula = T)
+
+
+
+
+
+
+
 
 
 d=list()

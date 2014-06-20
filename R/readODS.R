@@ -1,24 +1,27 @@
 library(XML)
 ##
 # http://www.omegahat.org/RSXML/Tour.pdf
-# TODO check images and formats and stufff....
 # todo: â€â€ turns into ""  libre office -- windows only....
 # probably an encoding thingy... 
 # 
+#TODO: test gnummeric and koffice generated ODS files
+#TODO: check if emtpy rows are the only ones with "number-rows-repeated"...
+# ALSO number-columns-repeated
+
+
 
 
 #' readODS
 #' 
+#' @description 
 #' returns a list of data.frames 1 data.frame per sheet
 #' 
-#' formulaAsFormula
-#' return "SUM(A1:A3)" instead of something like "3"
+#' @param file filepath to the ods file
+#' @param sheet select the sheet(s) you want, if left empty it will return all sheets in a list, if only 1 number is given it will return the sheet as a data.frame (not as a list of data.frames)
+#' @param formulaAsFormula a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8".. 
 #' 
-#' sheet give a single  number to get a data.frame of that sheet
-#' give multiple to make a selection.... you shoudln't, cause it will still parse all
-#' 
-#' TODO: check if emtpy rows are the only ones with "number-rows-repeated"...
-#' ALSO number-columns-repeated
+#' @details 
+#' the data.frame contains all strings (not factors)
 #' 
 #' @export
 readODS=function(file=NULL, sheet=NULL, formulaAsFormula=F){
@@ -51,7 +54,6 @@ readODS=function(file=NULL, sheet=NULL, formulaAsFormula=F){
       for(cell in row[names(row)=="table-cell"] ) {# <table:table-cell>
         colIndex=colIndex+1
         if(is.null(xmlAttrs(cell))){ # silly liblre office has: <table:table-cell/>
-#           print("STUPID LIBRE OFFICE!!!")
           next
         }
         #<table:table-cell table:number-columns-repeated="3"/>
@@ -61,8 +63,8 @@ readODS=function(file=NULL, sheet=NULL, formulaAsFormula=F){
           colIndex=colIndex+as.integer(xmlAttrs(cell)[["number-columns-repeated"]])-1
           next
         }
-
-#         print("here...")
+        # display the formula instead of its result
+        # so SUM(A1:A3) instead of something like 7... or 11...
         if (formulaAsFormula){
           if(!is.na(xmlAttrs(cell)["formula"])){ #office:formula ... but parser is weird...
             d[[rowIndex]][[colIndex]]=xmlAttrs(cell)[["formula"]]
@@ -92,12 +94,8 @@ readODS=function(file=NULL, sheet=NULL, formulaAsFormula=F){
       }# col/cell
     }# row
 
-#     print(d)
     nrOfRows=length(d)
-#     print("here")
     nrOfCols=max(sapply(X=d,FUN=length))
-#     print("or here?")
-
 
     l=data.frame(matrix(data="",nrow=nrOfRows ,ncol=nrOfCols), stringsAsFactors=F)
     for(i in 1:nrOfRows){
@@ -108,25 +106,29 @@ readODS=function(file=NULL, sheet=NULL, formulaAsFormula=F){
     }#row
     colnames(l)=numberToLetters(1:nrOfCols)
     rownames(l)=1:nrOfRows
-#     print(l)
+
     returnValue[[sheetIndex]]=l
   }# sheet
-
+  
+  # give back what was asked for!
   if (!is.null(sheet)){
     if(length(sheet)>1){
       return(returnValue[sheet])
     } else {
       return(returnValue[[sheet]])
     }
-   
   }
   return (returnValue)
 }
 
 
 #' getNrOfSheets
-#'
-#'  @export
+#' @description
+#' returns the number of sheets in the .ods file
+#' @param file path to the .ods file
+#' @details
+#' use readODS() to actualy get the sheets
+#' @export
 getNrOfSheetsInODS = function(file=NULL){ 
   root=getODSRoot(file)
   body=root[["body"]]
@@ -137,7 +139,10 @@ getNrOfSheetsInODS = function(file=NULL){
 
 
 #' getODSRoot
-#' 
+#' @description
+#' returns the XML root for the given .ods file
+#' @param file path to the .ods file
+#' @details
 #' internal only!
 getODSRoot = function(file=NULL){
   if(is.null(file)) stop("no filename given")
@@ -155,7 +160,23 @@ getODSRoot = function(file=NULL){
 
 
 
-
+#' numberToLetters
+#' 
+#' @description
+#' converts numbers to microplate row names and Excel & ODS column names
+#' 
+#' @param listOfNumbers the numbers you want to convert to chars
+#' @details
+#' 1=A
+#' 26=Z
+#' 27=ZA
+#' 702=ZZ
+#' 703=AAA
+#' 
+#' supports lists of numbers!
+#' 
+#' numberToLetters(1:1000)
+#' 
 numberToLetters=function(listOfNumbers=NULL){
   returnValue=NULL
   for(i in 1:length(listOfNumbers)){
@@ -178,7 +199,24 @@ numberToLetters=function(listOfNumbers=NULL){
   return(returnValue)
 }
 
-
+#' lettersToNumber
+#' 
+#' @description
+#' converts microplate row names and Excel & ODS column names into numbers
+#' 
+#' @param listOfStrings the strings you want to convert to numbers
+#' 
+#' @details
+#' supports lists of chars!
+#' ignores case
+#' 
+#' A=1
+#' Z=26
+#' ZA=27
+#' ZZ=702
+#' AAA=703 
+#' 
+#' lettersToNumber("AAa")
 lettersToNumber=function( listOfStrings=NULL){
   total=NULL
   for(i in 1:length(listOfStrings)){ # for each string
