@@ -20,6 +20,7 @@ file=paste(getwd(),"/tests/testdata/test.ods",sep="")
 file=paste(getwd(),"/tests/testdata/multisheet.ods",sep="")
 file=paste(getwd(),"/tests/testdata/sum.ods",sep="")
 file=paste(getwd(),"/tests/testdata/readODS test file google docs created.ods",sep="")
+file=paste(getwd(),"/tests/testdata/lotsofnothing_test.ods",sep="")
 
 
 readODS(file)
@@ -28,7 +29,7 @@ readODS(file)
 readODS(file,formulaAsFormula = T)
 
 
-
+test=readODS(file ,sheet=1)
 
 
 

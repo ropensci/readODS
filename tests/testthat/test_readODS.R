@@ -30,6 +30,12 @@ test_that("readODS", {
   df=data.frame(A=as.character(1:3),stringsAsFactors = F)
   rODS=readODS(file, sheet=1, formulaAsFormula=FALSE)
   expect_equal(rODS,df)
+  
+  file=paste("../testdata/lotsofnothing_test.ods",sep="")
+  print(dim(readODS(file, sheet=1)))
+  expect_equal(dim(readODS(file, sheet=1)),c(21,13)) # test if empty rows at the end are ignored
+  
+  
 })
 
 print("")

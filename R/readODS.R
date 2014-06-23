@@ -42,13 +42,12 @@ readODS=function(file=NULL, sheet=NULL, formulaAsFormula=F){
     rowIndex=0
     for(row in sheeti[names(sheeti)=="table-row"]){
       rowIndex=rowIndex+1
+      
       if(!is.na(xmlAttrs(row)["number-rows-repeated"])){
         # only on empty rows???
         rowIndex=rowIndex+as.integer(xmlAttrs(row)[["number-rows-repeated"]])-1
         next
       }
-#       d[[rowIndex]]=list() # causes bugs if it remains empty...
-      d[[rowIndex]]=""
       
       colIndex=0
       for(cell in row[names(row)=="table-cell"] ) {# <table:table-cell>
@@ -67,36 +66,36 @@ readODS=function(file=NULL, sheet=NULL, formulaAsFormula=F){
         # so SUM(A1:A3) instead of something like 7... or 11...
         if (formulaAsFormula){
           if(!is.na(xmlAttrs(cell)["formula"])){ #office:formula ... but parser is weird...
+            if(length(d)<=rowIndex) d[[rowIndex]]=""
             d[[rowIndex]][[colIndex]]=xmlAttrs(cell)[["formula"]]
             next
           }
         }
         
+#         print(xmlValue(cell[["p"]]))
+
         # show numbers instead of formula
         # so SUM(A1:A3) become something like 18... or 5.. 
         if(length(xmlValue(cell[["p"]]))>0){
           # <text:p> anything <text:p/>
+          if(length(d)<=rowIndex) d[[rowIndex]]=""
           d[[rowIndex]][[colIndex]]=xmlValue(cell[["p"]])
         } else {
           # <text:p/>
           # libre office can have a value as an attribute
 #           print(xmlAttrs(cell))
           if(!is.na(xmlAttrs(cell)["value"])){ #office:value ... but parser is weird...
+            if(length(d)<=rowIndex) d[[rowIndex]]=""
             d[[rowIndex]][[colIndex]]=xmlAttrs(cell)[["value"]]
           } else {
             # no value... weird... do nothing!
             print(paste("maybe make me a warning... but found no value for defined cell at sheet:",sheetIndex, "row:",rowIndex,"col:",colIndex ,sep=" "))
           }
         }
-       
-
-
       }# col/cell
     }# row
-
     nrOfRows=length(d)
     nrOfCols=max(sapply(X=d,FUN=length))
-
     l=data.frame(matrix(data="",nrow=nrOfRows ,ncol=nrOfCols), stringsAsFactors=F)
     for(i in 1:nrOfRows){
       for(j in 1:length(d[[i]])){
@@ -106,7 +105,7 @@ readODS=function(file=NULL, sheet=NULL, formulaAsFormula=F){
     }#row
     colnames(l)=numberToLetters(1:nrOfCols)
     rownames(l)=1:nrOfRows
-
+    
     returnValue[[sheetIndex]]=l
   }# sheet
   

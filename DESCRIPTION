@@ -1,7 +1,7 @@
 Package: readODS
 Type: Package
 Title: read ODS files and puts them into data.frames
-Version: 1.0
+Version: 1.1
 Date: 2014-06-12
 Author: Gerrit-Jan Schutten
 Maintainer: Gerrit-Jan Schutten <yourfault@somewhere.net>
