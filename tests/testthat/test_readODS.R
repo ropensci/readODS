@@ -21,19 +21,19 @@ test_that("getNrOfSheetsInODS", {
 })
 
 
-test_that("readODS", {
-  # readODS
+test_that("read.ods", {
+  # read.ods
   file=paste("../testdata/sum.ods",sep="") 
-  expect_equal(readODS(file, sheet=1, formulaAsFormula=TRUE)[3,1],"of:=SUM([.A1:.A2])")
-  expect_equal(readODS(file, sheet=1, formulaAsFormula=FALSE)[3,1],"3")
+  expect_equal(read.ods(file, sheet=1, formulaAsFormula=TRUE)[3,1],"of:=SUM([.A1:.A2])")
+  expect_equal(read.ods(file, sheet=1, formulaAsFormula=FALSE)[3,1],"3")
   
   df=data.frame(A=as.character(1:3),stringsAsFactors = F)
-  rODS=readODS(file, sheet=1, formulaAsFormula=FALSE)
+  rODS=read.ods(file, sheet=1, formulaAsFormula=FALSE)
   expect_equal(rODS,df)
   
   file=paste("../testdata/lotsofnothing_test.ods",sep="")
-  print(dim(readODS(file, sheet=1)))
-  expect_equal(dim(readODS(file, sheet=1)),c(21,13)) # test if empty rows at the end are ignored
+  print(dim(read.ods(file, sheet=1)))
+  expect_equal(dim(read.ods(file, sheet=1)),c(21,13)) # test if empty rows at the end are ignored
   
   
 })

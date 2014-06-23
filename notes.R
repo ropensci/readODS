@@ -23,13 +23,13 @@ file=paste(getwd(),"/tests/testdata/readODS test file google docs created.ods",s
 file=paste(getwd(),"/tests/testdata/lotsofnothing_test.ods",sep="")
 
 
-readODS(file)
-readODS(file)
-readODS(file)
-readODS(file,formulaAsFormula = T)
+read.ods(file)
+read.ods(file)
+read.ods(file)
+read.ods(file,formulaAsFormula = T)
 
 
-test=readODS(file ,sheet=1)
+test=read.ods(file ,sheet=1)
 
 
 

@@ -11,7 +11,7 @@ library(XML)
 
 
 
-#' readODS
+#' read.ods
 #' 
 #' @description 
 #' returns a list of data.frames 1 data.frame per sheet
@@ -24,7 +24,7 @@ library(XML)
 #' the data.frame contains all strings (not factors)
 #' 
 #' @export
-readODS=function(file=NULL, sheet=NULL, formulaAsFormula=F){
+read.ods=function(file=NULL, sheet=NULL, formulaAsFormula=F){
   root=getODSRoot(file)
   body=root[["body"]]
   sheets=body[["spreadsheet"]]
