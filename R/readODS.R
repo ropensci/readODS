@@ -23,6 +23,7 @@ library(XML)
 #' @details 
 #' the data.frame contains all strings (not factors)
 #' 
+#' @import XML
 #' @export
 read.ods=function(file=NULL, sheet=NULL, formulaAsFormula=F){
   root=getODSRoot(file)

@@ -15,7 +15,7 @@ test_that("getNrOfSheetsInODS", {
   expect_equal(getNrOfSheetsInODS(file),4)
   file=paste("../testdata/sum.ods",sep="")
   expect_equal(getNrOfSheetsInODS(file),1)
-  file=paste("../testdata/readODS test file google docs created.ods",sep="")
+  file=paste("../testdata/readODStestfilegoogledocscreated.ods",sep="")
   expect_equal(getNrOfSheetsInODS(file),4)
 #   expect_equal(getNrOfSheetsInODS(file),3) # CRASH!!!
 })
