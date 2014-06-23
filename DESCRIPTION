@@ -4,12 +4,15 @@ Title: read ODS files and puts them into data.frames
 Version: 1.1
 Date: 2014-06-12
 Author: Gerrit-Jan Schutten
-Maintainer: Gerrit-Jan Schutten <yourfault@somewhere.net>
+Maintainer: Gerrit-Jan Schutten <phonixor@gmail.com>
 Contact: https://github.com/phonixor/readODS/
 Source: https://github.com/phonixor/readODS/
 Description: read ODS files and puts them into a list of data.frames unless a
     specific sheet is specified then it will be put into a normal data.frame.
 Depends:
     XML
-Recommended: testthat, devtools, roxygen2
+Suggests:
+    testthat,
+    devtools,
+    roxygen2
 License: GPL-3
