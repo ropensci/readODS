@@ -37,8 +37,9 @@ From the CRAN with
 
     library(readODS)
 
-### Developpement version
+### Development version
 From github with the `devtools` package 
+WARNING: THIS MAY BE UNSTABLE!
 
     # import devtools
     if(!require(devtools)){

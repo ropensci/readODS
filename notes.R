@@ -22,6 +22,8 @@ file=paste(getwd(),"/tests/testdata/sum.ods",sep="")
 file=paste(getwd(),"/tests/testdata/readODS test file google docs created.ods",sep="")
 file=paste(getwd(),"/tests/testdata/lotsofnothing_test.ods",sep="")
 file=paste(getwd(),"/tests/testdata/layout_test.ods",sep="")
+file=paste(getwd(),"/tests/testdata/table.ods",sep="")
+
 
 
 read.ods(file)
@@ -31,11 +33,25 @@ read.ods(file,formulaAsFormula = T)
 read.ods(file ,sheet=1)
 
 
+read.ods(file,usePreParser = F)
+
+odsPreParser(file)
+
+
+
+elementName="GJSTTEST"
+listOfElements=""
+listOfElements=append(listOfElements,elementName)
+listOfElements
+listOfElements[length(listOfElements)]=NULL
+length(listOfElements)
+
 
 test=read.ods(file ,sheet=1)
 
 
 
+#           print(correctedXML[(length(correctedXML)-20):length(correctedXML)])
 
 
 
