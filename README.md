@@ -31,6 +31,27 @@ returns the number of sheets in the ODS file
 accepts the following parameters:
 - file - filepath to the ods file
 
+## Installation
+### Stable version
+From the CRAN with
+    library(readODS)
+
+### Developpement version
+From github with the `devtools` package 
+    # import devtools
+    if(!require(devtools)){
+      install.packages("devtools")
+      library(devtools)
+    }
+    
+    # Remove old version of readODS
+    detach("package:readODS")
+    remove.packages("readODS")
+    
+    # Install new version and load
+    install_github(repo="readODS", username ="phonixor", ref="master")
+    library(readODS)
+    
 ## package info
 libre office and google docs generated ODS files have been tested
 and the package contains some test files
