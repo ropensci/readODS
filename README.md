@@ -34,10 +34,12 @@ accepts the following parameters:
 ## Installation
 ### Stable version
 From the CRAN with
+
     library(readODS)
 
 ### Developpement version
 From github with the `devtools` package 
+
     # import devtools
     if(!require(devtools)){
       install.packages("devtools")
