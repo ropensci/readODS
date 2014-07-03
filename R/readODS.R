@@ -6,7 +6,7 @@ library(XML)
 # 
 #TODO: test gnummeric and koffice generated ODS files
 #TODO: check if emtpy rows are the only ones with "number-rows-repeated"...
-# ALSO number-columns-repeated
+# ALSO number-columns-repeated -- FIXED
 #
 # the thing i should have probably read (AKA the ODS standard :P): 
 # http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part1.html#__RefHeading__1420324_253892949
@@ -49,14 +49,13 @@ read.ods=function(file=NULL, sheet=NULL, formulaAsFormula=F){
   for(sheeti in sheets[names(sheets)=="table"]){
     sheetIndex=sheetIndex+1
     #sheeti=sheets[[3]]
-
+    
     d=list()
     d[1]="" # avoid bug later on if no rows
     # fill it
     rowIndex=0
     for(row in sheeti[names(sheeti)=="table-row"]){
       rowIndex=rowIndex+1
-#       print(rowIndex)
       if(!is.na(xmlAttrs(row)["number-rows-repeated"])){
         # only on empty rows???
         rowIndex=rowIndex+as.integer(xmlAttrs(row)[["number-rows-repeated"]])-1
@@ -69,17 +68,12 @@ read.ods=function(file=NULL, sheet=NULL, formulaAsFormula=F){
         if(is.null(xmlAttrs(cell))){ # silly liblre office has: <table:table-cell/>
           next
         }
-#         print(colIndex)
-        print(paste("row:",rowIndex," col:",colIndex,sep=""))
+#         print(paste("row:",rowIndex," col:",colIndex,sep=""))
         #<table:table-cell table:number-columns-repeated="3"/>
-#         colsRepeated=1
-#        print(names(cell))
-#        print(length((names(cell))))
         if(!is.na(xmlAttrs(cell)["number-columns-repeated"]) && length((names(cell)))==0  ){
 #           print(as.integer(xmlAttrs(cell)[["number-columns-repeated"]]))
           # repeat empty columns
           colIndex=colIndex+as.integer(xmlAttrs(cell)[["number-columns-repeated"]])-1
-#           colsRepeated=as.integer(xmlAttrs(cell)[["number-columns-repeated"]]
           next
         }
         # display the formula instead of its result
@@ -265,6 +259,8 @@ lettersToNumber=function( listOfStrings=NULL){
 #' libre office can do crap like this:
 #' <text:p>></text:p>
 #' which is not valid xml... and the XML package doesn't like that..
+#' OK NM NOW IT DOES! leaving the code here in case of changes...
+#' 
 #' also to not make the code fulgy as all hell, the content.xml file is first scanned for these XML violations, and then fixed!
 #' <text:p>></text:p> --> <text:p>&gt</text:p>
 #' @param file - the xml file to be parsed...
