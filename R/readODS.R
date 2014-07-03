@@ -7,6 +7,11 @@ library(XML)
 #TODO: test gnummeric and koffice generated ODS files
 #TODO: check if emtpy rows are the only ones with "number-rows-repeated"...
 # ALSO number-columns-repeated
+#
+# the thing i should have probably read (AKA the ODS standard :P): 
+# http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part1.html#__RefHeading__1420324_253892949
+
+
 
 
 
@@ -19,20 +24,22 @@ library(XML)
 #' @param file filepath to the ods file
 #' @param sheet select the sheet(s) you want, if left empty it will return all sheets in a list, if only 1 number is given it will return the sheet as a data.frame (not as a list of data.frames)
 #' @param formulaAsFormula a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8".. 
-#' @param usePreParser libre office delivers invalid XML files: <text:p>></text:p>,  this function first fixes the xml before parsing: <text:p>&gt</text:p> this is ofcourse a lot slower..
+####param usePreParser libre office delivers invalid XML files: <text:p>></text:p>,  this function first fixes the xml before parsing: <text:p>&gt</text:p> this is ofcourse a lot slower..
 #' 
 #' @details 
 #' the data.frame contains all strings (not factors)
 #' 
 #' @import XML
 #' @export
-read.ods=function(file=NULL, sheet=NULL, formulaAsFormula=F, usePreParser=T){
+read.ods=function(file=NULL, sheet=NULL, formulaAsFormula=F){
+#   read.ods=function(file=NULL, sheet=NULL, formulaAsFormula=F, usePreParser=T){
   root=NULL
-  if(usePreParser){
-    root=odsPreParser(file)
-  }else{
-    root=getODSRoot(file)
-  }
+#   if(usePreParser){
+#     root=odsPreParser(file)
+#   }else{
+#     root=getODSRoot(file)
+#   }
+  root=getODSRoot(file)
   body=root[["body"]]
   sheets=body[["spreadsheet"]]
   nrOfSheets=sum(names(sheets)=="table") # <table:named-expressions/> is useless
@@ -49,7 +56,7 @@ read.ods=function(file=NULL, sheet=NULL, formulaAsFormula=F, usePreParser=T){
     rowIndex=0
     for(row in sheeti[names(sheeti)=="table-row"]){
       rowIndex=rowIndex+1
-      
+#       print(rowIndex)
       if(!is.na(xmlAttrs(row)["number-rows-repeated"])){
         # only on empty rows???
         rowIndex=rowIndex+as.integer(xmlAttrs(row)[["number-rows-repeated"]])-1
@@ -62,11 +69,17 @@ read.ods=function(file=NULL, sheet=NULL, formulaAsFormula=F, usePreParser=T){
         if(is.null(xmlAttrs(cell))){ # silly liblre office has: <table:table-cell/>
           next
         }
+#         print(colIndex)
+        print(paste("row:",rowIndex," col:",colIndex,sep=""))
         #<table:table-cell table:number-columns-repeated="3"/>
-        if(!is.na(xmlAttrs(cell)["number-columns-repeated"])){
+#         colsRepeated=1
+#        print(names(cell))
+#        print(length((names(cell))))
+        if(!is.na(xmlAttrs(cell)["number-columns-repeated"]) && length((names(cell)))==0  ){
 #           print(as.integer(xmlAttrs(cell)[["number-columns-repeated"]]))
           # repeat empty columns
           colIndex=colIndex+as.integer(xmlAttrs(cell)[["number-columns-repeated"]])-1
+#           colsRepeated=as.integer(xmlAttrs(cell)[["number-columns-repeated"]]
           next
         }
         # display the formula instead of its result
@@ -86,7 +99,13 @@ read.ods=function(file=NULL, sheet=NULL, formulaAsFormula=F, usePreParser=T){
         if(length(xmlValue(cell[["p"]]))>0){
           # <text:p> anything <text:p/>
           if(length(d)<rowIndex) d[[rowIndex]]="" # create empty row
-          d[[rowIndex]][[colIndex]]=xmlValue(cell[["p"]])
+          if(!is.na(xmlAttrs(cell)["number-columns-repeated"])){
+            nextIndex=colIndex+as.integer(xmlAttrs(cell)[["number-columns-repeated"]])-1
+            d[[rowIndex]][colIndex:nextIndex]=xmlValue(cell[["p"]])
+            colIndex=nextIndex
+          }else{
+            d[[rowIndex]][[colIndex]]=xmlValue(cell[["p"]])
+          }
         } else {
           # <text:p/>
           # libre office can have a value as an attribute
@@ -239,6 +258,9 @@ lettersToNumber=function( listOfStrings=NULL){
 
 #' odsPreParser
 #' 
+#' WTF!!! XML suddenly started being able to handle these files... or maybe just on windows?
+#' 
+#' 
 #' @description
 #' libre office can do crap like this:
 #' <text:p>></text:p>
@@ -261,16 +283,15 @@ odsPreParser = function(file=NULL){
 #   print(lines)
   #
   # pre parse context.XML
-  # first line: <?xml version=\"1.0\" encoding=\"UTF-8\"?>
-  # 2nd line is the rest:
-  line=lines[2]
+  line=lines[1] # first line: <?xml version=\"1.0\" encoding=\"UTF-8\"?>
+  correctedXML=line
+  correctedXML=paste(correctedXML,"\n",sep="")
+  line=lines[2] # 2nd line is the rest:
   sizeOfXML=nchar(line)
-  
-  correctedXML=""
   listOfElements=NULL
   
   continue=TRUE
-  index=0
+  index=0 # character position in the content.xml file
   while(continue){
     index=index+1
 #     print("mainloop")
@@ -290,8 +311,8 @@ odsPreParser = function(file=NULL){
         if(substring(line,index,index)==" "){
           correctedXML=paste(correctedXML,substring(line,index,index),sep="")
           gotElementName=T
-        }else if( substring(line,index,index)=='"' || substring(line,index,index)=="'" ){
-          # attributes
+        }else if( substring(line,index,index)=='"' || substring(line,index,index)=="'" ){# attribute value
+          # <elementName attributeName="attributeValue">
           correctedXML=paste(correctedXML,substring(line,index,index),sep="")
           index=index+1
 #           while( substring(line,index,index)!='"' || substring(line,index,index)!="'" ){ # does not work...
@@ -302,6 +323,7 @@ odsPreParser = function(file=NULL){
             
             if(substring(line,index,index)=='"' || substring(line,index,index)=="'"){
 #               print("1029384756")
+              correctedXML=paste(correctedXML,substring(line,index,index),sep="")
               break
             }
           }
@@ -309,11 +331,11 @@ odsPreParser = function(file=NULL){
           correctedXML=paste(correctedXML,substring(line,index,index),sep="")
           if(elementName==""){ #</elementName>
             stopElement=T
-            print("stopElement")
+#             print("stopElement")
           }else{ #<elementName/>
             emptyElement=T
             gotElementName=T
-            print("emptyElement")
+#             print("emptyElement")
           }
         }else if(substring(line,index,index)==">"){
           # end of element 
@@ -325,7 +347,7 @@ odsPreParser = function(file=NULL){
               stop(paste("this .ods file is broken beyond repair..., it's element are inconsistent expected: '",listOfElements[[length(listOfElements)]], "' but given: '", elementName, "'", sep=""))
             }
             listOfElements=listOfElements[1:(length(listOfElements)-1)]
-            print(paste("removed ",elementName,sep=""))
+#             print(paste("removed ",elementName,sep=""))
           } else {
             # new element
             # check if empty
@@ -333,43 +355,55 @@ odsPreParser = function(file=NULL){
               # only add an element to the list if it is not
               # <elementName/>
               listOfElements=append(listOfElements,elementName)
-              print(paste("added ", elementName,sep=""))
+#               print(paste("added ", elementName,sep=""))
             } else {
-              print(paste("empty ", elementName,sep=""))
+#               print(paste("empty ", elementName,sep=""))
             } 
           }
           #check if it is a cell element
           if(elementName=="text:p" && emptyElement==F){
             #check if </text:p>
-            index=index+1
-            while(T){
+            while(T){ # look inside the cell content
               index=index+1
               # 
               # check if end
               if(substring(line,index,index+8)=="</text:p>"){
                 index=index+8
                 correctedXML=paste(correctedXML,"</text:p>",sep="")
+                listOfElements=listOfElements[1:(length(listOfElements)-1)]
                 break
-              } 
-              # else check if things need to be replaced..
-              char=substring(line,index,index)
-              if(char=="<"){
-                correctedXML=paste(correctedXML,"&lt",sep="")
-              }else if(char==">"){
-                correctedXML=paste(correctedXML,"&gt",sep="")
-              }else if(char=="&"){
-                correctedXML=paste(correctedXML,"&amp",sep="")
-              }else{ # i could add ' and " but i don't think they will cause trouble
-                # normal char
-                correctedXML=paste(correctedXML,char,sep="")
-              }
-
-            }
-          }
+              }else if(substring(line,index,index+6)=="</text:"){
+                # things like span uper case and other formating thingies
+                index=index+6
+                while(T){
+                  index=index+1
+                  if(substring(line,index,index)==">"){
+                    # ignore these elements
+                    break
+                  }
+                }
+                  
+              }else{ 
+                # else check if things need to be replaced..
+                char=substring(line,index,index)
+                if(char=="<"){
+                  correctedXML=paste(correctedXML,"&lt;",sep="")
+                }else if(char==">"){
+                  correctedXML=paste(correctedXML,"&gt;",sep="")
+                }else if(char=="&"){
+                  correctedXML=paste(correctedXML,"&amp;",sep="")
+                }else{ # i could add ' and " but i don't think they will cause trouble
+                  # normal char
+                  correctedXML=paste(correctedXML,char,sep="")
+                }
+              }#check for </text:p>
+            }#loop over the cell content
+          }#/<text:p>
           
           break
         }else if(gotElementName==F){
           elementName=paste(elementName,substring(line,index,index),sep="")
+          correctedXML=paste(correctedXML,substring(line,index,index),sep="")
         }else{
           # attributeName
           # <elementName, attributeName="attributeValue">
@@ -380,7 +414,7 @@ odsPreParser = function(file=NULL){
         
     }#/element
     else {
-      print("!!!!!!!!!!!!!!!!!!!!!!")
+      print("!!!!!!!!!!this should not happen!!!!!!!!!!!!")
       print(substring(line,index,index))
     }
     
@@ -388,10 +422,24 @@ odsPreParser = function(file=NULL){
     if(index>=sizeOfXML)continue=FALSE
   }
   
+  if(!is.null(listOfElements)){
+    print("parsing went wrong, as it reached end of the document but not all elements were closed")
+    print("list of unclosed elements")
+    print(listOfElements)
+  }
     
   # normal parse part
   print("normal parse part!!!")
+#   print(correctedXML)
+ 
+#   tempFile=tempfile()
+#   print(tempFile)
+#   write(correctedXML,file=tempFile)
+
   XML=xmlTreeParse(file=correctedXML, asText=TRUE)
+
+
+
   return(xmlRoot(XML))
 }
 
