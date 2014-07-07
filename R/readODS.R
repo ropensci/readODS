@@ -142,6 +142,7 @@ read.ods=function(file=NULL, sheet=NULL, formulaAsFormula=F){
 
 
 #' getNrOfSheets
+#' 
 #' @description
 #' returns the number of sheets in the .ods file
 #' @param file path to the .ods file
@@ -158,6 +159,8 @@ getNrOfSheetsInODS = function(file=NULL){
 
 
 #' getODSRoot
+#' 
+#' @keywords internal 
 #' @description
 #' returns the XML root for the given .ods file
 #' @param file path to the .ods file
@@ -181,6 +184,7 @@ getODSRoot = function(file=NULL){
 
 #' numberToLetters
 #' 
+#' @keywords internal
 #' @description
 #' converts numbers to microplate row names and Excel & ODS column names
 #' 
@@ -220,6 +224,7 @@ numberToLetters=function(listOfNumbers=NULL){
 
 #' lettersToNumber
 #' 
+#' @keywords internal
 #' @description
 #' converts microplate row names and Excel & ODS column names into numbers
 #' 
@@ -251,6 +256,8 @@ lettersToNumber=function( listOfStrings=NULL){
 
 
 #' odsPreParser
+#' 
+#' @keywords internal
 #' 
 #' WTF!!! XML suddenly started being able to handle these files... or maybe just on windows?
 #' 
