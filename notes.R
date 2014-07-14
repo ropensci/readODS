@@ -23,6 +23,8 @@ file=paste(getwd(),"/tests/testdata/readODS test file google docs created.ods",s
 file=paste(getwd(),"/tests/testdata/lotsofnothing_test.ods",sep="")
 file=paste(getwd(),"/tests/testdata/layout_test.ods",sep="")
 file=paste(getwd(),"/tests/testdata/table.ods",sep="")
+file=paste(getwd(),"/tests/testdata/1996-2000.ods",sep="")
+
 
 
 
