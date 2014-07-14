@@ -9,13 +9,13 @@ print(getwd())
 
 test_that("getNrOfSheetsInODS", {
   # getNrOfSheetsInODS
-  file=paste("../testdata/test.ods",sep="")
+  file="../testdata/test.ods"
   expect_equal(getNrOfSheetsInODS(file),1)
-  file=paste("../testdata/multisheet.ods",sep="")
+  file="../testdata/multisheet.ods"
   expect_equal(getNrOfSheetsInODS(file),4)
-  file=paste("../testdata/sum.ods",sep="")
+  file="../testdata/sum.ods"
   expect_equal(getNrOfSheetsInODS(file),1)
-  file=paste("../testdata/readODStestfilegoogledocscreated.ods",sep="")
+  file="../testdata/readODStestfilegoogledocscreated.ods"
   expect_equal(getNrOfSheetsInODS(file),4)
 #   expect_equal(getNrOfSheetsInODS(file),3) # CRASH!!!
 })
@@ -23,7 +23,7 @@ test_that("getNrOfSheetsInODS", {
 
 test_that("read.ods", {
   # read.ods
-  file=paste("../testdata/sum.ods",sep="") 
+  file="../testdata/sum.ods"
   expect_equal(read.ods(file, sheet=1, formulaAsFormula=TRUE)[3,1],"of:=SUM([.A1:.A2])")
   expect_equal(read.ods(file, sheet=1, formulaAsFormula=FALSE)[3,1],"3")
   
@@ -31,12 +31,12 @@ test_that("read.ods", {
   rODS=read.ods(file, sheet=1, formulaAsFormula=FALSE)
   expect_equal(rODS,df)
   
-  file=paste("../testdata/lotsofnothing_test.ods",sep="")
+  file="../testdata/lotsofnothing_test.ods"
   print(dim(read.ods(file, sheet=1)))
   expect_equal(dim(read.ods(file, sheet=1)),c(21,13)) # test if empty rows at the end are ignored
   
   # small file 
-  file=paste("../testdata/table.ods",sep="")
+  file="../testdata/table.ods"
   df=data.frame(A=c("gender","m","f","m"), 
                 B=c("visit1","4","8","8"),
                 C=c("visit2","6","9","2"),
@@ -44,7 +44,7 @@ test_that("read.ods", {
                 stringsAsFactors = F)
   expect_equal(read.ods(file, sheet=1),df)
   
-  file=paste("../testdata/layout_test.ods",sep="")
+  file="../testdata/layout_test.ods"
   sheet1=read.ods(file, sheet=1)
   expect_equal(sheet1[8,"F"],"empty") # this is a repeated element
   
@@ -65,8 +65,9 @@ test_that("read.ods", {
   sheet2=read.ods(file, sheet=2)
   expect_true(all(sheet2==df))
  
-  
-  
+  file="../testdata/1996-2000.ods"
+  expect_true(all(dim(read.ods(file)[[2]])==c(36,21)))
+
   # this test will fail on windows!!!
 #   file=paste("../testdata/test.ods",sep="")
 #   sheet1=read.ods(file, sheet=1)

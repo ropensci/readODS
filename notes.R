@@ -10,6 +10,12 @@
 library(XML)
 library(testthat)
 
+
+
+file=paste(getwd(),"/tests/testdata/smartSheetTest.ods",sep="")
+smartSheet(read.ods(file ,sheet=1))
+
+
 # this actually works!
 testPath=paste(getwd(),"/tests/R/",sep="")
 codePath=paste(getwd(),"/R/",sep="")
@@ -26,6 +32,7 @@ file=paste(getwd(),"/tests/testdata/table.ods",sep="")
 file=paste(getwd(),"/tests/testdata/1996-2000.ods",sep="")
 
 
+expect_true(all(dim(read.ods(file)[2])==c(36,212)))
 
 
 read.ods(file)
@@ -40,6 +47,28 @@ read.ods(file,usePreParser = F)
 
 odsPreParser(file)
 
+
+
+
+df=data.frame(a=1:10,b=1:10,c=1:10)
+df[3,]=NULL #does not work
+df[3]=NULL #works
+df[,3]=NULL #same as the one above... so rows are 
+df[3,1:3]=NULL
+
+df
+
+
+tryCatch(warning("gjstest"),warning=print("gottaloveme!"))# gives error
+tryCatch(warning("gjstest"),warning=function(e)print("gottaloveme!")) #works!!
+tryCatch(warning("gjstest"),warning=function(e)T)
+
+if(tryCatch(warning("jackpot!"),warning=function(e)T))print("jackpot!")#jackpot!
+
+
+df=data.frame(a=1:10,b=letters[1:10],c=1:10, stringsAsFactors = F)
+tryCatch(as.double(df[,1]),warning=function(e)T)
+tryCatch(as.double(df[,2]),warning=function(e)T)
 
 
 elementName="GJSTTEST"

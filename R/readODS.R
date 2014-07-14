@@ -109,7 +109,8 @@ read.ods=function(file=NULL, sheet=NULL, formulaAsFormula=F){
             d[[rowIndex]][[colIndex]]=xmlAttrs(cell)[["value"]]
           } else {
             # no value... weird... do nothing!
-            print(paste("maybe make me a warning... but found no value for defined cell at sheet:",sheetIndex, "row:",rowIndex,"col:",colIndex ,sep=" "))
+            # this can happen if you have code like this: =IF(E13="","",Q13)
+#             print(paste("maybe make me a warning... but found no value for defined cell at sheet:",sheetIndex, "row:",rowIndex,"col:",colIndex ,sep=" "))
           }
         }
       }# col/cell
