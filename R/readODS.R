@@ -147,7 +147,7 @@ read.ods=function(file=NULL, sheet=NULL, formulaAsFormula=F){
 #' returns the number of sheets in the .ods file
 #' @param file path to the .ods file
 #' @details
-#' use readODS() to actualy get the sheets
+#' use read.ods() to actualy get the sheets
 #' @export
 getNrOfSheetsInODS = function(file=NULL){ 
   root=getODSRoot(file)
