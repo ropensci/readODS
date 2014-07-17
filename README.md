@@ -1,14 +1,14 @@
 # readODS
 
 
-read ODS files into R
+read ODS  files into R
 
 gives you a data.frame per sheet
 
 
 
 ## how it works:
-ODS files are basically a zip file with all the stuff in it.
+ODS (Open Document Spreadsheets) files are basically a zip file with all the stuff in it.
 The most important file is contents.xml which contains all the numbers and formulas used in the ODS spreadsheet.
 this is the only file currently looked at.
 
@@ -35,6 +35,7 @@ accepts the following parameters:
 ### Stable version
 From the CRAN with
 
+    install.packages("readODS")
     library(readODS)
 
 ### Development version

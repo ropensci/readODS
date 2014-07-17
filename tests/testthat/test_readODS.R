@@ -1,4 +1,4 @@
-# readODS_test.R
+# tests for readODS.R
 library(testthat)
 
 print(getwd())
