@@ -34,7 +34,7 @@ test_that("read.ods", {
   file="../testdata/lotsofnothing_test.ods"
   print(dim(read.ods(file, sheet=1)))
   expect_equal(dim(read.ods(file, sheet=1)),c(21,13)) # test if empty rows at the end are ignored
-  
+  expect_equal(class(read.ods(file, sheet=1)),"data.frame")
   # small file 
   file="../testdata/table.ods"
   df=data.frame(A=c("gender","m","f","m"), 

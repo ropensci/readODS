@@ -24,5 +24,26 @@ test_that("smartSheet", {
   
   
   
+  file="../testdata/1996-2000.ods"
+  dfs=read.ods(file)
+  dfs[[1]]
+  s=smartSheet(dfs[[1]],rowNames = T)
+  expect_true(all(s==c(80,5,3,15)))# check that they are numbers, and correct 
+  s=smartSheet(dfs[[1]],rowNames = T,convertToNumbers = F)
+  expect_true(all(s==c("80","5","3","15")))# check that they are numbers, and correct 
   
+  s=smartSheet(dfs[[2]])
+  expect_true(colnames(s)[[1]]=="Team")
+  expect_true(all(dim(s)==c(35,20)))
+  expect_true(class(s[35,20])=="numeric")
+  s=smartSheet(dfs[[2]],colNames = F)
+  expect_true(all(dim(s)==c(36,20)))
+  expect_true(s[36,20]==0)#EEEEUGH this should be false cause its a "0"!!! FUCK R!
+  expect_true(class(s[36,20])=="character")
+  
+  s=smartSheet(dfs[[2]],rowNames = T)
+  expect_true(rownames(s)[1]=="AH")
+  
+  s=smartSheet(dfs[[2]],rowNames = T, colNames=F)
+  expect_true(rownames(s)[1]=="Team")  
 })

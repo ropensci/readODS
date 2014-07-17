@@ -22,6 +22,7 @@
 #' 
 #' 
 #' @export
+# Note: data.frames are horrible, they remove row and colnames at random...
 smartSheet=function(df=NULL, trim=TRUE, colNames="smart", rowNames="smart", removeEmptySheets=TRUE, convertToNumbers=TRUE){
   wasDf=F
   if(class(df)=="data.frame"){
@@ -35,9 +36,15 @@ smartSheet=function(df=NULL, trim=TRUE, colNames="smart", rowNames="smart", remo
   
   returnValue=NULL
   removedSheets=0
+
   
   for(i in 1:length(df)){
     idf=df[[i]]
+    
+    
+    colNameValues=NULL
+    rowNameValues=NULL
+    
 #     print(idf)
     
     if(class(idf)!="data.frame"){
@@ -52,7 +59,7 @@ smartSheet=function(df=NULL, trim=TRUE, colNames="smart", rowNames="smart", remo
         next # skip the rest...
       }
     }
-
+    
     # remove empty rows and columns
     if(trim){
       #check rows
@@ -118,22 +125,18 @@ smartSheet=function(df=NULL, trim=TRUE, colNames="smart", rowNames="smart", remo
     if(rowNames=="smart"){
       # check for rowNames
       if(idf[1,1]=="" && idf[2,1]!=""){
-  #       print(rownames(idf))
-  #       print(idf[2:dim(idf)[1],1])
-        
-  #       rownames(idf)=idf[2:dim(idf)[1],1]
-        rownames(idf)=idf[,1]
-        idf=idf[,2:dim(idf)[2]]
+        rowNameValues=idf[,1]
+        idf=data.frame(idf[,2:dim(idf)[2]],stringsAsFactors = F)
       }
     }else if(rowNames){
       # force row names
       # TODO FIX!! if no header or...
-      rownames(idf)=idf[,1]
-      idf=idf[2:dim(idf)[1],]
+      rowNameValues=idf[,1] 
+      idf=data.frame(idf[,2:dim(idf)[2]],stringsAsFactors = F) #remove rownames column from data, somehow this also removed the row names itself...
     }else{
       # false
     }
-  
+    
 #     print("after row names:")
 #     print(idf)
     
@@ -154,13 +157,13 @@ smartSheet=function(df=NULL, trim=TRUE, colNames="smart", rowNames="smart", remo
         }
       }
       if(header){
-        colnames(idf)=idf[1,]
-        idf=idf[2:dim(idf)[1],]
+        colNameValues=idf[1,]
+        idf=data.frame(idf[2:dim(idf)[1],],stringsAsFactors = F)
       }
     }else if(colNames){
       # force colname
-      colnames(idf)=idf[1,]
-      idf=idf[2:dim(idf)[1],]
+      colNameValues=idf[1,]
+      idf=data.frame(idf[2:dim(idf)[1],],stringsAsFactors = F)
     }else{
       # false
     }
@@ -172,18 +175,44 @@ smartSheet=function(df=NULL, trim=TRUE, colNames="smart", rowNames="smart", remo
     if(convertToNumbers){
       nrOfCols=dim(idf)[2]
       for(j in 1:nrOfCols){
+#         print(idf[,j])
+#         print(as.double(idf[,j]))
         if(!givesWarning(as.double(idf[,j]))){
+#           print(!givesWarning(as.double(idf[,j])))
+#           print(idf[1:5,j])
           idf[,j]=as.double(idf[,j])
         }
       }
     }
-  
+
+
+    # update rownames
+    if(!is.null(rowNameValues)){
+      if(length(rowNameValues)>dim(idf)[1]){
+        # 
+        rownames(idf)=rowNameValues[2:length(rowNameValues)]
+      } else{
+        rownames(idf)=rowNameValues
+      }
+      
+    }
+    else{
+      rownames(idf)=1:dim(idf)[1]
+    }
+    # update colnames
+    if(!is.null(colNameValues)){
+      colnames(idf)=colNameValues
+    }
+    else{
+      colnames(idf)=numberToLetters(1:dim(idf)[2])
+    }
+    # return the right thing
     if(wasDf){
       returnValue=idf
     }else{
       returnValue[[i-removedSheets]]=idf
     }
-  }
+  }#for each sheet
   
   return(returnValue)
 }

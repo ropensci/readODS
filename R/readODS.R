@@ -46,7 +46,11 @@ read.ods=function(file=NULL, sheet=NULL, formulaAsFormula=F){
   
   returnValue=list()
   sheetIndex=0
-  for(sheeti in sheets[names(sheets)=="table"]){
+  tempSheets=sheets[names(sheets)=="table"]
+  if(!is.null(sheet)){
+    tempSheets[sheet]
+  }
+  for(sheeti in tempSheets){
     sheetIndex=sheetIndex+1
     #sheeti=sheets[[3]]
     
@@ -130,13 +134,9 @@ read.ods=function(file=NULL, sheet=NULL, formulaAsFormula=F){
     returnValue[[sheetIndex]]=l
   }# sheet
   
-  # give back what was asked for!
-  if (!is.null(sheet)){
-    if(length(sheet)>1){
-      return(returnValue[sheet])
-    } else {
-      return(returnValue[[sheet]])
-    }
+  # convert to data.frame if a single sheet was asked for.
+  if (!is.null(sheet) && length(sheet)==1){
+    return(returnValue[[sheet]])
   }
   return (returnValue)
 }
@@ -182,7 +182,6 @@ getODSRoot = function(file=NULL){
 }
 
 
-
 #' numberToLetters
 #' 
 #' @keywords internal
@@ -223,6 +222,7 @@ numberToLetters=function(listOfNumbers=NULL){
   return(returnValue)
 }
 
+
 #' lettersToNumber
 #' 
 #' @keywords internal
@@ -253,7 +253,6 @@ lettersToNumber=function( listOfStrings=NULL){
   }
   return(total)
 }
-
 
 
 #' odsPreParser
