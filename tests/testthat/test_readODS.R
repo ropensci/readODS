@@ -1,11 +1,4 @@
 # tests for readODS.R
-library(testthat)
-source("../../R/readODS.R")
-
-# work dir needs to be testthat
-
-
-
 test_that("getNrOfSheetsInODS", {
     file="../testdata/test.ods"
     expect_equal(getNrOfSheetsInODS(file),1)
@@ -28,7 +21,6 @@ test_that("read_ods", {
     expect_equal(rODS,df)
   
     file="../testdata/lotsofnothing_test.ods"
-    print(dim(read.ods(file, sheet=1)))
     expect_equal(dim(read.ods(file, sheet=1)),c(21,13)) # test if empty rows at the end are ignored
     expect_equal(class(read.ods(file, sheet=1)),"data.frame")
     ## small file 
