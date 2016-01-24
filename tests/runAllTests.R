@@ -1,7 +1,7 @@
 
-library(testthat)
-print("running all tests")
-test_check("readODS") # this works with check() it does not work by ctrl+enter :(
+## library(testthat)
+## print("running all tests")
+## test_check("readODS") # this works with check() it does not work by ctrl+enter :(
 
 # testPath=paste(getwd(),"/tests/testthat/",sep="")
 # codePath=paste(getwd(),"/R/",sep="")
