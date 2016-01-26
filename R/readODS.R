@@ -24,7 +24,7 @@
 ## ' 
 ## ' numberToLetters(1:1000)
 ## ' 
-numbers_to_letters=function(listOfNumbers=NULL){
+numbers_to_letters <- function(listOfNumbers=NULL){
   returnValue <- NULL
   for(i in 1:length(listOfNumbers)){
       remainder <- listOfNumbers[[i]]
@@ -80,7 +80,7 @@ numbers_to_letters=function(listOfNumbers=NULL){
 
 
 ### return a parsed XML tree from an ODS file
-parse_ods_file= function(file = NULL){
+parse_ods_file <- function(file = NULL){
     if(is.null(file)) {
         stop("no filename given")
     }
@@ -125,8 +125,15 @@ parse_single_cell <- function(cell, ods_ns, formula_as_formula = FALSE, use_offi
     return(cell_value)
 }
 
-parse_rows <- function(parsed_sheet, ods_ns, formula_as_formula) {
+parse_rows <- function(parsed_sheet, ods_ns, formula_as_formula, skip = 0) {
     rows <- xml_find_all(parsed_sheet, ".//table:table-row", ods_ns)
+    if (skip > 0 & skip >= length(rows)) {
+        warning("skip value >=  number of rows, ignore the skip setting")
+        skip <- 0
+    }
+    if (skip > 0) {
+        rows <- rows[(skip+1):length(rows)]
+    }
     cell_values <- data.frame()
     current_row <- 0
     for (row in rows) {
@@ -203,16 +210,17 @@ parse_ods_to_sheets <- function(file) {
 #' @param sheet numeric, the sheet number to be read from. The default is 1.
 #' @param header logical,  indicating whether the file contains the names of the variables as its first line. 
 #' @param formula_as_formula logical, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..
+#' @param skip numeric, the number of lines of the data file to skip before beginning to read data.
 #' @return a data frame (\code{data.frame}) containing a representation of data in the ods file. All data are read as characters.
 #' @author Chung-hong Chan <chainsawtiney@gmail.com>
 #' @import xml2
 #' @export
-read_ods <- function(file = NULL, sheet = 1, header = FALSE, formula_as_formula = FALSE) {
+read_ods <- function(file = NULL, sheet = 1, header = FALSE, formula_as_formula = FALSE, skip = 0) {
     res <- parse_ods_to_sheets(file)
     ods_ns <- res[[2]]
     sheets <- res[[1]]
     if (!is.null(sheet)) {
-        cell_values <- parse_rows(sheets[sheet], ods_ns, formula_as_formula = formula_as_formula)
+        cell_values <- parse_rows(sheets[sheet], ods_ns, formula_as_formula = formula_as_formula, skip = skip)
         return(to_data_frame(cell_values, header))
     } else {
         return(lapply(sheets, function(x) to_data_frame(parse_rows(x, ods_ns, formula_as_formula = formula_as_formula), header)))
@@ -233,7 +241,7 @@ read_ods <- function(file = NULL, sheet = 1, header = FALSE, formula_as_formula 
 #' @author Chung-hong Chan <chainsawtiney@gmail.com>, Gerrit-Jan Schutten <phonixor@gmail.com>
 #' @export
 read.ods <- function(file=NULL, sheet=NULL, formulaAsFormula=F) {
-    return(read_ods(file = file, sheet = sheet, header = FALSE, formula_as_formula = formulaAsFormula))
+    return(read_ods(file = file, sheet = sheet, header = FALSE, formula_as_formula = formulaAsFormula, skip = 0))
 }
 
 
