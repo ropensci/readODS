@@ -9,7 +9,8 @@ Contact: https://github.com/chainsawriot/readODS/
 Description: Read ODS (OpenDocument Spreadsheet) files and put them into data
     frames.
 Imports:
-    xml2
+    xml2,
+    cellranger
 Suggests:
     testthat,
     devtools,

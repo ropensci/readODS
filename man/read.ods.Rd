@@ -4,10 +4,10 @@
 \alias{read.ods}
 \title{read data from ods files (depreciated)}
 \usage{
-read.ods(file = NULL, sheet = NULL, formulaAsFormula = F)
+read.ods(file = NULL, sheet = NULL, formulaAsFormula = FALSE)
 }
 \arguments{
-\item{file}{the name of the ods file which the data are to be read from.}
+\item{file}{Path to the ods file.}
 
 \item{sheet}{default to NULL with all sheets being read as a list of data.frame. If a number is given, the sheet as a single data.frame is returned.}
 

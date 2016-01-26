@@ -1,8 +1,8 @@
-##http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part1.html#__RefHeading__1420324_253892949
+## dependency
 
-
-
-
+#' @import xml2
+#' @import cellranger
+NULL
 
 
 
@@ -179,7 +179,11 @@ change_df_with_header <- function(x) {
 }
 
 ### ugly version
-to_data_frame <- function(cell_values, header = FALSE) {
+to_data_frame <- function(cell_values, header = FALSE, na) {
+    if (nrow(cell_values) == 0) {
+        warning("empty sheet, return empty data frame.")
+        return(data.frame())
+    }
     res <- data.frame(matrix(data = "", nrow = max(cell_values[,1]) ,ncol= max(cell_values[,2])), stringsAsFactors = FALSE)
     for(i in 1:nrow(cell_values)){
         res[cell_values[i, 1], cell_values[i, 2]] <- cell_values[i, 3]
@@ -189,6 +193,8 @@ to_data_frame <- function(cell_values, header = FALSE) {
     } else {
         colnames(res) <- numbers_to_letters(1:ncol(res))
     }
+    ## clean-up na
+    res[res == na] <- NA
     return(res)
 }
 
@@ -199,6 +205,21 @@ parse_ods_to_sheets <- function(file) {
     return(list(sheets, ods_ns))
 }
 
+select_sheet <- function(sheets, ods_ns, which_sheet) {
+    if (is.numeric(which_sheet) & which_sheet > length(sheets)) {
+        stop("sheet larger than number of sheets in the ods file.")
+    }
+    if (is.character(which_sheet)) {
+        sheet_names <- sapply(sheets, function(x) xml_attr(x, "table:name", ods_ns))
+        if (which_sheet %in% sheet_names) {
+            which_sheet <- which(sheet_names == which_sheet)
+        } else {
+            stop(paste0("No sheet named ", which_sheet, " in the ods file."))
+        }
+    }
+    return(sheets[which_sheet])
+}
+
 ############### REAL DEALS #####################
 
 #' read data from ods files
@@ -206,25 +227,24 @@ parse_ods_to_sheets <- function(file) {
 #' @description 
 #' Funtion to read a single sheet from a ods file and return a data frame. 
 #' 
-#' @param file the name of the ods file which the data are to be read from.
-#' @param sheet numeric, the sheet number to be read from. The default is 1.
-#' @param header logical,  indicating whether the file contains the names of the variables as its first line. 
-#' @param formula_as_formula logical, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..
-#' @param skip numeric, the number of lines of the data file to skip before beginning to read data.
+#' @param path Path to the ods file.
+#' @param sheet sheet to read. Either a string (the sheet name), or an integer sheet number. The default is 1.
+#' @param col_names indicating whether the file contains the names of the variables as its first line.
+#' @param col_type not yet implement.
+#' @param na Missing value. By default readODS converts blank cells to missing data.
+#' @param skip the number of lines of the data file to skip before beginning to read data.
+#' @param formula_as_formula a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..
+#' @param range not yet implement.
 #' @return a data frame (\code{data.frame}) containing a representation of data in the ods file. All data are read as characters.
 #' @author Chung-hong Chan <chainsawtiney@gmail.com>
-#' @import xml2
 #' @export
-read_ods <- function(file = NULL, sheet = 1, header = FALSE, formula_as_formula = FALSE, skip = 0) {
-    res <- parse_ods_to_sheets(file)
+read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_type = NULL, na = "", skip = 0, formula_as_formula = FALSE, range = NULL) {
+    res <- parse_ods_to_sheets(path)
     ods_ns <- res[[2]]
     sheets <- res[[1]]
-    if (!is.null(sheet)) {
-        cell_values <- parse_rows(sheets[sheet], ods_ns, formula_as_formula = formula_as_formula, skip = skip)
-        return(to_data_frame(cell_values, header))
-    } else {
-        return(lapply(sheets, function(x) to_data_frame(parse_rows(x, ods_ns, formula_as_formula = formula_as_formula), header)))
-    }
+    target_sheet <- select_sheet(sheets, ods_ns = ods_ns, which_sheet = sheet)
+    cell_values <- parse_rows(target_sheet, ods_ns, formula_as_formula = formula_as_formula, skip = skip)
+    return(to_data_frame(cell_values = cell_values, header = col_names, na = na))
 }
 
 #' read data from ods files (depreciated)
@@ -232,7 +252,7 @@ read_ods <- function(file = NULL, sheet = 1, header = FALSE, formula_as_formula 
 #' @description 
 #' returns a list of data frames with one data frame per sheet. This is a wrapper to read_ods  for backward compatibile with previous version of readODS. Please use read_ods if possible.
 #' 
-#' @param file the name of the ods file which the data are to be read from.
+#' @param file Path to the ods file.
 #' @param sheet default to NULL with all sheets being read as a list of data.frame. If a number is given, the sheet as a single data.frame is returned.
 #' @param formulaAsFormula Logical, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8".. 
 #' 
@@ -240,8 +260,12 @@ read_ods <- function(file = NULL, sheet = 1, header = FALSE, formula_as_formula 
 #' the data.frame contains all strings (not factors)
 #' @author Chung-hong Chan <chainsawtiney@gmail.com>, Gerrit-Jan Schutten <phonixor@gmail.com>
 #' @export
-read.ods <- function(file=NULL, sheet=NULL, formulaAsFormula=F) {
-    return(read_ods(file = file, sheet = sheet, header = FALSE, formula_as_formula = formulaAsFormula, skip = 0))
+read.ods <- function(file = NULL, sheet = NULL, formulaAsFormula = FALSE) {
+    if (!is.null(sheet)) {
+        return(read_ods(path = file, sheet = sheet, col_names = FALSE, formula_as_formula = formulaAsFormula, skip = 0))
+    } else {
+        return(lapply(ods_sheets(file), function(x) read_ods(path = file, sheet = x, col_names = FALSE, formula_as_formula = formulaAsFormula, skip = 0)))
+    }
 }
 
 
@@ -268,4 +292,15 @@ get_num_sheet_in_ods <- function(file) {
 #' @export
 getNrOfSheetsInODS <- function(file) {
     return(get_num_sheet_in_ods(file))
+}
+
+#' List all sheets in an ods file.
+#'
+#' @description
+#' List all sheets in an ods file.
+#' @param path Path to the ods file
+#' @export
+ods_sheets <- function(path) {
+    res <- parse_ods_to_sheets(path)
+    return(sapply(res[[1]], function(x) xml_attr(x, "table:name", res[[2]])))
 }

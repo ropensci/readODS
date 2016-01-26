@@ -2,6 +2,8 @@
 
 export(getNrOfSheetsInODS)
 export(get_num_sheet_in_ods)
+export(ods_sheets)
 export(read.ods)
 export(read_ods)
+import(cellranger)
 import(xml2)

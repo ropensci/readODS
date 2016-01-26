@@ -4,19 +4,25 @@
 \alias{read_ods}
 \title{read data from ods files}
 \usage{
-read_ods(file = NULL, sheet = 1, header = FALSE,
-  formula_as_formula = FALSE, skip = 0)
+read_ods(path = NULL, sheet = 1, col_names = TRUE, col_type = NULL,
+  na = "", skip = 0, formula_as_formula = FALSE, range = NULL)
 }
 \arguments{
-\item{file}{the name of the ods file which the data are to be read from.}
+\item{path}{Path to the ods file.}
 
-\item{sheet}{numeric, the sheet number to be read from. The default is 1.}
+\item{sheet}{sheet to read. Either a string (the sheet name), or an integer sheet number. The default is 1.}
 
-\item{header}{logical,  indicating whether the file contains the names of the variables as its first line.}
+\item{col_names}{indicating whether the file contains the names of the variables as its first line.}
 
-\item{formula_as_formula}{logical, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..}
+\item{col_type}{not yet implement.}
 
-\item{skip}{numeric, the number of lines of the data file to skip before beginning to read data.}
+\item{na}{Missing value. By default readODS converts blank cells to missing data.}
+
+\item{skip}{the number of lines of the data file to skip before beginning to read data.}
+
+\item{formula_as_formula}{a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..}
+
+\item{range}{not yet implement.}
 }
 \value{
 a data frame (\code{data.frame}) containing a representation of data in the ods file. All data are read as characters.

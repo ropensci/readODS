@@ -41,7 +41,7 @@ test_that("read_ods", {
     expect_true(all(sheet1[21,]==sheet2[22,]))
     
     file=paste("../testdata/multisheet.ods",sep="")
-    df=data.frame(matrix("",14,7),stringsAsFactors = F)
+    df=data.frame(matrix(as.character(NA),14,7),stringsAsFactors = F)
     df[1,1]="COOKIES"
     df[4,2]="1"
     df[6,3]="2"
@@ -51,7 +51,7 @@ test_that("read_ods", {
     df[9,5]="1"
     df[10,7]="1"
     sheet2=read.ods(file, sheet=2)
-    expect_true(all(sheet2==df))
+    expect_true(all(sheet2==df, na.rm = TRUE))
  
     file="../testdata/1996-2000.ods"
     expect_true(all(dim(read.ods(file)[[2]])==c(36,21)))
