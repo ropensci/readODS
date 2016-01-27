@@ -4,7 +4,7 @@
 \alias{read_ods}
 \title{read data from ods files}
 \usage{
-read_ods(path = NULL, sheet = 1, col_names = TRUE, col_type = NULL,
+read_ods(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL,
   na = "", skip = 0, formula_as_formula = FALSE, range = NULL)
 }
 \arguments{
@@ -14,7 +14,7 @@ read_ods(path = NULL, sheet = 1, col_names = TRUE, col_type = NULL,
 
 \item{col_names}{indicating whether the file contains the names of the variables as its first line.}
 
-\item{col_type}{not yet implement.}
+\item{col_types}{Either NULL to guess from the spreadsheet or a character vector containing "blank", "numeric", "date" or "text". A string of "legacy" will return a data frame with all columns being "text".}
 
 \item{na}{Missing value. By default readODS converts blank cells to missing data.}
 

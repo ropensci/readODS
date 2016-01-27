@@ -2,6 +2,7 @@
 
 #' @import xml2
 #' @import cellranger
+#' @import readr
 NULL
 
 
@@ -174,6 +175,10 @@ parse_rows <- function(parsed_sheet, ods_ns, formula_as_formula, skip = 0) {
 change_df_with_header <- function(x) {
     colnames(x) <- x[1,]
     g <- x[2:nrow(x),]
+    if (class(g) != "data.frame") {
+        g <- data.frame(g, stringsAsFactors = FALSE)
+        colnames(g) <- x[1,]
+    }
     rownames(g) <- seq(from = 1, to = nrow(g))
     return(g)
 }
@@ -194,7 +199,9 @@ to_data_frame <- function(cell_values, header = FALSE, na) {
         colnames(res) <- numbers_to_letters(1:ncol(res))
     }
     ## clean-up na
-    res[res == na] <- NA
+    if (!is.null(na)) {
+        res[res == na] <- NA
+    }
     return(res)
 }
 
@@ -230,7 +237,7 @@ select_sheet <- function(sheets, ods_ns, which_sheet) {
 #' @param path Path to the ods file.
 #' @param sheet sheet to read. Either a string (the sheet name), or an integer sheet number. The default is 1.
 #' @param col_names indicating whether the file contains the names of the variables as its first line.
-#' @param col_type not yet implement.
+#' @param col_types Either NULL to guess from the spreadsheet or a character vector containing "blank", "numeric", "date" or "text". A string of "legacy" will return a data frame with all columns being "text".
 #' @param na Missing value. By default readODS converts blank cells to missing data.
 #' @param skip the number of lines of the data file to skip before beginning to read data.
 #' @param formula_as_formula a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..
@@ -238,13 +245,21 @@ select_sheet <- function(sheets, ods_ns, which_sheet) {
 #' @return a data frame (\code{data.frame}) containing a representation of data in the ods file. All data are read as characters.
 #' @author Chung-hong Chan <chainsawtiney@gmail.com>
 #' @export
-read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_type = NULL, na = "", skip = 0, formula_as_formula = FALSE, range = NULL) {
+read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL, na = "", skip = 0, formula_as_formula = FALSE, range = NULL) {
     res <- parse_ods_to_sheets(path)
     ods_ns <- res[[2]]
     sheets <- res[[1]]
     target_sheet <- select_sheet(sheets, ods_ns = ods_ns, which_sheet = sheet)
     cell_values <- parse_rows(target_sheet, ods_ns, formula_as_formula = formula_as_formula, skip = skip)
-    return(to_data_frame(cell_values = cell_values, header = col_names, na = na))
+    parsed_df <- to_data_frame(cell_values = cell_values, header = col_names, na = na)
+    if (is.null(col_types)) {
+        return(readr::type_convert(df = parsed_df))
+    }
+    if (col_types == "legacy") {
+        return(parsed_df)
+    } else {
+        return(readr::type_convert(df = parsed_df, col_types = col_types))
+    }
 }
 
 #' read data from ods files (depreciated)
@@ -262,9 +277,9 @@ read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_type = NULL, 
 #' @export
 read.ods <- function(file = NULL, sheet = NULL, formulaAsFormula = FALSE) {
     if (!is.null(sheet)) {
-        return(read_ods(path = file, sheet = sheet, col_names = FALSE, formula_as_formula = formulaAsFormula, skip = 0))
+        return(read_ods(path = file, sheet = sheet, col_names = FALSE, formula_as_formula = formulaAsFormula, skip = 0, na = NULL, col_types = "legacy"))
     } else {
-        return(lapply(ods_sheets(file), function(x) read_ods(path = file, sheet = x, col_names = FALSE, formula_as_formula = formulaAsFormula, skip = 0)))
+        return(lapply(ods_sheets(file), function(x) read_ods(path = file, sheet = x, col_names = FALSE, formula_as_formula = formulaAsFormula, skip = 0, na = NULL, col_types = "legacy")))
     }
 }
 

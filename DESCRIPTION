@@ -1,19 +1,19 @@
 Package: readODS
 Type: Package
-Title: Read ODS files and puts them into data frames
-Version: 1.6.1
+Title: Read ODS files
+Version: 1.6.2
 Date: 2016-01-19
 Author: Gerrit-Jan Schutten, Chung-hong Chan
 Maintainer: Chung-hong Chan <chainsawtiney@gmail.com>
 Contact: https://github.com/chainsawriot/readODS/
-Description: Read ODS (OpenDocument Spreadsheet) files and put them into data
+Description: Read ODS (OpenDocument Spreadsheet) and puts them into data frames. Works on Windows, Mac and Linux without external dependencies.
     frames.
 Imports:
     xml2,
-    cellranger
+    cellranger,
+    readr
 Suggests:
-    testthat,
-    devtools,
-    roxygen2
+    dplyr,
+    testthat
 License: GPL-3
 RoxygenNote: 5.0.1
