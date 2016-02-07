@@ -48,36 +48,6 @@ numbers_to_letters <- function(listOfNumbers=NULL){
 }
 
 
-## #' lettersToNumber
-## #' 
-## #' @keywords internal
-## #' @description
-## #' converts microplate row names and Excel & ODS column names into numbers
-## #' 
-## #' @param listOfStrings the strings you want to convert to numbers
-## #' 
-## #' @details
-## #' supports lists of chars!
-## #' ignores case
-## #' 
-## #' A=1
-## #' Z=26
-## #' ZA=27
-## #' ZZ=702
-## #' AAA=703 
-## #' 
-## #' lettersToNumber("AAa")
-## lettersToNumber=function( listOfStrings=NULL){
-##   total=NULL
-##   for(i in 1:length(listOfStrings)){ # for each string
-##     total[i]=0
-##     for (j in 1:nchar(listOfStrings[i])){ # for each char in the string
-##       current=match(casefold(substring(listOfStrings[i],j,j)),letters)
-##       total[i]=total[i]+(current*26^(nchar(listOfStrings[i])-j))
-##     }
-##   }
-##   return(total)
-## }
 
 
 ### return a parsed XML tree from an ODS file
@@ -167,7 +137,6 @@ parse_rows <- function(parsed_sheet, ods_ns, formula_as_formula, skip = 0) {
         }
     }
     return(cell_values)
-
 }
 
 
@@ -227,6 +196,12 @@ select_sheet <- function(sheets, ods_ns, which_sheet) {
     return(sheets[which_sheet])
 }
 
+select_range <- function(raw_sheet, range) {
+    range_select <- cellranger::as.cell_limits(range)
+    selected_sheet <- raw_sheet[range_select$ul[1]:range_select$lr[1], range_select$ul[2]:range_select$lr[2]]
+    return(selected_sheet)
+}
+
 ############### REAL DEALS #####################
 
 #' read data from ods files
@@ -237,7 +212,7 @@ select_sheet <- function(sheets, ods_ns, which_sheet) {
 #' @param path Path to the ods file.
 #' @param sheet sheet to read. Either a string (the sheet name), or an integer sheet number. The default is 1.
 #' @param col_names indicating whether the file contains the names of the variables as its first line.
-#' @param col_types Either NULL to guess from the spreadsheet or a character vector containing "blank", "numeric", "date" or "text". A string of "legacy" will return a data frame with all columns being "text".
+#' @param col_types Either NULL to guess from the spreadsheet or a character vector containing "blank", "numeric", "date" or "text". NA will return a data frame with all columns being "text".
 #' @param na Missing value. By default readODS converts blank cells to missing data.
 #' @param skip the number of lines of the data file to skip before beginning to read data.
 #' @param formula_as_formula a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..
@@ -253,13 +228,19 @@ read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL,
     cell_values <- parse_rows(target_sheet, ods_ns, formula_as_formula = formula_as_formula, skip = skip)
     parsed_df <- to_data_frame(cell_values = cell_values, header = col_names, na = na)
     if (is.null(col_types)) {
-        return(readr::type_convert(df = parsed_df))
+        raw_sheet <- readr::type_convert(df = parsed_df)
     }
-    if (col_types == "legacy") {
-        return(parsed_df)
+    if (is.na(NA)) {
+        raw_sheet <- parsed_df
     } else {
-        return(readr::type_convert(df = parsed_df, col_types = col_types))
+        raw_sheet <- readr::type_convert(df = parsed_df, col_types = col_types)
     }
+    if (!is.null(range)) {
+        res <- select_range(raw_sheet, range)
+    } else {
+        res <- raw_sheet
+    }
+    return(res)
 }
 
 #' read data from ods files (depreciated)
@@ -277,9 +258,9 @@ read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL,
 #' @export
 read.ods <- function(file = NULL, sheet = NULL, formulaAsFormula = FALSE) {
     if (!is.null(sheet)) {
-        return(read_ods(path = file, sheet = sheet, col_names = FALSE, formula_as_formula = formulaAsFormula, skip = 0, na = NULL, col_types = "legacy"))
+        return(read_ods(path = file, sheet = sheet, col_names = FALSE, formula_as_formula = formulaAsFormula, skip = 0, na = NULL, col_types = NA))
     } else {
-        return(lapply(ods_sheets(file), function(x) read_ods(path = file, sheet = x, col_names = FALSE, formula_as_formula = formulaAsFormula, skip = 0, na = NULL, col_types = "legacy")))
+        return(lapply(ods_sheets(file), function(x) read_ods(path = file, sheet = x, col_names = FALSE, formula_as_formula = formulaAsFormula, skip = 0, na = NULL, col_types = NA)))
     }
 }
 
