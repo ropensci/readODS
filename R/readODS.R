@@ -216,8 +216,9 @@ select_range <- function(raw_sheet, range) {
 #' @param na Missing value. By default readODS converts blank cells to missing data.
 #' @param skip the number of lines of the data file to skip before beginning to read data.
 #' @param formula_as_formula a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..
-#' @param range not yet implement.
-#' @return a data frame (\code{data.frame}) containing a representation of data in the ods file. All data are read as characters.
+#' @param range selection of rectangle using Excel-like cell range, such as \code{range = "D12:F15"} or \code{range = "R1C12:R6C15"}. Cell range processing is handled by the \code{\link[=cellranger]{cellranger}} package.
+#' @return a data frame (\code{data.frame}) containing a representation of data in the ods file.
+#' @note Currently, ods files that linked to external data source cannot be read. Merged cells cannot be parsed correctly.
 #' @author Chung-hong Chan <chainsawtiney@gmail.com>
 #' @export
 read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL, na = "", skip = 0, formula_as_formula = FALSE, range = NULL) {
