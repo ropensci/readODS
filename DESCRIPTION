@@ -2,12 +2,11 @@ Package: readODS
 Type: Package
 Title: Read ODS files
 Version: 1.6.2
-Date: 2016-01-19
+Date: 2016-03-07
 Author: Gerrit-Jan Schutten, Chung-hong Chan
 Maintainer: Chung-hong Chan <chainsawtiney@gmail.com>
 Contact: https://github.com/chainsawriot/readODS/
-Description: Read ODS (OpenDocument Spreadsheet) and puts them into data frames. Works on Windows, Mac and Linux without external dependencies.
-    frames.
+Description: Read ODS (OpenDocument Spreadsheet) and puts them into data frames.
 Imports:
     xml2,
     cellranger,
