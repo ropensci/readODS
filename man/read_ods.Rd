@@ -14,7 +14,7 @@ read_ods(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL,
 
 \item{col_names}{indicating whether the file contains the names of the variables as its first line.}
 
-\item{col_types}{Either NULL to guess from the spreadsheet or a character vector containing "blank", "numeric", "date" or "text". NA will return a data frame with all columns being "text".}
+\item{col_types}{Either NULL to guess from the spreadsheet or a compact character combination of "c" (character), "i" (integer), "n" (number), "d" (double), "l" (logical), "D" (date), "T" (date time), "t" (time), ? (guess) or _/- (skip). For example, to convert a 3 column data.frame into character, character and integer, the character combination is "cci". NA will return a data frame with all columns being "text".}
 
 \item{na}{Missing value. By default readODS converts blank cells to missing data.}
 
@@ -31,7 +31,7 @@ a data frame (\code{data.frame}) containing a representation of data in the ods 
 Funtion to read a single sheet from a ods file and return a data frame.
 }
 \note{
-Currently, ods files that linked to external data source cannot be read. Merged cells cannot be parsed correct.
+Currently, ods files that linked to external data source cannot be read. Merged cells cannot be parsed correctly.
 }
 \author{
 Chung-hong Chan <chainsawtiney@gmail.com>

@@ -212,7 +212,7 @@ select_range <- function(raw_sheet, range) {
 #' @param path Path to the ods file.
 #' @param sheet sheet to read. Either a string (the sheet name), or an integer sheet number. The default is 1.
 #' @param col_names indicating whether the file contains the names of the variables as its first line.
-#' @param col_types Either NULL to guess from the spreadsheet or a character vector containing "blank", "numeric", "date" or "text". NA will return a data frame with all columns being "text".
+#' @param col_types Either NULL to guess from the spreadsheet or a compact character combination of "c" (character), "i" (integer), "n" (number), "d" (double), "l" (logical), "D" (date), "T" (date time), "t" (time), ? (guess) or _/- (skip). For example, to convert a 3 column data.frame into character, character and integer, the character combination is "cci". NA will return a data frame with all columns being "text".
 #' @param na Missing value. By default readODS converts blank cells to missing data.
 #' @param skip the number of lines of the data file to skip before beginning to read data.
 #' @param formula_as_formula a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..
@@ -230,8 +230,7 @@ read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL,
     parsed_df <- to_data_frame(cell_values = cell_values, header = col_names, na = na)
     if (is.null(col_types)) {
         raw_sheet <- readr::type_convert(df = parsed_df)
-    }
-    if (is.na(NA)) {
+    } else if (is.na(col_types)) {
         raw_sheet <- parsed_df
     } else {
         raw_sheet <- readr::type_convert(df = parsed_df, col_types = col_types)
