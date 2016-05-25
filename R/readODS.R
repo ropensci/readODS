@@ -86,7 +86,7 @@ check_cell_with_textp <- function(cell, ods_ns) {
 }
 
 parse_single_cell <- function(cell, ods_ns, formula_as_formula = FALSE, use_office_value = TRUE) {
-    cell_value <- xml_text(xml_find_all(cell, ".//text:p", ods_ns))
+    cell_value <- paste0(xml_text(xml_find_all(cell, ".//text:p", ods_ns)), collapse = "\n") ## handle multiline values, #23 
     if (cell_value == "" & use_office_value & xml_has_attr(cell, "office:value", ods_ns)) {
         cell_value <- xml_attr(cell, "office:value", ods_ns)
     }
