@@ -1,8 +1,8 @@
 Package: readODS
 Type: Package
 Title: Read ODS files
-Version: 1.6.3
-Date: 2016-08-18
+Version: 1.6.4
+Date: 2016-11-23
 Author: Gerrit-Jan Schutten, Chung-hong Chan, Thomas J. Leeper
 Maintainer: Chung-hong Chan <chainsawtiney@gmail.com>
 Contact: https://github.com/chainsawriot/readODS/

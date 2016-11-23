@@ -210,7 +210,7 @@ select_range <- function(raw_sheet, range) {
 #' read.ods always return a list of data frames with one data frame per sheet. This is a wrapper to read_ods for backward compatibility with previous version of readODS. Please use read_ods if possible.
 #'
 #' @aliases read_ods read.ods
-#' @param path Path to the ods file.
+#' @param path path to the ods file.
 #' @param sheet sheet to read. Either a string (the sheet name), or an integer sheet number. The default is 1.
 #' @param col_names indicating whether the file contains the names of the variables as its first line.
 #' @param col_types Either NULL to guess from the spreadsheet or refer to readr::type_convert to specify cols specification. NA will return a data frame with all columns being "characters".
@@ -218,6 +218,8 @@ select_range <- function(raw_sheet, range) {
 #' @param skip the number of lines of the data file to skip before beginning to read data.
 #' @param formula_as_formula a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..
 #' @param range selection of rectangle using Excel-like cell range, such as \code{range = "D12:F15"} or \code{range = "R1C12:R6C15"}. Cell range processing is handled by the \code{\link[=cellranger]{cellranger}} package.
+#' @param file for read.ods only, path to the ods file.
+#' @param formulaAsFormula for read.ods only, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..
 #' @return a data frame (\code{data.frame}) containing a representation of data in the ods file.
 #' @note Currently, ods files that linked to external data source cannot be read. Merged cells cannot be parsed correctly.
 #' @author Chung-hong Chan <chainsawtiney@gmail.com>, Gerrit-Jan Schutten <phonixor@gmail.com>

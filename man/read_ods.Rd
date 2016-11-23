@@ -11,7 +11,7 @@ read_ods(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL,
 read.ods(file = NULL, sheet = NULL, formulaAsFormula = FALSE)
 }
 \arguments{
-\item{path}{Path to the ods file.}
+\item{path}{path to the ods file.}
 
 \item{sheet}{sheet to read. Either a string (the sheet name), or an integer sheet number. The default is 1.}
 
@@ -26,6 +26,10 @@ read.ods(file = NULL, sheet = NULL, formulaAsFormula = FALSE)
 \item{formula_as_formula}{a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..}
 
 \item{range}{selection of rectangle using Excel-like cell range, such as \code{range = "D12:F15"} or \code{range = "R1C12:R6C15"}. Cell range processing is handled by the \code{\link[=cellranger]{cellranger}} package.}
+
+\item{file}{for read.ods only, path to the ods file.}
+
+\item{formulaAsFormula}{for read.ods only, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..}
 }
 \value{
 a data frame (\code{data.frame}) containing a representation of data in the ods file.
