@@ -206,8 +206,8 @@ select_range <- function(raw_sheet, range) {
 
 #' read data from ods files
 #' 
-#' read_ods is a funtion to read a single sheet from a ods file and return a data frame.
-#' read.ods always return a list of data frames with one data frame per sheet. This is a wrapper to read_ods for backward compatibility with previous version of readODS. Please use read_ods if possible.
+#' read_ods is a function to read a single sheet from an ods file and return a data frame.
+#' read.ods always returns a list of data frames with one data frame per sheet. This is a wrapper to read_ods for backward compatibility with previous version of readODS. Please use read_ods if possible.
 #'
 #' @aliases read_ods read.ods
 #' @param path path to the ods file.
@@ -220,7 +220,7 @@ select_range <- function(raw_sheet, range) {
 #' @param range selection of rectangle using Excel-like cell range, such as \code{range = "D12:F15"} or \code{range = "R1C12:R6C15"}. Cell range processing is handled by the \code{\link[=cellranger]{cellranger}} package.
 #' @param file for read.ods only, path to the ods file.
 #' @param formulaAsFormula for read.ods only, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..
-#' @return a data frame (\code{data.frame}) containing a representation of data in the ods file.
+#' @return A data frame (\code{data.frame}) containing a representation of data in the ods file.
 #' @note Currently, ods files that linked to external data source cannot be read. Merged cells cannot be parsed correctly.
 #' @author Chung-hong Chan <chainsawtiney@gmail.com>, Gerrit-Jan Schutten <phonixor@gmail.com>
 #' @export
