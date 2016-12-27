@@ -105,7 +105,7 @@ parse_rows <- function(parsed_sheet, ods_ns, formula_as_formula, skip = 0) {
     if (skip > 0) {
         rows <- rows[(skip+1):length(rows)]
     }
-    cell_values <- data.frame()
+    cell_values <- new.env(hash = TRUE)
     current_row <- 0
     for (row in rows) {
         current_row <- current_row + 1
@@ -122,7 +122,7 @@ parse_rows <- function(parsed_sheet, ods_ns, formula_as_formula, skip = 0) {
                 if (cell_with_textp) {
                     ## non_empty cell, get the value
                     cell_value <- parse_single_cell(cell, ods_ns, formula_as_formula = formula_as_formula)
-                    cell_values <- rbind(cell_values, data.frame(row_id = current_row, col_id = current_col, cell_value = cell_value, stringsAsFactors = FALSE))
+                    cell_values[[paste0(current_row, ",", current_col)]] <- cell_value
                 }
                 if (bump_cell > 1 & !cell_with_textp) {
                     current_col <- current_col + bump_cell - 1
@@ -130,7 +130,7 @@ parse_rows <- function(parsed_sheet, ods_ns, formula_as_formula, skip = 0) {
                 if (bump_cell > 1 & cell_with_textp) {
                     for (bump in 1:(bump_cell-1)) {
                         current_col <- current_col + 1
-                        cell_values <- rbind(cell_values, data.frame(row_id = current_row, col_id = current_col, cell_value = cell_value ,stringsAsFactors = FALSE))
+                        cell_values[[paste0(current_row, ",", current_col)]] <- cell_value
                     }
                 }
             }
@@ -153,14 +153,18 @@ change_df_with_header <- function(x) {
 }
 
 ### ugly version
-to_data_frame <- function(cell_values, header = FALSE, na) {
-    if (nrow(cell_values) == 0) {
+to_data_frame <- function(cell_values, header = FALSE, na = NULL) {
+    cv_keys <- ls(cell_values)
+    if (length(cv_keys) == 0) {
         warning("empty sheet, return empty data frame.")
         return(data.frame())
     }
-    res <- data.frame(matrix(data = "", nrow = max(cell_values[,1]) ,ncol= max(cell_values[,2])), stringsAsFactors = FALSE)
-    for(i in 1:nrow(cell_values)){
-        res[cell_values[i, 1], cell_values[i, 2]] <- cell_values[i, 3]
+    row_id <- as.numeric(sapply(strsplit(cv_keys, ","), function(x) x[1]))
+    col_id <- as.numeric(sapply(strsplit(cv_keys, ","), function(x) x[2]))
+    res <- data.frame(matrix(data = "", nrow = max(row_id) ,ncol= max(col_id)), stringsAsFactors = FALSE)
+    for(key in cv_keys){
+        pos <- as.numeric(strsplit(key, ',')[[1]])
+        res[pos[1], pos[2]] <- get(key, envir = cell_values)
     }
     if (header) {
         res <- change_df_with_header(res)

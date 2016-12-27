@@ -32,11 +32,11 @@ read.ods(file = NULL, sheet = NULL, formulaAsFormula = FALSE)
 \item{formulaAsFormula}{for read.ods only, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..}
 }
 \value{
-a data frame (\code{data.frame}) containing a representation of data in the ods file.
+A data frame (\code{data.frame}) containing a representation of data in the ods file.
 }
 \description{
-read_ods is a funtion to read a single sheet from a ods file and return a data frame.
-read.ods always return a list of data frames with one data frame per sheet. This is a wrapper to read_ods for backward compatibility with previous version of readODS. Please use read_ods if possible.
+read_ods is a function to read a single sheet from an ods file and return a data frame.
+read.ods always returns a list of data frames with one data frame per sheet. This is a wrapper to read_ods for backward compatibility with previous version of readODS. Please use read_ods if possible.
 }
 \note{
 Currently, ods files that linked to external data source cannot be read. Merged cells cannot be parsed correctly.
