@@ -10,8 +10,7 @@ Description: Import ODS (OpenDocument Spreadsheet) into R as a data frame. Also 
 Imports:
     xml2 (>= 1.0.0),
     cellranger,
-    readr,
-    hash
+    readr
 Suggests:
     dplyr,
     testthat,
