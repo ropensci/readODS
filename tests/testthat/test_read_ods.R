@@ -5,6 +5,6 @@ test_that("Single column ODS", {
 })
 
 test_that('read_ods works with all kind of character encodings', {
-  expect_error(read_ods('file.ods', sheet='évaluation'),   NA) # é as e and accent
-  expect_error(read_ods('file.ods', sheet='évaluation 2'), NA) # é as one character
+  expect_error(read_ods('../testdata/wild_character_encoding.ods', sheet='évaluation'),   NA) # é as e and accent
+  expect_error(read_ods('../testdata/wild_character_encoding.ods', sheet='évaluation 2'), NA) # é as one character
 })
