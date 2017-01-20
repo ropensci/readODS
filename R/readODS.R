@@ -192,8 +192,8 @@ select_sheet <- function(sheets, ods_ns, which_sheet) {
     }
     if (is.character(which_sheet)) {
         sheet_names <- sapply(sheets, function(x) xml_attr(x, "table:name", ods_ns))
-        is_in_sheet_names <- stringi::stri_cmp(which_sheet, sheet_names)==0
-        if (any(is_in_sheet_names) {
+        is_in_sheet_names <- stri_cmp(which_sheet, sheet_names)==0
+        if (any(is_in_sheet_names)) {
             which_sheet <- which(is_in_sheet_names)
         } else {
             stop(paste0("No sheet named ", which_sheet, " in the ods file."))
