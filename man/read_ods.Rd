@@ -19,7 +19,7 @@ read.ods(file = NULL, sheet = NULL, formulaAsFormula = FALSE)
 
 \item{col_types}{Either NULL to guess from the spreadsheet or refer to readr::type_convert to specify cols specification. NA will return a data frame with all columns being "characters".}
 
-\item{na}{Missing value. By default read_ods converts blank cells to missing data.}
+\item{na}{Character vector of strings to use for missing values. By default read_ods converts blank cells to missing data.}
 
 \item{skip}{the number of lines of the data file to skip before beginning to read data.}
 

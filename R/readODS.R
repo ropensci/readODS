@@ -163,18 +163,22 @@ to_data_frame <- function(cell_values, header = FALSE, na = NULL) {
     row_id <- as.numeric(sapply(strsplit(cv_keys, ","), function(x) x[1]))
     col_id <- as.numeric(sapply(strsplit(cv_keys, ","), function(x) x[2]))
     res <- data.frame(matrix(data = "", nrow = max(row_id) ,ncol= max(col_id)), stringsAsFactors = FALSE)
-    for(key in cv_keys){
-        pos <- as.numeric(strsplit(key, ',')[[1]])
-        res[pos[1], pos[2]] <- get(key, envir = cell_values)
+    if (is.null(na)) { 
+        for(key in cv_keys){
+            pos <- as.numeric(strsplit(key, ',')[[1]])
+            res[pos[1], pos[2]] <- get(key, envir = cell_values)
+        }
+    } else {
+        for(key in cv_keys){
+            pos <- as.numeric(strsplit(key, ',')[[1]])
+            value <- get(key, envir = cell_values)
+            res[pos[1], pos[2]] <- ifelse(value %in% na, NA, value)
+        }   
     }
     if (header) {
         res <- change_df_with_header(res)
     } else {
         colnames(res) <- numbers_to_letters(1:ncol(res))
-    }
-    ## clean-up na
-    if (!is.null(na)) {
-        res[res == na] <- NA
     }
     return(res)
 }
@@ -220,7 +224,7 @@ select_range <- function(raw_sheet, range) {
 #' @param sheet sheet to read. Either a string (the sheet name), or an integer sheet number. The default is 1.
 #' @param col_names indicating whether the file contains the names of the variables as its first line.
 #' @param col_types Either NULL to guess from the spreadsheet or refer to readr::type_convert to specify cols specification. NA will return a data frame with all columns being "characters".
-#' @param na Missing value. By default read_ods converts blank cells to missing data.
+#' @param na Character vector of strings to use for missing values. By default read_ods converts blank cells to missing data.
 #' @param skip the number of lines of the data file to skip before beginning to read data.
 #' @param formula_as_formula a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..
 #' @param range selection of rectangle using Excel-like cell range, such as \code{range = "D12:F15"} or \code{range = "R1C12:R6C15"}. Cell range processing is handled by the \code{\link[=cellranger]{cellranger}} package.
