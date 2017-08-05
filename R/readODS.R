@@ -247,7 +247,7 @@ read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL,
     parsed_df <- to_data_frame(cell_values = cell_values, header = col_names, na = na)
     if (is.null(col_types)) {
         raw_sheet <- readr::type_convert(df = parsed_df)
-    } else if (is.na(col_types)) {
+    } else if (any(is.na(col_types))) {
         raw_sheet <- parsed_df
     } else {
         raw_sheet <- readr::type_convert(df = parsed_df, col_types = col_types)
