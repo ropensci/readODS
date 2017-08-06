@@ -245,12 +245,15 @@ read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL,
     target_sheet <- select_sheet(sheets, ods_ns = ods_ns, which_sheet = sheet)
     cell_values <- parse_rows(target_sheet, ods_ns, formula_as_formula = formula_as_formula, skip = skip)
     parsed_df <- to_data_frame(cell_values = cell_values, header = col_names, na = na)
-    if (is.null(col_types)) {
+    ## Kill unknown col_types
+    if (class(col_types) == 'col_spec') {
+        raw_sheet <- readr::type_convert(df = parsed_df, col_types = col_types)
+    } else if (length(col_types) == 0 & is.null(col_types)) {
         raw_sheet <- readr::type_convert(df = parsed_df)
-    } else if (is.na(col_types)) {
+    } else if (length(col_types) == 1 & is.na(col_types[1])) {
         raw_sheet <- parsed_df
     } else {
-        raw_sheet <- readr::type_convert(df = parsed_df, col_types = col_types)
+        stop("Unknown col_types. Can either be a class col_spec, NULL or NA.")
     }
     if (!is.null(range)) {
         res <- select_range(raw_sheet, range)
