@@ -90,12 +90,12 @@ parse_single_cell <- function(cell, ods_ns, formula_as_formula = FALSE, use_offi
     cell_value <- paste0(xml_text(xml_find_all(cell, ".//text:p", ods_ns)), collapse = "\n") ## handle multiline values, #23
     if (xml_has_attr(cell, "office:value-type", ods_ns) &&
         xml_attr(cell, "office:value-type", ods_ns) %in% c("float", "currency", "percentage") &&
-	xml_has_attr(cell, "office:value", ods_ns)) {
+        xml_has_attr(cell, "office:value", ods_ns)) {
       cell_value <- xml_attr(cell, "office:value", ods_ns)
     }
     if (xml_has_attr(cell, "office:value-type", ods_ns) &&
         xml_attr(cell, "office:value-type", ods_ns) == "date" &&
-	xml_has_attr(cell, "office:date-value", ods_ns)) {
+        xml_has_attr(cell, "office:date-value", ods_ns)) {
       cell_value <- xml_attr(cell, "office:date-value", ods_ns)
     }
     if (cell_value == "" & use_office_value & xml_has_attr(cell, "office:value", ods_ns)) {
