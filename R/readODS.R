@@ -101,14 +101,19 @@ parse_single_cell <- function(cell, ods_ns, formula_as_formula = FALSE, use_offi
     return(cell_value)
 }
 
-parse_rows <- function(parsed_sheet, ods_ns, formula_as_formula, skip = 0) {
+parse_rows <- function(parsed_sheet, ods_ns, formula_as_formula, skip = 0, range = NULL) {
     rows <- xml_find_all(parsed_sheet, ".//table:table-row", ods_ns)
-    if (skip > 0 & skip >= length(rows)) {
-        warning("skip value >=  number of rows, ignore the skip setting")
-        skip <- 0
-    }
-    if (skip > 0) {
-        rows <- rows[(skip+1):length(rows)]
+    if (is.null(range)) {
+      if (skip > 0 & skip >= length(rows)) {
+          warning("skip value >=  number of rows, ignore the skip setting")
+          skip <- 0
+      }
+      if (skip > 0) {
+          rows <- rows[(skip+1):length(rows)]
+      }
+      } else {
+      rangeSelect <- cellranger::as.cell_limits(range)
+      rows <- rows[rangeSelect$ul[1]:rangeSelect$lr[1]]
     }
     cell_values <- new.env(hash = TRUE)
     current_row <- 0
@@ -216,6 +221,12 @@ select_range <- function(raw_sheet, range) {
     return(selected_sheet)
 }
 
+select_cols <- function(raw_sheet, range) {
+  range_select <- cellranger::as.cell_limits(range)
+  selected_sheet <- raw_sheet[, range_select$ul[2]:range_select$lr[2]]
+  return(selected_sheet)
+}
+
 ############### REAL DEALS #####################
 
 #' read data from ods files
@@ -226,10 +237,10 @@ select_range <- function(raw_sheet, range) {
 #' @aliases read_ods read.ods
 #' @param path path to the ods file.
 #' @param sheet sheet to read. Either a string (the sheet name), or an integer sheet number. The default is 1.
-#' @param col_names indicating whether the file contains the names of the variables as its first line.
+#' @param col_names indicating whether the file contains the names of the variables as the first line or as the first line in the range (if specified).
 #' @param col_types Either NULL to guess from the spreadsheet or refer to readr::type_convert to specify cols specification. NA will return a data frame with all columns being "characters".
 #' @param na Character vector of strings to use for missing values. By default read_ods converts blank cells to missing data.
-#' @param skip the number of lines of the data file to skip before beginning to read data.
+#' @param skip the number of lines of the data file to skip before beginning to read data (ignored if range is selected).
 #' @param formula_as_formula a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..
 #' @param range selection of rectangle using Excel-like cell range, such as \code{range = "D12:F15"} or \code{range = "R1C12:R6C15"}. Cell range processing is handled by the \code{\link[=cellranger]{cellranger}} package.
 #' @param file for read.ods only, path to the ods file.
@@ -243,22 +254,21 @@ read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL,
     ods_ns <- res[[2]]
     sheets <- res[[1]]
     target_sheet <- select_sheet(sheets, ods_ns = ods_ns, which_sheet = sheet)
-    cell_values <- parse_rows(target_sheet, ods_ns, formula_as_formula = formula_as_formula, skip = skip)
+    cell_values <- parse_rows(target_sheet, ods_ns, formula_as_formula = formula_as_formula, skip = skip, range = range)
     parsed_df <- to_data_frame(cell_values = cell_values, header = col_names, na = na)
+    ## rows have been selected in parse_rows - now select columns
+    if (!is.null(range)) {
+      parsed_df <- select_cols(parsed_df, range)
+    }
     ## Kill unknown col_types
     if (class(col_types) == 'col_spec') {
-        raw_sheet <- readr::type_convert(df = parsed_df, col_types = col_types)
+        res <- readr::type_convert(df = parsed_df, col_types = col_types)
     } else if (length(col_types) == 0 & is.null(col_types)) {
-        raw_sheet <- readr::type_convert(df = parsed_df)
+        res <- readr::type_convert(df = parsed_df)
     } else if (length(col_types) == 1 & is.na(col_types[1])) {
-        raw_sheet <- parsed_df
+        res <- parsed_df
     } else {
         stop("Unknown col_types. Can either be a class col_spec, NULL or NA.")
-    }
-    if (!is.null(range)) {
-        res <- select_range(raw_sheet, range)
-    } else {
-        res <- raw_sheet
     }
     return(res)
 }
