@@ -3,7 +3,6 @@
 #' @import xml2
 #' @import cellranger
 #' @import readr
-#' @import stringi
 NULL
 
 
@@ -87,11 +86,7 @@ check_cell_with_textp <- function(cell, ods_ns) {
 }
 
 parse_single_cell <- function(cell, ods_ns, formula_as_formula = FALSE, use_office_value = TRUE) {
-    cell_value <- paste0(xml_text(xml_find_all(cell, ".//text:p", ods_ns)), collapse = "\n") ## handle multiline values, #23
-    if (xml_has_attr(cell, "office:value-type", ods_ns) &&
-        xml_attr(cell, "office:value-type", ods_ns) %in% c("float", "currency", "percentage")) {
-      cell_value <- xml_attr(cell, "office:value", ods_ns)
-    }
+    cell_value <- paste0(xml_text(xml_find_all(cell, ".//text:p", ods_ns)), collapse = "\n") ## handle multiline values, #23 
     if (cell_value == "" & use_office_value & xml_has_attr(cell, "office:value", ods_ns)) {
         cell_value <- xml_attr(cell, "office:value", ods_ns)
     }
@@ -110,7 +105,7 @@ parse_rows <- function(parsed_sheet, ods_ns, formula_as_formula, skip = 0) {
     if (skip > 0) {
         rows <- rows[(skip+1):length(rows)]
     }
-    cell_values <- new.env(hash = TRUE)
+    cell_values <- data.frame()
     current_row <- 0
     for (row in rows) {
         current_row <- current_row + 1
@@ -127,7 +122,7 @@ parse_rows <- function(parsed_sheet, ods_ns, formula_as_formula, skip = 0) {
                 if (cell_with_textp) {
                     ## non_empty cell, get the value
                     cell_value <- parse_single_cell(cell, ods_ns, formula_as_formula = formula_as_formula)
-                    cell_values[[paste0(current_row, ",", current_col)]] <- cell_value
+                    cell_values <- rbind(cell_values, data.frame(row_id = current_row, col_id = current_col, cell_value = cell_value, stringsAsFactors = FALSE))
                 }
                 if (bump_cell > 1 & !cell_with_textp) {
                     current_col <- current_col + bump_cell - 1
@@ -135,7 +130,7 @@ parse_rows <- function(parsed_sheet, ods_ns, formula_as_formula, skip = 0) {
                 if (bump_cell > 1 & cell_with_textp) {
                     for (bump in 1:(bump_cell-1)) {
                         current_col <- current_col + 1
-                        cell_values[[paste0(current_row, ",", current_col)]] <- cell_value
+                        cell_values <- rbind(cell_values, data.frame(row_id = current_row, col_id = current_col, cell_value = cell_value ,stringsAsFactors = FALSE))
                     }
                 }
             }
@@ -158,31 +153,23 @@ change_df_with_header <- function(x) {
 }
 
 ### ugly version
-to_data_frame <- function(cell_values, header = FALSE, na = NULL) {
-    cv_keys <- ls(cell_values)
-    if (length(cv_keys) == 0) {
+to_data_frame <- function(cell_values, header = FALSE, na) {
+    if (nrow(cell_values) == 0) {
         warning("empty sheet, return empty data frame.")
         return(data.frame())
     }
-    row_id <- as.numeric(sapply(strsplit(cv_keys, ","), function(x) x[1]))
-    col_id <- as.numeric(sapply(strsplit(cv_keys, ","), function(x) x[2]))
-    res <- data.frame(matrix(data = "", nrow = max(row_id) ,ncol= max(col_id)), stringsAsFactors = FALSE)
-    if (is.null(na)) { 
-        for(key in cv_keys){
-            pos <- as.numeric(strsplit(key, ',')[[1]])
-            res[pos[1], pos[2]] <- get(key, envir = cell_values)
-        }
-    } else {
-        for(key in cv_keys){
-            pos <- as.numeric(strsplit(key, ',')[[1]])
-            value <- get(key, envir = cell_values)
-            res[pos[1], pos[2]] <- ifelse(value %in% na, NA, value)
-        }   
+    res <- data.frame(matrix(data = "", nrow = max(cell_values[,1]) ,ncol= max(cell_values[,2])), stringsAsFactors = FALSE)
+    for(i in 1:nrow(cell_values)){
+        res[cell_values[i, 1], cell_values[i, 2]] <- cell_values[i, 3]
     }
     if (header) {
         res <- change_df_with_header(res)
     } else {
         colnames(res) <- numbers_to_letters(1:ncol(res))
+    }
+    ## clean-up na
+    if (!is.null(na)) {
+        res[res == na] <- NA
     }
     return(res)
 }
@@ -200,9 +187,8 @@ select_sheet <- function(sheets, ods_ns, which_sheet) {
     }
     if (is.character(which_sheet)) {
         sheet_names <- sapply(sheets, function(x) xml_attr(x, "table:name", ods_ns))
-        is_in_sheet_names <- stri_cmp(which_sheet, sheet_names)==0
-        if (any(is_in_sheet_names)) {
-            which_sheet <- which(is_in_sheet_names)
+        if (which_sheet %in% sheet_names) {
+            which_sheet <- which(sheet_names == which_sheet)
         } else {
             stop(paste0("No sheet named ", which_sheet, " in the ods file."))
         }
@@ -220,21 +206,21 @@ select_range <- function(raw_sheet, range) {
 
 #' read data from ods files
 #' 
-#' read_ods is a function to read a single sheet from an ods file and return a data frame.
-#' read.ods always returns a list of data frames with one data frame per sheet. This is a wrapper to read_ods for backward compatibility with previous version of readODS. Please use read_ods if possible.
+#' read_ods is a funtion to read a single sheet from a ods file and return a data frame.
+#' read.ods always return a list of data frames with one data frame per sheet. This is a wrapper to read_ods for backward compatibility with previous version of readODS. Please use read_ods if possible.
 #'
 #' @aliases read_ods read.ods
 #' @param path path to the ods file.
 #' @param sheet sheet to read. Either a string (the sheet name), or an integer sheet number. The default is 1.
 #' @param col_names indicating whether the file contains the names of the variables as its first line.
 #' @param col_types Either NULL to guess from the spreadsheet or refer to readr::type_convert to specify cols specification. NA will return a data frame with all columns being "characters".
-#' @param na Character vector of strings to use for missing values. By default read_ods converts blank cells to missing data.
+#' @param na Missing value. By default read_ods converts blank cells to missing data.
 #' @param skip the number of lines of the data file to skip before beginning to read data.
 #' @param formula_as_formula a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..
 #' @param range selection of rectangle using Excel-like cell range, such as \code{range = "D12:F15"} or \code{range = "R1C12:R6C15"}. Cell range processing is handled by the \code{\link[=cellranger]{cellranger}} package.
 #' @param file for read.ods only, path to the ods file.
 #' @param formulaAsFormula for read.ods only, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..
-#' @return A data frame (\code{data.frame}) containing a representation of data in the ods file.
+#' @return a data frame (\code{data.frame}) containing a representation of data in the ods file.
 #' @note Currently, ods files that linked to external data source cannot be read. Merged cells cannot be parsed correctly.
 #' @author Chung-hong Chan <chainsawtiney@gmail.com>, Gerrit-Jan Schutten <phonixor@gmail.com>
 #' @export
@@ -245,15 +231,12 @@ read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL,
     target_sheet <- select_sheet(sheets, ods_ns = ods_ns, which_sheet = sheet)
     cell_values <- parse_rows(target_sheet, ods_ns, formula_as_formula = formula_as_formula, skip = skip)
     parsed_df <- to_data_frame(cell_values = cell_values, header = col_names, na = na)
-    ## Kill unknown col_types
-    if (class(col_types) == 'col_spec') {
-        raw_sheet <- readr::type_convert(df = parsed_df, col_types = col_types)
-    } else if (length(col_types) == 0 & is.null(col_types)) {
+    if (is.null(col_types)) {
         raw_sheet <- readr::type_convert(df = parsed_df)
-    } else if (length(col_types) == 1 & is.na(col_types[1])) {
+    } else if (is.na(col_types)) {
         raw_sheet <- parsed_df
     } else {
-        stop("Unknown col_types. Can either be a class col_spec, NULL or NA.")
+        raw_sheet <- readr::type_convert(df = parsed_df, col_types = col_types)
     }
     if (!is.null(range)) {
         res <- select_range(raw_sheet, range)

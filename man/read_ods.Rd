@@ -19,7 +19,7 @@ read.ods(file = NULL, sheet = NULL, formulaAsFormula = FALSE)
 
 \item{col_types}{Either NULL to guess from the spreadsheet or refer to readr::type_convert to specify cols specification. NA will return a data frame with all columns being "characters".}
 
-\item{na}{Character vector of strings to use for missing values. By default read_ods converts blank cells to missing data.}
+\item{na}{Missing value. By default read_ods converts blank cells to missing data.}
 
 \item{skip}{the number of lines of the data file to skip before beginning to read data.}
 
@@ -32,11 +32,11 @@ read.ods(file = NULL, sheet = NULL, formulaAsFormula = FALSE)
 \item{formulaAsFormula}{for read.ods only, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..}
 }
 \value{
-A data frame (\code{data.frame}) containing a representation of data in the ods file.
+a data frame (\code{data.frame}) containing a representation of data in the ods file.
 }
 \description{
-read_ods is a function to read a single sheet from an ods file and return a data frame.
-read.ods always returns a list of data frames with one data frame per sheet. This is a wrapper to read_ods for backward compatibility with previous version of readODS. Please use read_ods if possible.
+read_ods is a funtion to read a single sheet from a ods file and return a data frame.
+read.ods always return a list of data frames with one data frame per sheet. This is a wrapper to read_ods for backward compatibility with previous version of readODS. Please use read_ods if possible.
 }
 \note{
 Currently, ods files that linked to external data source cannot be read. Merged cells cannot be parsed correctly.
