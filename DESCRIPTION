@@ -1,8 +1,8 @@
 Package: readODS
 Type: Package
 Title: Read and Write ODS Files
-Version: 1.6.6
-Date: 2017-1-26
+Version: 1.6.7
+Date: 2018-11-25
 Author: Gerrit-Jan Schutten, Chung-hong Chan, Thomas J. Leeper and other contributors
 Maintainer: Chung-hong Chan <chainsawtiney@gmail.com>
 Contact: https://github.com/chainsawriot/readODS/
