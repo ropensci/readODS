@@ -12,4 +12,3 @@ ods_sheets(path)
 \description{
 List all sheets in an ods file.
 }
-

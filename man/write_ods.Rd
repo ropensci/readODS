@@ -20,4 +20,3 @@ Function to write a single data.frame to an ods file and return a data frame.
 \author{
 Thomas J. Leeper <thosjleeper@gmail.com>
 }
-
