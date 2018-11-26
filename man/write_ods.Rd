@@ -15,7 +15,7 @@ write_ods(x, path)
 the value of \code{path} invisibly.
 }
 \description{
-Function to write a single data.frame to an ods file and return a data frame.
+Function to write a single data.frame to an ods file.
 }
 \author{
 Thomas J. Leeper <thosjleeper@gmail.com>

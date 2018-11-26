@@ -1,7 +1,7 @@
 #' write data to ods file
 #' 
 #' @description 
-#' Function to write a single data.frame to an ods file and return a data frame. 
+#' Function to write a single data.frame to an ods file.
 #' 
 #' @param x a data.frame
 #' @param path Path to the ods file to write.
