@@ -5,12 +5,13 @@
 #' 
 #' @param x a data.frame
 #' @param path Path to the ods file to write.
+#' @param overwrite logical, whether to overwrite an existing file, if available.
 #' @return the value of \code{path} invisibly.
-#' @author Thomas J. Leeper <thosjleeper@gmail.com>
+#' @author Thomas J. Leeper <thosjleeper@gmail.com>, Chung-hong Chan <chainsawtiney@gmail.com>
 #' @importFrom xml2 read_xml xml_children xml_add_child xml_add_sibling write_xml xml_ns
 #' @importFrom utils zip
 #' @export
-write_ods <- function(x, path) {
+write_ods <- function(x, path, overwrite = TRUE) {
     # setup temp directory
     tmp <- tempfile()
     dir.create(tmp)
@@ -64,6 +65,6 @@ write_ods <- function(x, path) {
     setwd(tmp)
     zip(basename(path), dir())
     setwd(wd)
-    file.copy(file.path(tmp, basename(path)), path)
+    file.copy(file.path(tmp, basename(path)), path, overwrite = overwrite)
     invisible(path)
 }

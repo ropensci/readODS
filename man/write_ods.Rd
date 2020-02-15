@@ -4,12 +4,14 @@
 \alias{write_ods}
 \title{write data to ods file}
 \usage{
-write_ods(x, path)
+write_ods(x, path, overwrite = TRUE)
 }
 \arguments{
 \item{x}{a data.frame}
 
 \item{path}{Path to the ods file to write.}
+
+\item{overwrite}{logical, whether to overwrite an existing file, if available.}
 }
 \value{
 the value of \code{path} invisibly.
@@ -18,5 +20,5 @@ the value of \code{path} invisibly.
 Function to write a single data.frame to an ods file.
 }
 \author{
-Thomas J. Leeper <thosjleeper@gmail.com>
+Thomas J. Leeper <thosjleeper@gmail.com>, Chung-hong Chan <chainsawtiney@gmail.com>
 }
