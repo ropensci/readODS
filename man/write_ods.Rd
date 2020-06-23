@@ -4,7 +4,14 @@
 \alias{write_ods}
 \title{write data to ods file}
 \usage{
-write_ods(x, path, overwrite = TRUE)
+write_ods(
+  x,
+  path,
+  overwrite = TRUE,
+  sheet_name = "Sheet1",
+  row_names = FALSE,
+  col_names = TRUE
+)
 }
 \arguments{
 \item{x}{a data.frame}
@@ -12,6 +19,12 @@ write_ods(x, path, overwrite = TRUE)
 \item{path}{Path to the ods file to write.}
 
 \item{overwrite}{logical, whether to overwrite an existing file, if available.}
+
+\item{sheet_name}{Name of the sheet}
+
+\item{row_names}{TRUE iff row names are to be included in the sheet}
+
+\item{col_names}{TRUE iff the column names are to be included in the sheet}
 }
 \value{
 the value of \code{path} invisibly.
@@ -20,5 +33,5 @@ the value of \code{path} invisibly.
 Function to write a single data.frame to an ods file.
 }
 \author{
-Thomas J. Leeper <thosjleeper@gmail.com>, Chung-hong Chan <chainsawtiney@gmail.com>
+Thomas J. Leeper \href{mailto:thosjleeper@gmail.com}{thosjleeper@gmail.com}, Chung-hong Chan \href{mailto:chainsawtiney@gmail.com}{chainsawtiney@gmail.com}
 }

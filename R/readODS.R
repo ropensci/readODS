@@ -146,19 +146,30 @@ parse_rows <- function(parsed_sheet, ods_ns, formula_as_formula, skip = 0) {
 
 
 ### steal from rio
-change_df_with_header <- function(x) {
-    colnames(x) <- x[1,]
-    g <- x[2:nrow(x),]
-    if (class(g) != "data.frame") {
-        g <- data.frame(g, stringsAsFactors = FALSE)
-        colnames(g) <- x[1,]
-    }
-    rownames(g) <- seq(from = 1, to = nrow(g))
+# change_df_with_header <- function(x) {
+#     colnames(x) <- x[1,]
+#     g <- x[2:nrow(x),]
+#     if (class(g) != "data.frame") {
+#         g <- data.frame(g, stringsAsFactors = FALSE)
+#         colnames(g) <- x[1,]
+#     }
+#     return(g)
+# }
+
+change_df_with_col_row_header <- function(x, col_header, row_header) {
+
+    irow <- ifelse(col_header, 2, 1)  
+    jcol <- ifelse(row_header, 2, 1)
+    
+    g <- x[irow:nrow(x), jcol:ncol(x), drop=FALSE] # maintain as dataframe for single column
+    
+    rownames(g) <- if (row_header) x[irow:nrow(x), 1] else 1:nrow(g)
+    colnames(g) <- if (col_header) x[1, jcol:ncol(x)] else numbers_to_letters(1:ncol(g))
     return(g)
 }
 
 ### ugly version
-to_data_frame <- function(cell_values, header = FALSE, na = NULL) {
+to_data_frame <- function(cell_values, header = FALSE, na = NULL, row_header = FALSE) {
     cv_keys <- ls(cell_values)
     if (length(cv_keys) == 0) {
         warning("empty sheet, return empty data frame.")
@@ -179,11 +190,8 @@ to_data_frame <- function(cell_values, header = FALSE, na = NULL) {
             res[pos[1], pos[2]] <- ifelse(value %in% na, NA, value)
         }   
     }
-    if (header) {
-        res <- change_df_with_header(res)
-    } else {
-        colnames(res) <- numbers_to_letters(1:ncol(res))
-    }
+    res <- change_df_with_col_row_header(res, header, row_header)
+
     return(res)
 }
 
@@ -234,17 +242,20 @@ select_range <- function(raw_sheet, range) {
 #' @param range selection of rectangle using Excel-like cell range, such as \code{range = "D12:F15"} or \code{range = "R1C12:R6C15"}. Cell range processing is handled by the \code{\link[=cellranger]{cellranger}} package.
 #' @param file for read.ods only, path to the ods file.
 #' @param formulaAsFormula for read.ods only, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..
+#' @param row_names indicating whether the file contains the names of the rows as its first column
 #' @return A data frame (\code{data.frame}) containing a representation of data in the ods file.
 #' @note Currently, ods files that linked to external data source cannot be read. Merged cells cannot be parsed correctly.
 #' @author Chung-hong Chan <chainsawtiney@gmail.com>, Gerrit-Jan Schutten <phonixor@gmail.com>
 #' @export
-read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL, na = "", skip = 0, formula_as_formula = FALSE, range = NULL) {
+read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL, na = "", skip = 0, formula_as_formula = FALSE, range = NULL,
+                     row_names = FALSE) {
+  
     res <- parse_ods_to_sheets(path)
     ods_ns <- res[[2]]
     sheets <- res[[1]]
     target_sheet <- select_sheet(sheets, ods_ns = ods_ns, which_sheet = sheet)
     cell_values <- parse_rows(target_sheet, ods_ns, formula_as_formula = formula_as_formula, skip = skip)
-    parsed_df <- to_data_frame(cell_values = cell_values, header = col_names, na = na)
+    parsed_df <- to_data_frame(cell_values = cell_values, header = col_names, na = na, row_header = row_names)
     ## Kill unknown col_types
     if (class(col_types) == 'col_spec') {
         raw_sheet <- readr::type_convert(df = parsed_df, col_types = col_types)

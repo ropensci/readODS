@@ -5,9 +5,17 @@
 \alias{read.ods}
 \title{read data from ods files}
 \usage{
-read_ods(path = NULL, sheet = 1, col_names = TRUE,
-  col_types = NULL, na = "", skip = 0, formula_as_formula = FALSE,
-  range = NULL)
+read_ods(
+  path = NULL,
+  sheet = 1,
+  col_names = TRUE,
+  col_types = NULL,
+  na = "",
+  skip = 0,
+  formula_as_formula = FALSE,
+  range = NULL,
+  row_names = FALSE
+)
 
 read.ods(file = NULL, sheet = NULL, formulaAsFormula = FALSE)
 }
@@ -28,6 +36,8 @@ read.ods(file = NULL, sheet = NULL, formulaAsFormula = FALSE)
 
 \item{range}{selection of rectangle using Excel-like cell range, such as \code{range = "D12:F15"} or \code{range = "R1C12:R6C15"}. Cell range processing is handled by the \code{\link[=cellranger]{cellranger}} package.}
 
+\item{row_names}{indicating whether the file contains the names of the rows as its first column}
+
 \item{file}{for read.ods only, path to the ods file.}
 
 \item{formulaAsFormula}{for read.ods only, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..}
@@ -43,5 +53,5 @@ read.ods always returns a list of data frames with one data frame per sheet. Thi
 Currently, ods files that linked to external data source cannot be read. Merged cells cannot be parsed correctly.
 }
 \author{
-Chung-hong Chan <chainsawtiney@gmail.com>, Gerrit-Jan Schutten <phonixor@gmail.com>
+Chung-hong Chan \href{mailto:chainsawtiney@gmail.com}{chainsawtiney@gmail.com}, Gerrit-Jan Schutten \href{mailto:phonixor@gmail.com}{phonixor@gmail.com}
 }
