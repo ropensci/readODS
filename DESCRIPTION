@@ -1,7 +1,7 @@
 Package: readODS
 Type: Package
 Title: Read and Write ODS Files
-Version: 2.0
+Version: 2.1
 Date: 2020-06-22
 Author: Gerrit-Jan Schutten, Chung-hong Chan, Thomas J. Leeper and other contributors
 Maintainer: Chung-hong Chan <chainsawtiney@gmail.com>

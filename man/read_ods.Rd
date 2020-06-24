@@ -14,7 +14,8 @@ read_ods(
   skip = 0,
   formula_as_formula = FALSE,
   range = NULL,
-  row_names = FALSE
+  row_names = FALSE,
+  strings_as_factors = FALSE
 )
 
 read.ods(file = NULL, sheet = NULL, formulaAsFormula = FALSE)
@@ -37,6 +38,8 @@ read.ods(file = NULL, sheet = NULL, formulaAsFormula = FALSE)
 \item{range}{selection of rectangle using Excel-like cell range, such as \code{range = "D12:F15"} or \code{range = "R1C12:R6C15"}. Cell range processing is handled by the \code{\link[=cellranger]{cellranger}} package.}
 
 \item{row_names}{indicating whether the file contains the names of the rows as its first column}
+
+\item{strings_as_factors}{TRUE iff character columns to be converted to factors.}
 
 \item{file}{for read.ods only, path to the ods file.}
 
