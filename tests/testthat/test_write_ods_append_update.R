@@ -3,12 +3,11 @@ library(dplyr)
 tmp <- tempfile(fileext=".ods")
 
 # Use this instead of numbers_to_letters for testing - only works for 1:26
-cols_to_letters <- function(n)
-{
+cols_to_letters <- function(n) {
     assert_that(n <= 26)
     
     seq <- 1:n
-    sapply(seq, function(n) { LETTERS[n] })
+    sapply(seq, function(n) LETTERS[n])
 }
 
 setup({
@@ -26,16 +25,19 @@ test_that("Write Excel sheets", {
     # reading it back and comparing will give an attribute difference
     starwars10 <- readRDS("../testdata/starwars10.rds")
 
-    expect_silent(write_ods_2(starwars10, tmp, "SW", row_names = FALSE, col_names = FALSE))
+    expect_silent(write_ods(starwars10, tmp, "SW", row_names = FALSE, col_names = FALSE))
     expect_true(file.exists(tmp))
-    expect_warning(write_ods_2(starwars10, tmp, "SWR", row_names=TRUE, col_names = FALSE))
-    expect_warning(write_ods_2(starwars10, tmp, "SWC", row_names = FALSE, col_names = TRUE))
-    expect_warning(write_ods_2(starwars10, tmp, "SWRC", row_names=TRUE, col_names = TRUE))
-    expect_warning(write_ods_2(starwars10[1, 1:ncol(starwars10)], tmp, "SW1", row_names=TRUE, col_names = TRUE))
-    expect_warning(write_ods_2(starwars10[1:nrow(starwars10), 1, drop=FALSE], tmp, "SW10", row_names=TRUE, col_names = TRUE))
+    expect_silent(write_ods(starwars10, tmp, "SWR", row_names=TRUE, col_names = FALSE, append = TRUE))
+    expect_silent(write_ods(starwars10, tmp, "SWC", row_names = FALSE, col_names = TRUE, append = TRUE))
+    expect_silent(write_ods(starwars10, tmp, "SWRC", row_names=TRUE, col_names = TRUE, append = TRUE))
+    expect_silent(write_ods(starwars10[1, 1:ncol(starwars10)], tmp, "SW1", row_names=TRUE, col_names = TRUE, append = TRUE))
+    expect_silent(write_ods(starwars10[1:nrow(starwars10), 1, drop=FALSE], tmp, "SW10", row_names=TRUE, col_names = TRUE, append = TRUE))
 
-
-    expect_error(write_ods_2(starwars10, tmp, "SWRC", row_names=TRUE, col_names = TRUE, overwrite_sheet = FALSE))
+    ## SWRC is there
+    expect_error(write_ods(starwars10, tmp, "SWRC", row_names=TRUE, col_names = TRUE, append = TRUE))
+    ## SWRC is there, but this is update
+    expect_error(write_ods(starwars10, tmp, "SWRC", row_names=TRUE, col_names = TRUE, update = TRUE), NA)
+    expect_error(write_ods(starwars10, tmp, "whatevernotexists", row_names=TRUE, col_names = TRUE, update = TRUE))
 
     df <- read_ods(tmp, "SW", row_names = FALSE, col_names = FALSE, strings_as_factors = TRUE)
     expect_true(all.equal({

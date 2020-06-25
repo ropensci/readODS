@@ -249,7 +249,7 @@ strings_to_factors <- function(df)
 #' @param file for read.ods only, path to the ods file.
 #' @param formulaAsFormula for read.ods only, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..
 #' @param row_names indicating whether the file contains the names of the rows as its first column
-#' @param strings_as_factors TRUE iff character columns to be converted to factors.
+#' @param strings_as_factors logical, if character columns to be converted to factors.
 #' @return A data frame (\code{data.frame}) containing a representation of data in the ods file.
 #' @note Currently, ods files that linked to external data source cannot be read. Merged cells cannot be parsed correctly.
 #' @author Chung-hong Chan <chainsawtiney@gmail.com>, Gerrit-Jan Schutten <phonixor@gmail.com>

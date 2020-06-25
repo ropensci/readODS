@@ -1,5 +1,4 @@
-df_to_sheet <- function(x, sheet, row_names, col_names)
-{
+df_to_sheet <- function(x, sheet, row_names, col_names) {
     # identify variable types
     types <- unlist(lapply(x, class))
     types <- ifelse(types %in% c("integer", "numeric"), "float", "string")
@@ -32,172 +31,108 @@ df_to_sheet <- function(x, sheet, row_names, col_names)
         }
     }
 }
-make_temp_dir <- function()
-{
+
+make_temp_dir <- function() {
     tmp <- tempfile()
     dir.create(tmp)
     return (tmp)
 }
-zip_it_up <- function(tmp, path, overwrite)
-{
+
+zip_it_up <- function(tmp, path, overwrite) {
     wd <- getwd()
     on.exit(setwd(wd), add = TRUE)
     setwd(tmp)
-    zip(basename(path), dir())
+    zip(basename(path), dir(), flags = "-q")
     setwd(wd)
     file.copy(file.path(tmp, basename(path)), path, overwrite = overwrite)
 }
-find_named_sheet <- function(ss, name)
-{
+
+find_named_sheet <- function(ss, name) {
     sheet <- NULL
-    sapply(2: length(xml_children(ss)),
+    sapply(2:length(xml_children(ss)),
            function(i) {
-               
-               if (xml_attr(xml_children(ss)[[i]], "name") == name)
-               {
+               if (xml_attr(xml_children(ss)[[i]], "name") == name) {
                    sheet <<- xml_children(ss)[[i]]
                }
            })
     return (sheet)
 }
 
+.silent_add_sheet_node <- function(sheet_name) {
+    suppressWarnings({
+        return(read_xml(sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="16384" table:default-cell-style-name="ce1"/></table:table>', sheet_name)))
+    })
+}
 
 #' write data to ods file
-#' 
 #' @description 
 #' Function to write a single data.frame to an ods file.
 #' 
 #' @param x a data.frame
-#' @param path Path to the ods file to write.
-#' @param overwrite logical, whether to overwrite an existing file, if available.
+#' @param path Path to the ods file to write
 #' @param sheet_name Name of the sheet
-#' @param row_names TRUE iff row names are to be included in the sheet
-#' @param col_names TRUE iff the column names are to be included in the sheet
+#' @param row_names logical, TRUE indicates that row names of x are to be included in the sheet
+#' @param col_names logical, TRUE indicates that column names of x are to be included in the sheet
+#' @param append logical, TRUE indicates that x should be appended to the existing file (path) as a new sheet. If a sheet with the same sheet_name exists, an exception is thrown. See update.
+#' @param update logical, TRUE indicates that the sheet with sheet_name in the existing file (path) should be updated with the content of x. If a sheet with sheet_name does not exist, an exception is thrown.
+#' @param overwrite logical, depreciated.
 #' @return the value of \code{path} invisibly.
-#' @author Thomas J. Leeper <thosjleeper@gmail.com>, Chung-hong Chan <chainsawtiney@gmail.com>
-#' @importFrom xml2 read_xml xml_children xml_add_child xml_add_sibling write_xml xml_ns xml_set_attr xml_attr
-#' @importFrom utils zip
-#' @importFrom assertthat assert_that
-#' @export
-write_ods <- function(x, path, overwrite = TRUE, sheet_name = "Sheet1", row_names = FALSE, col_names = TRUE) {
-    
-    assert_that(is.data.frame(x))
-    
-    # setup temp directory
-    tmp <- make_temp_dir()
-    tryCatch({
-        
-        templatedir <- system.file("template", package = "readODS")
-        file.copy(dir(templatedir, full.names = TRUE), tmp, recursive = TRUE)
-        
-        # open template document
-        contentfile <- file.path(tmp, "content.xml")
-        content <- read_xml(contentfile)
-        
-        # spreadsheet contents
-        spreadsheet <- xml_children(xml_children(content)[[3]])[[1]]
-        
-        # read sheet
-        sheet <- xml_children(spreadsheet)[[2]]
-
-        xml_set_attr(sheet, "table:name", sheet_name)
-        df_to_sheet(x, sheet, row_names, col_names)
-        
-        # write xml to contentfile
-        write_xml(content, contentfile)
-        
-        # zip up ODS archive
-        zip_it_up(tmp, path, overwrite)
-    },
-    finally = 
-    {
-        unlink(tmp)
-        
-    })
-    invisible(path)
-}
-#' write data to ods file in a named sheet. 
-#' @description 
-#' Function to write a single data.frame to an ods file.
-#' 
-#' @details 
-#' The logic table below explains behaviour:
-#' 
-#' Logic table:
-#' \tabular{rrrrr}{
-#' \strong{File exists} \tab \strong{Sheet exists} \tab \strong{overwrite_file} \tab \strong{overwrite_sheet} \tab \strong{Result} \cr
-#' F \tab F \tab X \tab X \tab New file with named sheet \cr
-#' T \tab X \tab T \tab X \tab Overwrite file with named sheet \cr
-#' T \tab F \tab F \tab X \tab New sheet added to file \cr
-#' T \tab T \tab F \tab F \tab Exception thrown \cr
-#' T \tab T \tab F \tab T \tab Sheet replaced in file
-#' }
-#' 
-#' 
-#' @param x a data.frame
-#' @param path Path to the ods file to write.
-#' @param sheet_name Name of the sheet
-#' @param overwrite_file logical, whether to overwrite an existing file, if available. See logic table.
-#' @param overwrite_sheet TRUE iff named sheet to be overwritten. See logic table.
-#' @param row_names TRUE iff row names are to be included in the sheet
-#' @param col_names TRUE iff the column names are to be included in the sheet
-#' @return the value of \code{path} invisibly. Throws an exception if named sheet exists and overwrite_sheet is FALSE.
-#' @author J Foster <john.x.foster@nab.com.au>
+#' @author Thomas J. Leeper <thosjleeper@gmail.com>, John Foster <john.x.foster@nab.com.au>, Chung-hong Chan <chainsawtiney@gmail.com>
 #' @importFrom xml2 read_xml xml_children xml_add_child xml_add_sibling write_xml xml_ns xml_set_attr xml_attr xml_remove
 #' @importFrom utils zip
 #' @importFrom assertthat assert_that
 #' @export
-write_ods_2 <- function(x, path, sheet_name,
-                        overwrite_file = FALSE, overwrite_sheet = FALSE, 
-                        row_names = FALSE, col_names = TRUE)
-{
-    assert_that(is.data.frame(x))
-    
-    if (overwrite_file || !file.exists(path))
-    {
-        return (write_ods(x, path, overwrite = overwrite_file, sheet_name = sheet_name, row_names = row_names, col_names = col_names))
+write_ods <- function(x, path, sheet_name = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, overwrite = NULL) {
+    if (!is.null(overwrite)) {
+        warning("overwrite is depreciated. Future versions will always set it to TRUE.")
+    } else {
+        overwrite <- TRUE
     }
-    
+    assert_that(is.data.frame(x))    
     # setup temp directory
     tmp <- make_temp_dir()
     tryCatch({
-        
-        unzip(path, exdir = tmp)
-        contentfile <- file.path(tmp, "content.xml")
-        content <- read_xml(contentfile)
-        
-        # spreadsheet contents
-        spreadsheet <- xml_children(xml_children(content)[[3]])[[1]]
-    
-        sn <- find_named_sheet(spreadsheet, sheet_name)
-        
-        if (is.null(sn))
-        {
-            # Add a new sheet
-            sn <- xml_add_child(spreadsheet, read_xml(sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="16384" table:default-cell-style-name="ce1"/></table:table>', sheet_name)))
+        if (!file.exists(path) | (!append & !update)) {
+            ## The file doesn't exist, no need to consider overwrite or append
+            templatedir <- system.file("template", package = "readODS")
+            file.copy(dir(templatedir, full.names = TRUE), tmp, recursive = TRUE)
+            contentfile <- file.path(tmp, "content.xml")
+            content <- read_xml(contentfile)
+            spreadsheet <- xml_children(xml_children(content)[[3]])[[1]]
+            sheet <- xml_children(spreadsheet)[[2]]
+            xml_set_attr(sheet, "table:name", sheet_name)
+            df_to_sheet(x, sheet, row_names, col_names)
+        } else {
+            ## The file must be there.
+            unzip(path, exdir = tmp)
+            contentfile <- file.path(tmp, "content.xml")
+            content <- read_xml(contentfile)
+            spreadsheet <- xml_children(xml_children(content)[[3]])[[1]]
+            sn <- find_named_sheet(spreadsheet, sheet_name)
+            if ((!is.null(sn) & append & !update) | (!is.null(sn) & !update)) {
+                ## Sheet exists so we cannot append
+                stop(paste0("Sheet ", sheet_name, " exists. Set update to TRUE is you want to update this sheet."))
+            }
+            if (is.null(sn) & update) {
+                stop(paste0("Sheet ", sheet_name, " does not exist. Cannot update."))
+            }
+            if (!is.null(sn) & update) {
+                ## clean up the sheet
+                xml_remove(xml_children(sn)[2:length(xml_children(sn))])
+            }
+            if (is.null(sn) & append) {
+                ## Add a new sheet
+                sn <- xml_add_child(spreadsheet, .silent_add_sheet_node(sheet_name))
+            }
+            df_to_sheet(x, sn, row_names, col_names)        
         }
-        else if (!overwrite_sheet)
-        {
-            stop("Sheet exists and overwrite is FALSE", call. = FALSE)
-        }
-        else if (length(xml_children(sn)) > 1)
-        {
-            # Truncate existing sheet
-            xml_remove(xml_children(sn)[2:length(xml_children(sn))])
-        }
-
-        df_to_sheet(x, sn, row_names, col_names)
-        
-        # write xml to contentfile
+        ## write xml to contentfile
         write_xml(content, contentfile)
-        
-        # zip up ODS archive
-        zip_it_up(tmp, path, TRUE)
+        ## zip up ODS archive
+        zip_it_up(tmp, path, overwrite)
     },
-    finally = 
-    {
+    finally =  {
         unlink(tmp)
-            
     })
     invisible(path)
 }

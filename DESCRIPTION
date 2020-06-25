@@ -1,14 +1,14 @@
 Package: readODS
 Type: Package
 Title: Read and Write ODS Files
-Version: 2.1
+Version: 1.7.0
 Date: 2020-06-22
-Author: Gerrit-Jan Schutten, Chung-hong Chan, Thomas J. Leeper and other contributors
+Author: Gerrit-Jan Schutten, Chung-hong Chan, Thomas J. Leeper, John Foster,  and other contributors
 Maintainer: Chung-hong Chan <chainsawtiney@gmail.com>
 Contact: https://github.com/chainsawriot/readODS/
 Description: Import ODS (OpenDocument Spreadsheet) into R as a data frame. Also support writing data frame into ODS file.
 Imports:
-    xml2 (>= 1.0.0),
+    xml2 (>= 1.3.2),
     cellranger,
     readr (>= 1.2.1),
     stringi

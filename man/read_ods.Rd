@@ -39,7 +39,7 @@ read.ods(file = NULL, sheet = NULL, formulaAsFormula = FALSE)
 
 \item{row_names}{indicating whether the file contains the names of the rows as its first column}
 
-\item{strings_as_factors}{TRUE iff character columns to be converted to factors.}
+\item{strings_as_factors}{logical, if character columns to be converted to factors.}
 
 \item{file}{for read.ods only, path to the ods file.}
 

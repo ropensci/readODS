@@ -7,24 +7,30 @@
 write_ods(
   x,
   path,
-  overwrite = TRUE,
   sheet_name = "Sheet1",
+  append = FALSE,
+  update = FALSE,
   row_names = FALSE,
-  col_names = TRUE
+  col_names = TRUE,
+  overwrite = NULL
 )
 }
 \arguments{
 \item{x}{a data.frame}
 
-\item{path}{Path to the ods file to write.}
-
-\item{overwrite}{logical, whether to overwrite an existing file, if available.}
+\item{path}{Path to the ods file to write}
 
 \item{sheet_name}{Name of the sheet}
 
-\item{row_names}{TRUE iff row names are to be included in the sheet}
+\item{append}{logical, TRUE indicates that x should be appended to the existing file (path) as a new sheet. If a sheet with the same sheet_name exists, an exception is thrown. See update.}
 
-\item{col_names}{TRUE iff the column names are to be included in the sheet}
+\item{update}{logical, TRUE indicates that the sheet with sheet_name in the existing file (path) should be updated with the content of x. If a sheet with sheet_name does not exist, an exception is thrown.}
+
+\item{row_names}{logical, TRUE indicates that row names of x are to be included in the sheet}
+
+\item{col_names}{logical, TRUE indicates that column names of x are to be included in the sheet}
+
+\item{overwrite}{logical, depreciated.}
 }
 \value{
 the value of \code{path} invisibly.
@@ -33,5 +39,5 @@ the value of \code{path} invisibly.
 Function to write a single data.frame to an ods file.
 }
 \author{
-Thomas J. Leeper \href{mailto:thosjleeper@gmail.com}{thosjleeper@gmail.com}, Chung-hong Chan \href{mailto:chainsawtiney@gmail.com}{chainsawtiney@gmail.com}
+Thomas J. Leeper \href{mailto:thosjleeper@gmail.com}{thosjleeper@gmail.com}, John Foster \href{mailto:john.x.foster@nab.com.au}{john.x.foster@nab.com.au}, Chung-hong Chan \href{mailto:chainsawtiney@gmail.com}{chainsawtiney@gmail.com}
 }
