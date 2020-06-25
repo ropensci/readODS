@@ -1,0 +1,71 @@
+library(dplyr)
+
+tmp <- tempfile(fileext=".ods")
+
+# Use this instead of numbers_to_letters for testing - only works for 1:26
+cols_to_letters <- function(n)
+{
+    assert_that(n <= 26)
+    
+    seq <- 1:n
+    sapply(seq, function(n) { LETTERS[n] })
+}
+
+setup({
+    
+})
+teardown({
+
+    unlink(tmp)
+})
+
+test_that("Write Excel sheets", {
+
+    # Use a dataframe with row and column headers, and at least one charactor column
+    # If you write a dataframe which has not had rownames explicitly set and use row_names=T,
+    # reading it back and comparing will give an attribute difference
+    starwars10 <- readRDS("../testdata/starwars10.rds")
+
+    expect_silent(write_ods_2(starwars10, tmp, "SW", row_names = FALSE, col_names = FALSE))
+    expect_true(file.exists(tmp))
+    expect_warning(write_ods_2(starwars10, tmp, "SWR", row_names=TRUE, col_names = FALSE))
+    expect_warning(write_ods_2(starwars10, tmp, "SWC", row_names = FALSE, col_names = TRUE))
+    expect_warning(write_ods_2(starwars10, tmp, "SWRC", row_names=TRUE, col_names = TRUE))
+    expect_warning(write_ods_2(starwars10[1, 1:ncol(starwars10)], tmp, "SW1", row_names=TRUE, col_names = TRUE))
+    expect_warning(write_ods_2(starwars10[1:nrow(starwars10), 1, drop=FALSE], tmp, "SW10", row_names=TRUE, col_names = TRUE))
+
+
+    expect_error(write_ods_2(starwars10, tmp, "SWRC", row_names=TRUE, col_names = TRUE, overwrite_sheet = FALSE))
+
+    df <- read_ods(tmp, "SW", row_names = FALSE, col_names = FALSE, strings_as_factors = TRUE)
+    expect_true(all.equal({
+        cars <- starwars10
+        rownames(cars) <- NULL
+        colnames(cars) <- cols_to_letters(ncol(cars))
+        cars
+    }, df))
+
+    df <- read_ods(tmp, "SWR", row_names = TRUE, col_names = FALSE, strings_as_factors = TRUE)
+    expect_true(all.equal({
+        cars <- starwars10
+        colnames(cars) <- cols_to_letters(ncol(cars))
+        cars}, df))
+
+    df <- read_ods(tmp, "SWC", row_names = FALSE, col_names = TRUE, strings_as_factors = TRUE)
+    expect_true(all.equal({
+        cars <- starwars10
+        rownames(cars) <- NULL
+        cars
+    }, df))
+
+    df <- read_ods(tmp, "SWRC", row_names = TRUE, col_names = TRUE, strings_as_factors = TRUE)
+    expect_true(all.equal(starwars10, df))
+
+    df <- read_ods(tmp, "SW1", row_names = TRUE, col_names = TRUE, strings_as_factors = TRUE)
+
+    expect_false(isTRUE(all.equal(starwars10[1, 1:ncol(starwars10)], df))) # factor mismatch
+    expect_true(all((df == starwars10[1, 1:ncol(starwars10)])[1,]))
+
+    df <- read_ods(tmp, "SW10", row_names = TRUE, col_names = TRUE, strings_as_factors = TRUE)
+    expect_true(all.equal(starwars10[1:nrow(starwars10), 1, drop=FALSE], df))
+})

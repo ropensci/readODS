@@ -92,10 +92,10 @@ parse_single_cell <- function(cell, ods_ns, formula_as_formula = FALSE, use_offi
         xml_attr(cell, "office:value-type", ods_ns) %in% c("float", "currency", "percentage")) {
       cell_value <- xml_attr(cell, "office:value", ods_ns)
     }
-    if (cell_value == "" & use_office_value & xml_has_attr(cell, "office:value", ods_ns)) {
+    if (cell_value == "" && use_office_value & xml_has_attr(cell, "office:value", ods_ns)) {
         cell_value <- xml_attr(cell, "office:value", ods_ns)
     }
-    if (formula_as_formula & xml_has_attr(cell, "table:formula", ods_ns)) {
+    if (formula_as_formula && xml_has_attr(cell, "table:formula", ods_ns)) {
         cell_value <- xml_attr(cell, "table:formula", ods_ns)
     }
     return(cell_value)
@@ -103,7 +103,7 @@ parse_single_cell <- function(cell, ods_ns, formula_as_formula = FALSE, use_offi
 
 parse_rows <- function(parsed_sheet, ods_ns, formula_as_formula, skip = 0) {
     rows <- xml_find_all(parsed_sheet, ".//table:table-row", ods_ns)
-    if (skip > 0 & skip >= length(rows)) {
+    if (skip > 0 && skip >= length(rows)) {
         warning("skip value >=  number of rows, ignore the skip setting")
         skip <- 0
     }
@@ -129,10 +129,10 @@ parse_rows <- function(parsed_sheet, ods_ns, formula_as_formula, skip = 0) {
                     cell_value <- parse_single_cell(cell, ods_ns, formula_as_formula = formula_as_formula)
                     cell_values[[paste0(current_row, ",", current_col)]] <- cell_value
                 }
-                if (bump_cell > 1 & !cell_with_textp) {
+                if (bump_cell > 1 && !cell_with_textp) {
                     current_col <- current_col + bump_cell - 1
                 }
-                if (bump_cell > 1 & cell_with_textp) {
+                if (bump_cell > 1 && cell_with_textp) {
                     for (bump in 1:(bump_cell-1)) {
                         current_col <- current_col + 1
                         cell_values[[paste0(current_row, ",", current_col)]] <- cell_value
@@ -146,19 +146,29 @@ parse_rows <- function(parsed_sheet, ods_ns, formula_as_formula, skip = 0) {
 
 
 ### steal from rio
-change_df_with_header <- function(x) {
-    colnames(x) <- x[1,]
-    g <- x[2:nrow(x),]
-    if (class(g) != "data.frame") {
-        g <- data.frame(g, stringsAsFactors = FALSE)
-        colnames(g) <- x[1,]
-    }
-    rownames(g) <- seq(from = 1, to = nrow(g))
+# change_df_with_header <- function(x) {
+#     colnames(x) <- x[1,]
+#     g <- x[2:nrow(x),]
+#     if (class(g) != "data.frame") {
+#         g <- data.frame(g, stringsAsFactors = FALSE)
+#         colnames(g) <- x[1,]
+#     }
+#     return(g)
+# }
+
+change_df_with_col_row_header <- function(x, col_header, row_header) {
+
+    irow <- ifelse(col_header, 2, 1)  
+    jcol <- ifelse(row_header, 2, 1)
+    
+    g <- x[irow:nrow(x), jcol:ncol(x), drop=FALSE] # maintain as dataframe for single column
+    rownames(g) <- if (row_header) x[irow:nrow(x), 1] else NULL # dont want character row headers given by 1:nrow(g)
+    colnames(g) <- if (col_header) x[1, jcol:ncol(x)] else numbers_to_letters(1:ncol(g))
     return(g)
 }
 
 ### ugly version
-to_data_frame <- function(cell_values, header = FALSE, na = NULL) {
+to_data_frame <- function(cell_values, header = FALSE, na = NULL, row_header = FALSE) {
     cv_keys <- ls(cell_values)
     if (length(cv_keys) == 0) {
         warning("empty sheet, return empty data frame.")
@@ -179,11 +189,8 @@ to_data_frame <- function(cell_values, header = FALSE, na = NULL) {
             res[pos[1], pos[2]] <- ifelse(value %in% na, NA, value)
         }   
     }
-    if (header) {
-        res <- change_df_with_header(res)
-    } else {
-        colnames(res) <- numbers_to_letters(1:ncol(res))
-    }
+    res <- change_df_with_col_row_header(res, header, row_header)
+
     return(res)
 }
 
@@ -195,7 +202,7 @@ parse_ods_to_sheets <- function(file) {
 }
 
 select_sheet <- function(sheets, ods_ns, which_sheet) {
-    if (is.numeric(which_sheet) & which_sheet > length(sheets)) {
+    if (is.numeric(which_sheet) && which_sheet > length(sheets)) {
         stop("sheet larger than number of sheets in the ods file.")
     }
     if (is.character(which_sheet)) {
@@ -214,6 +221,13 @@ select_range <- function(raw_sheet, range) {
     range_select <- cellranger::as.cell_limits(range)
     selected_sheet <- raw_sheet[range_select$ul[1]:range_select$lr[1], range_select$ul[2]:range_select$lr[2]]
     return(selected_sheet)
+}
+strings_to_factors <- function(df)
+{
+    i <- sapply(df, is.character)
+    df[i] <- lapply(df[i], as.factor)
+    
+    return (df)
 }
 
 ############### REAL DEALS #####################
@@ -234,17 +248,21 @@ select_range <- function(raw_sheet, range) {
 #' @param range selection of rectangle using Excel-like cell range, such as \code{range = "D12:F15"} or \code{range = "R1C12:R6C15"}. Cell range processing is handled by the \code{\link[=cellranger]{cellranger}} package.
 #' @param file for read.ods only, path to the ods file.
 #' @param formulaAsFormula for read.ods only, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..
+#' @param row_names indicating whether the file contains the names of the rows as its first column
+#' @param strings_as_factors TRUE iff character columns to be converted to factors.
 #' @return A data frame (\code{data.frame}) containing a representation of data in the ods file.
 #' @note Currently, ods files that linked to external data source cannot be read. Merged cells cannot be parsed correctly.
 #' @author Chung-hong Chan <chainsawtiney@gmail.com>, Gerrit-Jan Schutten <phonixor@gmail.com>
 #' @export
-read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL, na = "", skip = 0, formula_as_formula = FALSE, range = NULL) {
+read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL, na = "", skip = 0, formula_as_formula = FALSE, range = NULL,
+                     row_names = FALSE, strings_as_factors = FALSE) {
+  
     res <- parse_ods_to_sheets(path)
     ods_ns <- res[[2]]
     sheets <- res[[1]]
     target_sheet <- select_sheet(sheets, ods_ns = ods_ns, which_sheet = sheet)
     cell_values <- parse_rows(target_sheet, ods_ns, formula_as_formula = formula_as_formula, skip = skip)
-    parsed_df <- to_data_frame(cell_values = cell_values, header = col_names, na = na)
+    parsed_df <- to_data_frame(cell_values = cell_values, header = col_names, na = na, row_header = row_names)
     ## Kill unknown col_types
     if (class(col_types) == 'col_spec') {
         raw_sheet <- readr::type_convert(df = parsed_df, col_types = col_types)
@@ -259,6 +277,10 @@ read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL,
         res <- select_range(raw_sheet, range)
     } else {
         res <- raw_sheet
+    }
+    if (strings_as_factors)
+    {
+        res <- strings_to_factors(res)
     }
     return(res)
 }
