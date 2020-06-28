@@ -3,3 +3,4 @@
 notes.R
 .~lock*
 .DS_Store
+^README\.Rmd$

@@ -1,0 +1,92 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# readODS <img src="man/figures/read_ods_logo.png"  align="right" height="200" />
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The only goal of readODS is to enable R to read and write OpenDocument Spreadsheet (ODS) files.
+
+## Installation
+
+Install the latest stable version from CRAN: 
+
+```r
+install.packages("readODS")
+```
+
+Or install the development version from Github:
+
+```r
+devtools::install_github("chainsawriot/readODS")
+```
+
+### Usage
+
+In almost all of the use cases, you only need two functions: `read_ods` and `write_ods`. Simple.
+
+#### Reading
+
+```{r}
+library(readODS)
+read_ods("starwars.ods")
+```
+
+Reading from the 2nd sheet
+
+```{r}
+read_ods("starwars.ods", sheet = 2)
+```
+
+Reading from a specific range
+
+```{r}
+read_ods("starwars.ods", sheet = 2, range = "A1:C11")
+```
+
+#### Writing
+
+```{r}
+## preserve the row names
+write_ods(mtcars, "mtcars.ods", row_names = TRUE)
+```
+
+Appending a sheet
+
+```{r}
+write_ods(PlantGrowth, "mtcars.ods", append = TRUE, sheet = "plant")
+```
+
+```{r}
+## Default: First sheet
+read_ods("mtcars.ods")
+```
+
+```{r}
+read_ods("mtcars.ods", sheet = "plant", range = "A1:B10")
+```
+
+### Misc
+
+The logo of readODS is a remix of LibreOffice Calc v6.1 icon created by the Document Foundation. The original logo is licensed under the [Creative Commons Attribution Share-Alike 3.0 Unported License](https://wiki.documentfoundation.org/File:LibO6_MIME.svg). readODS is not a product of the Document Foundation.
+
+The creator of this package is Gerrit-Jan Schutten. The current maintainer is Chung-hong Chan. This package benefits from contributions from Thomas J. Leeper and other contributors.
+
+This package emulates the behaviors of `readxl::read_xlsx`, `writexl::write_xlsx` and `xlsx::write.xlsx`.
+
+### License
+
+GPL3
