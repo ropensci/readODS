@@ -42,7 +42,7 @@ zip_it_up <- function(tmp, path, overwrite) {
     wd <- getwd()
     on.exit(setwd(wd), add = TRUE)
     setwd(tmp)
-    zip(basename(path), dir(), flags = "-q")
+    zip(basename(path), dir(), flags = "-r9Xq")
     setwd(wd)
     file.copy(file.path(tmp, basename(path)), path, overwrite = overwrite)
 }
