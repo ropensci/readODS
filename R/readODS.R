@@ -156,8 +156,10 @@ parse_rows <- function(parsed_sheet, ods_ns, formula_as_formula, skip = 0) {
 #     return(g)
 # }
 
-change_df_with_col_row_header <- function(x, col_header, row_header) {
-
+change_df_with_col_row_header <- function(x, col_header, row_header, range) {
+    if (!is.null(range)) {
+        x <- select_range(x, range)
+    }
     irow <- ifelse(col_header, 2, 1)  
     jcol <- ifelse(row_header, 2, 1)
     
@@ -168,7 +170,7 @@ change_df_with_col_row_header <- function(x, col_header, row_header) {
 }
 
 ### ugly version
-to_data_frame <- function(cell_values, header = FALSE, na = NULL, row_header = FALSE) {
+to_data_frame <- function(cell_values, header = FALSE, na = NULL, row_header = FALSE, range) {
     cv_keys <- ls(cell_values)
     if (length(cv_keys) == 0) {
         warning("empty sheet, return empty data frame.")
@@ -189,8 +191,7 @@ to_data_frame <- function(cell_values, header = FALSE, na = NULL, row_header = F
             res[pos[1], pos[2]] <- ifelse(value %in% na, NA, value)
         }   
     }
-    res <- change_df_with_col_row_header(res, header, row_header)
-
+    res <- change_df_with_col_row_header(res, header, row_header, range)
     return(res)
 }
 
@@ -222,8 +223,8 @@ select_range <- function(raw_sheet, range) {
     selected_sheet <- raw_sheet[range_select$ul[1]:range_select$lr[1], range_select$ul[2]:range_select$lr[2]]
     return(selected_sheet)
 }
-strings_to_factors <- function(df)
-{
+
+strings_to_factors <- function(df) {
     i <- sapply(df, is.character)
     df[i] <- lapply(df[i], as.factor)
     
@@ -262,24 +263,19 @@ read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL,
     sheets <- res[[1]]
     target_sheet <- select_sheet(sheets, ods_ns = ods_ns, which_sheet = sheet)
     cell_values <- parse_rows(target_sheet, ods_ns, formula_as_formula = formula_as_formula, skip = skip)
-    parsed_df <- to_data_frame(cell_values = cell_values, header = col_names, na = na, row_header = row_names)
+    parsed_df <- to_data_frame(cell_values = cell_values, header = col_names, na = na, row_header = row_names, range = range)
+    ## emulate readxl to first select range.
     ## Kill unknown col_types
     if (class(col_types) == 'col_spec') {
-        raw_sheet <- readr::type_convert(df = parsed_df, col_types = col_types)
+        res <- readr::type_convert(df = parsed_df, col_types = col_types)
     } else if (length(col_types) == 0 & is.null(col_types)) {
-        raw_sheet <- readr::type_convert(df = parsed_df)
+        res <- readr::type_convert(df = parsed_df)
     } else if (length(col_types) == 1 & is.na(col_types[1])) {
-        raw_sheet <- parsed_df
+        res <- parsed_df
     } else {
         stop("Unknown col_types. Can either be a class col_spec, NULL or NA.")
     }
-    if (!is.null(range)) {
-        res <- select_range(raw_sheet, range)
-    } else {
-        res <- raw_sheet
-    }
-    if (strings_as_factors)
-    {
+    if (strings_as_factors) {
         res <- strings_to_factors(res)
     }
     return(res)
