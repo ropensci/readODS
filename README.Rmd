@@ -81,11 +81,13 @@ read_ods("mtcars.ods", sheet = "plant", range = "A1:B10")
 
 ### Misc
 
-The logo of readODS is a remix of LibreOffice Calc v6.1 icon created by the Document Foundation. The original logo is licensed under the [Creative Commons Attribution Share-Alike 3.0 Unported License](https://wiki.documentfoundation.org/File:LibO6_MIME.svg). readODS is not a product of the Document Foundation.
+The logo of readODS is a remix of LibreOffice Calc v6.1 icon created by the Document Foundation. The original LibreOffice logo is licensed under the [Creative Commons Attribution Share-Alike 3.0 Unported License](https://wiki.documentfoundation.org/File:LibO6_MIME.svg). readODS is not a product of the Document Foundation. The logo of readODS is licensed under the [Creative Commons Attribution Share-Alike 3.0 Unported License](https://creativecommons.org/licenses/by-sa/3.0/).
 
-The creator of this package is Gerrit-Jan Schutten. The current maintainer is Chung-hong Chan. This package benefits from contributions from Thomas J. Leeper and other contributors.
+The creator of this package is Gerrit-Jan Schutten. The current maintainer is Chung-hong Chan. This package benefits from contributions by Thomas J. Leeper, John Foster, Sergio Oller, Jim Hester, Stephen Watts, Arthur Katossky, and Stas Malavin.
 
 This package emulates the behaviors of `readxl::read_xlsx`, `writexl::write_xlsx` and `xlsx::write.xlsx`.
+
+This package should be a silent member of `rio`, so that you don't need to care about file format anymore.
 
 ### License
 
