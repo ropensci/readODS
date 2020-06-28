@@ -5,6 +5,10 @@
 
 <!-- badges: start -->
 
+[![CRAN
+status](https://www.r-pkg.org/badges/version/readODS)](https://CRAN.R-project.org/package=readODS)
+[![Lifecycle:
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
 <!-- badges: end -->
 
 The only goal of readODS is to enable R to read and write OpenDocument
@@ -24,10 +28,10 @@ Or install the development version from Github:
 devtools::install_github("chainsawriot/readODS")
 ```
 
-### Usage
+## Usage
 
-In almost all of the use cases, you only need two functions: `read_ods`
-and `write_ods`. Simple.
+In almost all use cases, you only need two functions: `read_ods` and
+`write_ods`. Simple.
 
 #### Reading
 
