@@ -38,12 +38,6 @@ In almost all use cases, you only need two functions: `read_ods` and
 ``` r
 library(readODS)
 read_ods("starwars.ods")
-#> Parsed with column specification:
-#> cols(
-#>   Name = col_character(),
-#>   homeworld = col_character(),
-#>   species = col_character()
-#> )
 #>                  Name homeworld species
 #> 1      Luke Skywalker  Tatooine   Human
 #> 2               C-3PO  Tatooine   Human
@@ -61,17 +55,6 @@ Reading from the 2nd sheet
 
 ``` r
 read_ods("starwars.ods", sheet = 2)
-#> Parsed with column specification:
-#> cols(
-#>   Name = col_character(),
-#>   height = col_double(),
-#>   mass = col_double(),
-#>   hair_color = col_character(),
-#>   skin_color = col_character(),
-#>   eye_color = col_character(),
-#>   birth_year = col_double(),
-#>   gender = col_character()
-#> )
 #>                  Name height mass    hair_color skin_color eye_color
 #> 1      Luke Skywalker    172   77         blond       fair      blue
 #> 2               C-3PO    202  136          none      white    yellow
@@ -100,12 +83,6 @@ Reading from a specific range
 
 ``` r
 read_ods("starwars.ods", sheet = 2, range = "A1:C11")
-#> Parsed with column specification:
-#> cols(
-#>   Name = col_character(),
-#>   height = col_double(),
-#>   mass = col_double()
-#> )
 #>                  Name height mass
 #> 1      Luke Skywalker    172   77
 #> 2               C-3PO    202  136
@@ -136,21 +113,6 @@ write_ods(PlantGrowth, "mtcars.ods", append = TRUE, sheet = "plant")
 ## Default: First sheet
 read_ods("mtcars.ods")
 #> Warning: Missing column names filled in: 'X1' [1]
-#> Parsed with column specification:
-#> cols(
-#>   X1 = col_character(),
-#>   mpg = col_double(),
-#>   cyl = col_double(),
-#>   disp = col_double(),
-#>   hp = col_double(),
-#>   drat = col_double(),
-#>   wt = col_double(),
-#>   qsec = col_double(),
-#>   vs = col_double(),
-#>   am = col_double(),
-#>   gear = col_double(),
-#>   carb = col_double()
-#> )
 #>                     NA  mpg cyl  disp  hp drat    wt  qsec vs am gear carb
 #> 1            Mazda RX4 21.0   6 160.0 110 3.90 2.620 16.46  0  1    4    4
 #> 2        Mazda RX4 Wag 21.0   6 160.0 110 3.90 2.875 17.02  0  1    4    4
@@ -188,11 +150,6 @@ read_ods("mtcars.ods")
 
 ``` r
 read_ods("mtcars.ods", sheet = "plant", range = "A1:B10")
-#> Parsed with column specification:
-#> cols(
-#>   weight = col_double(),
-#>   group = col_character()
-#> )
 #>   weight group
 #> 1   4.17  ctrl
 #> 2   5.58  ctrl

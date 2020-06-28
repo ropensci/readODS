@@ -15,7 +15,8 @@ read_ods(
   formula_as_formula = FALSE,
   range = NULL,
   row_names = FALSE,
-  strings_as_factors = FALSE
+  strings_as_factors = FALSE,
+  verbose = FALSE
 )
 
 read.ods(file = NULL, sheet = NULL, formulaAsFormula = FALSE)
@@ -40,6 +41,8 @@ read.ods(file = NULL, sheet = NULL, formulaAsFormula = FALSE)
 \item{row_names}{indicating whether the file contains the names of the rows as its first column}
 
 \item{strings_as_factors}{logical, if character columns to be converted to factors.}
+
+\item{verbose}{logical, if messages should be displayed.}
 
 \item{file}{for read.ods only, path to the ods file.}
 

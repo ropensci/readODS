@@ -38,11 +38,16 @@ make_temp_dir <- function() {
     return (tmp)
 }
 
-zip_it_up <- function(tmp, path, overwrite) {
+zip_it_up <- function(tmp, path, overwrite, verbose) {
+    if (verbose) {
+        zip_flags <- "-r9X"
+    } else {
+        zip_flags <- "-r9Xq"
+    }
     wd <- getwd()
     on.exit(setwd(wd), add = TRUE)
     setwd(tmp)
-    zip(basename(path), dir(), flags = "-r9Xq")
+    zip(basename(path), dir(), flags = zip_flags)
     setwd(wd)
     file.copy(file.path(tmp, basename(path)), path, overwrite = overwrite)
 }
@@ -75,6 +80,7 @@ find_named_sheet <- function(ss, name) {
 #' @param col_names logical, TRUE indicates that column names of x are to be included in the sheet
 #' @param append logical, TRUE indicates that x should be appended to the existing file (path) as a new sheet. If a sheet with the same sheet_name exists, an exception is thrown. See update.
 #' @param update logical, TRUE indicates that the sheet with sheet_name in the existing file (path) should be updated with the content of x. If a sheet with sheet_name does not exist, an exception is thrown.
+#' @param verbose logical, if messages should be displayed
 #' @param overwrite logical, depreciated.
 #' @return the value of \code{path} invisibly.
 #' @author Thomas J. Leeper <thosjleeper@gmail.com>, John Foster <john.x.foster@nab.com.au>, Chung-hong Chan <chainsawtiney@gmail.com>
@@ -82,7 +88,7 @@ find_named_sheet <- function(ss, name) {
 #' @importFrom utils zip
 #' @importFrom assertthat assert_that
 #' @export
-write_ods <- function(x, path, sheet_name = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, overwrite = NULL) {
+write_ods <- function(x, path, sheet_name = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, verbose = FALSE, overwrite = NULL) {
     if (!is.null(overwrite)) {
         warning("overwrite is depreciated. Future versions will always set it to TRUE.")
     } else {
@@ -129,7 +135,7 @@ write_ods <- function(x, path, sheet_name = "Sheet1", append = FALSE, update = F
         ## write xml to contentfile
         write_xml(content, contentfile)
         ## zip up ODS archive
-        zip_it_up(tmp, path, overwrite)
+        zip_it_up(tmp, path, overwrite, verbose)
     },
     finally =  {
         unlink(tmp)

@@ -231,6 +231,17 @@ strings_to_factors <- function(df) {
     return (df)
 }
 
+.silent_type_convert <- function(x, verbose = TRUE) {
+    if (verbose) {
+        res <- readr::type_convert(df = x)
+    } else {
+        suppressMessages({
+            res <- readr::type_convert(df = x)
+        })
+    }
+    return(res)
+}
+
 ############### REAL DEALS #####################
 
 #' read data from ods files
@@ -251,12 +262,13 @@ strings_to_factors <- function(df) {
 #' @param formulaAsFormula for read.ods only, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..
 #' @param row_names indicating whether the file contains the names of the rows as its first column
 #' @param strings_as_factors logical, if character columns to be converted to factors.
+#' @param verbose logical, if messages should be displayed.
 #' @return A data frame (\code{data.frame}) containing a representation of data in the ods file.
 #' @note Currently, ods files that linked to external data source cannot be read. Merged cells cannot be parsed correctly.
 #' @author Chung-hong Chan <chainsawtiney@gmail.com>, Gerrit-Jan Schutten <phonixor@gmail.com>
 #' @export
 read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL, na = "", skip = 0, formula_as_formula = FALSE, range = NULL,
-                     row_names = FALSE, strings_as_factors = FALSE) {
+                     row_names = FALSE, strings_as_factors = FALSE, verbose = FALSE) {
   
     res <- parse_ods_to_sheets(path)
     ods_ns <- res[[2]]
@@ -269,7 +281,7 @@ read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL,
     if (class(col_types) == 'col_spec') {
         res <- readr::type_convert(df = parsed_df, col_types = col_types)
     } else if (length(col_types) == 0 & is.null(col_types)) {
-        res <- readr::type_convert(df = parsed_df)
+        res <- .silent_type_convert(parsed_df, verbose)
     } else if (length(col_types) == 1 & is.na(col_types[1])) {
         res <- parsed_df
     } else {

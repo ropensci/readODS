@@ -12,6 +12,7 @@ write_ods(
   update = FALSE,
   row_names = FALSE,
   col_names = TRUE,
+  verbose = FALSE,
   overwrite = NULL
 )
 }
@@ -29,6 +30,8 @@ write_ods(
 \item{row_names}{logical, TRUE indicates that row names of x are to be included in the sheet}
 
 \item{col_names}{logical, TRUE indicates that column names of x are to be included in the sheet}
+
+\item{verbose}{logical, if messages should be displayed}
 
 \item{overwrite}{logical, depreciated.}
 }
