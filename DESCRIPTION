@@ -11,7 +11,8 @@ Imports:
     xml2 (>= 1.3.2),
     cellranger,
     readr (>= 1.2.1),
-    stringi
+    stringi,
+    utils
 Suggests:
     dplyr,
     testthat,
