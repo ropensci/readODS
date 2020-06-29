@@ -12,7 +12,8 @@ Imports:
     cellranger,
     readr (>= 1.2.1),
     stringi,
-    assertthat
+    assertthat,
+    utils
 Suggests:
     dplyr,
     testthat,

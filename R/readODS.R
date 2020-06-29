@@ -280,7 +280,7 @@ read.ods <- function(file = NULL, sheet = NULL, formulaAsFormula = FALSE) {
 #' 
 #' get the number of sheets in an ods file
 #'
-#' @param file the name of the ods file
+#' @param path Path to the ods file
 #' @return Number of sheets
 #' @author Chung-hong Chan <chainsawtiney@gmail.com>, Gerrit-Jan Schutten <phonixor@gmail.com>
 #' @seealso

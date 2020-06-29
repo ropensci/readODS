@@ -6,3 +6,4 @@ notes.R
 ^README\.Rmd$
 ^\.travis\.yml$
 ^codecov\.yml$
+^starwars\.ods$

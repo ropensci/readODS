@@ -110,7 +110,7 @@ write_ods <- function(x, path, sheet_name = "Sheet1", append = FALSE, update = F
             .convert_df_to_sheet(x, sheet, row_names, col_names)
         } else {
             ## The file must be there.
-            unzip(path, exdir = tmp)
+            utils::unzip(path, exdir = tmp)
             contentfile <- file.path(tmp, "content.xml")
             content <- xml2::read_xml(contentfile)
             spreadsheet <- xml2::xml_children(xml2::xml_children(content)[[3]])[[1]]
