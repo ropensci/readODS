@@ -4,3 +4,5 @@ notes.R
 .~lock*
 .DS_Store
 ^README\.Rmd$
+^\.travis\.yml$
+^codecov\.yml$

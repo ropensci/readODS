@@ -15,7 +15,8 @@ Imports:
 Suggests:
     dplyr,
     testthat,
-    datasets
+    datasets,
+    covr
 License: GPL-3
 RoxygenNote: 7.1.0
 Roxygen: list(markdown = TRUE)
