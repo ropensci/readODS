@@ -1,0 +1,89 @@
+---
+title: "An overview of readODS"
+output: rmarkdown::html_vignette
+author:
+  - Chung-hong Chan ^[University of Mannheim]
+vignette: >
+  %\VignetteIndexEntry{An overview of readODS}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(readODS)
+```
+
+You probably only need to use two functions from this package: `read_ods` and `write_ods`.
+
+Write the data PlantGrowth as a new file `plant.ods`
+
+```{r write_ods1}
+write_ods(PlantGrowth, "plant.ods")
+```
+
+You can then read it back from `plant.ods`
+
+```{r read_ods1}
+read_ods("plant.ods")
+```
+
+## Update and Append
+
+You can append another sheet into an existing ods file with the sheet name being "mtcars_ods".
+
+```{r write_ods_append}
+write_ods(mtcars, "plant.ods", sheet = "mtcars_ods", append = TRUE)
+```
+
+Read from a specific sheet. Notice row names are missing.
+
+```{r read_ods_mtcars}
+read_ods("plant.ods", sheet = "mtcars_ods")
+```
+
+You can also integer for `sheet`, e.g. 2 for the second sheet.
+
+```{r read_ods_mtcars2}
+read_ods("plant.ods", sheet = 2)
+```
+
+Update an existing sheet and preserve row names
+
+```{r write_ods_update}
+write_ods(mtcars, "plant.ods", sheet = "mtcars_ods", update = TRUE, row_names = TRUE)
+```
+
+Notice the information from the sheet `mtcars_ods` is updated.
+
+```{r read_ods_mtcars3}
+read_ods("plant.ods", sheet = "mtcars_ods")
+```
+
+Read from a specific range
+
+```{r read_ods_mtcars_range}
+read_ods("plant.ods", sheet = "mtcars_ods", range = "A1:C10")
+```
+
+You cannot append to an existing sheet.
+
+```{r append_error, error = TRUE}
+write_ods(iris, "plant.ods", sheet = "mtcars_ods", append = TRUE)
+```
+
+You cannot update a missing sheet.
+
+```{r update_error, error = TRUE}
+write_ods(iris, "plant.ods", sheet = "iris", update = TRUE)
+```
+
+```{r, echo = FALSE, message = FALSE}
+unlink("plant.ods")
+```

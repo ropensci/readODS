@@ -3,3 +3,4 @@
 .RData
 .~lock*
 .DS_Store
+inst/doc

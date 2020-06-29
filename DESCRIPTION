@@ -17,7 +17,10 @@ Suggests:
     dplyr,
     testthat,
     datasets,
-    covr
+    covr,
+    knitr,
+    rmarkdown
 License: GPL-3
 RoxygenNote: 7.1.0
 Roxygen: list(markdown = TRUE)
+VignetteBuilder: knitr
