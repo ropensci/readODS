@@ -4,7 +4,7 @@ tmp <- tempfile(fileext=".ods")
 
 # Use this instead of numbers_to_letters for testing - only works for 1:26
 cols_to_letters <- function(n) {
-    assert_that(n <= 26)
+    stopifnot(n <= 26)
     
     seq <- 1:n
     sapply(seq, function(n) LETTERS[n])

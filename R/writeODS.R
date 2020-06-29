@@ -84,9 +84,6 @@
 #' @param overwrite logical, depreciated.
 #' @return the value of \code{path} invisibly.
 #' @author Thomas J. Leeper <thosjleeper@gmail.com>, John Foster <john.x.foster@nab.com.au>, Chung-hong Chan <chainsawtiney@gmail.com>
-#' @importFrom xml2 read_xml xml_children xml_add_child xml_add_sibling write_xml xml_ns xml_set_attr xml_attr xml_remove
-#' @importFrom utils zip
-#' @importFrom assertthat assert_that
 #' @export
 write_ods <- function(x, path, sheet_name = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, verbose = FALSE, overwrite = NULL) {
     if (!is.null(overwrite)) {
@@ -94,7 +91,9 @@ write_ods <- function(x, path, sheet_name = "Sheet1", append = FALSE, update = F
     } else {
         overwrite <- TRUE
     }
-    assertthat::assert_that(is.data.frame(x))    
+    if (!is.data.frame(x)) {
+        stop("x must be a data.frame.")
+    }
     # setup temp directory
     tmp <- .make_temp_dir()
     tryCatch({
