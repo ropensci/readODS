@@ -10,7 +10,7 @@ get_num_sheets_in_ods(path)
 getNrOfSheetsInODS(path)
 }
 \arguments{
-\item{path}{Path to the ods file}
+\item{file}{the name of the ods file}
 }
 \value{
 Number of sheets
