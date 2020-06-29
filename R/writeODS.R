@@ -1,4 +1,4 @@
-df_to_sheet <- function(x, sheet, row_names, col_names) {
+.convert_df_to_sheet <- function(x, sheet, row_names, col_names) {
     # identify variable types
     types <- unlist(lapply(x, class))
     types <- ifelse(types %in% c("integer", "numeric"), "float", "string")
@@ -8,7 +8,7 @@ df_to_sheet <- function(x, sheet, row_names, col_names) {
     # add data
     for (i in rowi) {
         # create a row
-        thisrow <- xml_add_child(sheet, "table:table-row")
+        thisrow <- xml2::xml_add_child(sheet, "table:table-row")
         for (j in colj) {
             if (i == 0) {
                 # get column name
@@ -22,23 +22,23 @@ df_to_sheet <- function(x, sheet, row_names, col_names) {
             }
             
             # add value to row
-            thiscell <- xml_add_child(thisrow, "table:table-cell")
-            xml_attr(thiscell, "office:value-type") <- if (i == 0 || j == 0) "string" else types[j]
-            xml_attr(thiscell, "office:value") <- value
-            xml_attr(thiscell, "table:style-name") <- "ce1"
-            thistext <- xml_add_child(thiscell, "text:p")
-            xml_text(thistext) <- value
+            thiscell <- xml2::xml_add_child(thisrow, "table:table-cell")
+            xml2::xml_attr(thiscell, "office:value-type") <- if (i == 0 || j == 0) "string" else types[j]
+            xml2::xml_attr(thiscell, "office:value") <- value
+            xml2::xml_attr(thiscell, "table:style-name") <- "ce1"
+            thistext <- xml2::xml_add_child(thiscell, "text:p")
+            xml2::xml_text(thistext) <- value
         }
     }
 }
 
-make_temp_dir <- function() {
+.make_temp_dir <- function() {
     tmp <- tempfile()
     dir.create(tmp)
     return (tmp)
 }
 
-zip_it_up <- function(tmp, path, overwrite, verbose) {
+.zip_tmp_to_path <- function(tmp, path, overwrite, verbose) {
     if (verbose) {
         zip_flags <- "-r9X"
     } else {
@@ -52,12 +52,12 @@ zip_it_up <- function(tmp, path, overwrite, verbose) {
     file.copy(file.path(tmp, basename(path)), path, overwrite = overwrite)
 }
 
-find_named_sheet <- function(ss, name) {
+.find_named_sheet <- function(ss, name) {
     sheet <- NULL
-    sapply(2:length(xml_children(ss)),
+    sapply(2:length(xml2::xml_children(ss)),
            function(i) {
-               if (xml_attr(xml_children(ss)[[i]], "name") == name) {
-                   sheet <<- xml_children(ss)[[i]]
+               if (xml2::xml_attr(xml2::xml_children(ss)[[i]], "name") == name) {
+                   sheet <<- xml2::xml_children(ss)[[i]]
                }
            })
     return (sheet)
@@ -65,7 +65,7 @@ find_named_sheet <- function(ss, name) {
 
 .silent_add_sheet_node <- function(sheet_name) {
     suppressWarnings({
-        return(read_xml(sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="16384" table:default-cell-style-name="ce1"/></table:table>', sheet_name)))
+        return(xml2::read_xml(sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="16384" table:default-cell-style-name="ce1"/></table:table>', sheet_name)))
     })
 }
 
@@ -94,27 +94,27 @@ write_ods <- function(x, path, sheet_name = "Sheet1", append = FALSE, update = F
     } else {
         overwrite <- TRUE
     }
-    assert_that(is.data.frame(x))    
+    assertthat::assert_that(is.data.frame(x))    
     # setup temp directory
-    tmp <- make_temp_dir()
+    tmp <- .make_temp_dir()
     tryCatch({
         if (!file.exists(path) | (!append & !update)) {
             ## The file doesn't exist, no need to consider overwrite or append
             templatedir <- system.file("template", package = "readODS")
             file.copy(dir(templatedir, full.names = TRUE), tmp, recursive = TRUE)
             contentfile <- file.path(tmp, "content.xml")
-            content <- read_xml(contentfile)
-            spreadsheet <- xml_children(xml_children(content)[[3]])[[1]]
-            sheet <- xml_children(spreadsheet)[[2]]
-            xml_set_attr(sheet, "table:name", sheet_name)
-            df_to_sheet(x, sheet, row_names, col_names)
+            content <- xml2::read_xml(contentfile)
+            spreadsheet <- xml2::xml_children(xml2::xml_children(content)[[3]])[[1]]
+            sheet <- xml2::xml_children(spreadsheet)[[2]]
+            xml2::xml_set_attr(sheet, "table:name", sheet_name)
+            .convert_df_to_sheet(x, sheet, row_names, col_names)
         } else {
             ## The file must be there.
             unzip(path, exdir = tmp)
             contentfile <- file.path(tmp, "content.xml")
-            content <- read_xml(contentfile)
-            spreadsheet <- xml_children(xml_children(content)[[3]])[[1]]
-            sn <- find_named_sheet(spreadsheet, sheet_name)
+            content <- xml2::read_xml(contentfile)
+            spreadsheet <- xml2::xml_children(xml2::xml_children(content)[[3]])[[1]]
+            sn <- .find_named_sheet(spreadsheet, sheet_name)
             if ((!is.null(sn) & append & !update) | (!is.null(sn) & !update)) {
                 ## Sheet exists so we cannot append
                 stop(paste0("Sheet ", sheet_name, " exists. Set update to TRUE is you want to update this sheet."))
@@ -124,18 +124,18 @@ write_ods <- function(x, path, sheet_name = "Sheet1", append = FALSE, update = F
             }
             if (!is.null(sn) & update) {
                 ## clean up the sheet
-                xml_remove(xml_children(sn)[2:length(xml_children(sn))])
+                xml2::xml_remove(xml2::xml_children(sn)[2:length(xml2::xml_children(sn))])
             }
             if (is.null(sn) & append) {
                 ## Add a new sheet
-                sn <- xml_add_child(spreadsheet, .silent_add_sheet_node(sheet_name))
+                sn <- xml2::xml_add_child(spreadsheet, .silent_add_sheet_node(sheet_name))
             }
-            df_to_sheet(x, sn, row_names, col_names)        
+            .convert_df_to_sheet(x, sn, row_names, col_names)        
         }
         ## write xml to contentfile
-        write_xml(content, contentfile)
+        xml2::write_xml(content, contentfile)
         ## zip up ODS archive
-        zip_it_up(tmp, path, overwrite, verbose)
+        .zip_tmp_to_path(tmp, path, overwrite, verbose)
     },
     finally =  {
         unlink(tmp)
