@@ -56,7 +56,7 @@
     sheet <- NULL
     sapply(2:length(xml2::xml_children(ss)),
            function(i) {
-               if (xml2::xml_attr(xml2::xml_children(ss)[[i]], "name") == name) {
+               if (!is.na(xml2::xml_attr(xml2::xml_children(ss)[[i]], "name") == name) & xml2::xml_attr(xml2::xml_children(ss)[[i]], "name") == name) {
                    sheet <<- xml2::xml_children(ss)[[i]]
                }
            })
@@ -112,7 +112,7 @@ write_ods <- function(x, path, sheet_name = "Sheet1", append = FALSE, update = F
             utils::unzip(path, exdir = tmp)
             contentfile <- file.path(tmp, "content.xml")
             content <- xml2::read_xml(contentfile)
-            spreadsheet <- xml2::xml_children(xml2::xml_children(content)[[3]])[[1]]
+            spreadsheet <- xml2::xml_children(xml2::xml_children(content)[[which(!is.na(xml2::xml_find_first(xml2::xml_children(content),"office:spreadsheet")))]])[[1]]
             sn <- .find_named_sheet(spreadsheet, sheet_name)
             if ((!is.null(sn) & append & !update) | (!is.null(sn) & !update)) {
                 ## Sheet exists so we cannot append
