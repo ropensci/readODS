@@ -63,9 +63,9 @@
     return (sheet)
 }
 
-.silent_add_sheet_node <- function(sheet_name) {
+.silent_add_sheet_node <- function(sheet) {
     suppressWarnings({
-        return(xml2::read_xml(sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="16384" table:default-cell-style-name="ce1"/></table:table>', sheet_name)))
+        return(xml2::read_xml(sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="16384" table:default-cell-style-name="ce1"/></table:table>', sheet)))
     })
 }
 
@@ -75,7 +75,7 @@
 #' 
 #' @param x a data.frame
 #' @param path Path to the ods file to write
-#' @param sheet_name Name of the sheet
+#' @param sheet Name of the sheet
 #' @param row_names logical, TRUE indicates that row names of x are to be included in the sheet
 #' @param col_names logical, TRUE indicates that column names of x are to be included in the sheet
 #' @param append logical, TRUE indicates that x should be appended to the existing file (path) as a new sheet. If a sheet with the same sheet_name exists, an exception is thrown. See update.
@@ -85,7 +85,7 @@
 #' @return the value of \code{path} invisibly.
 #' @author Thomas J. Leeper <thosjleeper@gmail.com>, John Foster <john.x.foster@nab.com.au>, Chung-hong Chan <chainsawtiney@gmail.com>
 #' @export
-write_ods <- function(x, path, sheet_name = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, verbose = FALSE, overwrite = NULL) {
+write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, verbose = FALSE, overwrite = NULL) {
     if (!is.null(overwrite)) {
         warning("overwrite is depreciated. Future versions will always set it to TRUE.")
     } else {
@@ -104,22 +104,22 @@ write_ods <- function(x, path, sheet_name = "Sheet1", append = FALSE, update = F
             contentfile <- file.path(tmp, "content.xml")
             content <- xml2::read_xml(contentfile)
             spreadsheet <- xml2::xml_children(xml2::xml_children(content)[[3]])[[1]]
-            sheet <- xml2::xml_children(spreadsheet)[[2]]
-            xml2::xml_set_attr(sheet, "table:name", sheet_name)
-            .convert_df_to_sheet(x, sheet, row_names, col_names)
+            target_sheet <- xml2::xml_children(spreadsheet)[[2]]
+            xml2::xml_set_attr(target_sheet, "table:name", sheet)
+            .convert_df_to_sheet(x, target_sheet, row_names, col_names)
         } else {
             ## The file must be there.
             utils::unzip(path, exdir = tmp)
             contentfile <- file.path(tmp, "content.xml")
             content <- xml2::read_xml(contentfile)
             spreadsheet <- xml2::xml_children(xml2::xml_children(content)[[which(!is.na(xml2::xml_find_first(xml2::xml_children(content),"office:spreadsheet")))]])[[1]]
-            sn <- .find_named_sheet(spreadsheet, sheet_name)
+            sn <- .find_named_sheet(spreadsheet, sheet)
             if ((!is.null(sn) & append & !update) | (!is.null(sn) & !update)) {
                 ## Sheet exists so we cannot append
-                stop(paste0("Sheet ", sheet_name, " exists. Set update to TRUE is you want to update this sheet."))
+                stop(paste0("Sheet ", sheet, " exists. Set update to TRUE is you want to update this sheet."))
             }
             if (is.null(sn) & update) {
-                stop(paste0("Sheet ", sheet_name, " does not exist. Cannot update."))
+                stop(paste0("Sheet ", sheet, " does not exist. Cannot update."))
             }
             if (!is.null(sn) & update) {
                 ## clean up the sheet
@@ -127,7 +127,7 @@ write_ods <- function(x, path, sheet_name = "Sheet1", append = FALSE, update = F
             }
             if (is.null(sn) & append) {
                 ## Add a new sheet
-                sn <- xml2::xml_add_child(spreadsheet, .silent_add_sheet_node(sheet_name))
+                sn <- xml2::xml_add_child(spreadsheet, .silent_add_sheet_node(sheet))
             }
             .convert_df_to_sheet(x, sn, row_names, col_names)        
         }

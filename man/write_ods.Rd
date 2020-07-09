@@ -7,7 +7,7 @@
 write_ods(
   x,
   path,
-  sheet_name = "Sheet1",
+  sheet = "Sheet1",
   append = FALSE,
   update = FALSE,
   row_names = FALSE,
@@ -21,7 +21,7 @@ write_ods(
 
 \item{path}{Path to the ods file to write}
 
-\item{sheet_name}{Name of the sheet}
+\item{sheet}{Name of the sheet}
 
 \item{append}{logical, TRUE indicates that x should be appended to the existing file (path) as a new sheet. If a sheet with the same sheet_name exists, an exception is thrown. See update.}
 
