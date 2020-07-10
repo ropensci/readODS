@@ -3,6 +3,7 @@
 export(getNrOfSheetsInODS)
 export(get_num_sheets_in_ods)
 export(list_ods_sheets)
+export(ods_sheets)
 export(read.ods)
 export(read_ods)
 export(write_ods)

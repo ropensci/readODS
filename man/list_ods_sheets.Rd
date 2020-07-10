@@ -2,9 +2,12 @@
 % Please edit documentation in R/readODS.R
 \name{list_ods_sheets}
 \alias{list_ods_sheets}
+\alias{ods_sheets}
 \title{List all sheets in an ods file.}
 \usage{
 list_ods_sheets(path)
+
+ods_sheets(path)
 }
 \arguments{
 \item{path}{Path to the ods file}

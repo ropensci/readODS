@@ -309,3 +309,10 @@ list_ods_sheets <- function(path) {
     res <- .parse_ods_to_sheets(path)
     return(sapply(res[[1]], function(x) xml2::xml_attr(x, "table:name", res[[2]])))
 }
+
+#' @rdname list_ods_sheets
+#' @export
+ods_sheets <- function(path) {
+    warning("ods_sheets will be depreciated in the next version. Use list_ods_sheets instead.")
+    list_ods_sheets(path)
+}

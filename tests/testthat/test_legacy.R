@@ -12,6 +12,11 @@ s_read.ods <- function(...) {
     })
 }
 
+test_that("ods_sheets", {
+    file="../testdata/test.ods"
+    expect_warning(ods_sheets(file))
+})
+
 test_that("getNrOfSheetsInODS", {
     file="../testdata/test.ods"
     expect_warning(getNrOfSheetsInODS(file))
