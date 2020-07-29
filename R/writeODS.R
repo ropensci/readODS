@@ -81,13 +81,13 @@
 #' @param append logical, TRUE indicates that x should be appended to the existing file (path) as a new sheet. If a sheet with the same sheet_name exists, an exception is thrown. See update.
 #' @param update logical, TRUE indicates that the sheet with sheet_name in the existing file (path) should be updated with the content of x. If a sheet with sheet_name does not exist, an exception is thrown.
 #' @param verbose logical, if messages should be displayed
-#' @param overwrite logical, depreciated.
+#' @param overwrite logical, deprecated.
 #' @return the value of \code{path} invisibly.
 #' @author Thomas J. Leeper <thosjleeper@gmail.com>, John Foster <john.x.foster@nab.com.au>, Chung-hong Chan <chainsawtiney@gmail.com>
 #' @export
 write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, verbose = FALSE, overwrite = NULL) {
     if (!is.null(overwrite)) {
-        warning("overwrite is depreciated. Future versions will always set it to TRUE.")
+        warning("overwrite is deprecated. Future versions will always set it to TRUE.")
     } else {
         overwrite <- TRUE
     }

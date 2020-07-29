@@ -267,7 +267,7 @@ read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL,
 #' @rdname read_ods
 #' @export
 read.ods <- function(file = NULL, sheet = NULL, formulaAsFormula = FALSE) {
-    warning("read.ods will be depreciated in the next version. Use read_ods instead.")
+    warning("read.ods will be deprecated in the next version. Use read_ods instead.")
     if (!is.null(sheet)) {
         return(read_ods(path = file, sheet = sheet, col_names = FALSE, formula_as_formula = formulaAsFormula, skip = 0, na = NULL, col_types = NA))
     } else {
@@ -294,7 +294,7 @@ get_num_sheets_in_ods <- function(path) {
 #' @rdname get_num_sheets_in_ods
 #' @export
 getNrOfSheetsInODS <- function(path) {
-    warning("getNrOfSheetsInODS will be depreciated in the next version. Use get_num_sheets_in_ods instead.")
+    warning("getNrOfSheetsInODS will be deprecated in the next version. Use get_num_sheets_in_ods instead.")
     return(get_num_sheets_in_ods(path))
 }
 
@@ -313,6 +313,6 @@ list_ods_sheets <- function(path) {
 #' @rdname list_ods_sheets
 #' @export
 ods_sheets <- function(path) {
-    warning("ods_sheets will be depreciated in the next version. Use list_ods_sheets instead.")
+    warning("ods_sheets will be deprecated in the next version. Use list_ods_sheets instead.")
     list_ods_sheets(path)
 }

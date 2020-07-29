@@ -33,7 +33,7 @@ write_ods(
 
 \item{verbose}{logical, if messages should be displayed}
 
-\item{overwrite}{logical, depreciated.}
+\item{overwrite}{logical, deprecated.}
 }
 \value{
 the value of \code{path} invisibly.
