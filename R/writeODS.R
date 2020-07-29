@@ -83,7 +83,7 @@
 #' @param verbose logical, if messages should be displayed
 #' @param overwrite logical, deprecated.
 #' @return the value of \code{path} invisibly.
-#' @author Thomas J. Leeper <thosjleeper@gmail.com>, John Foster <john.x.foster@nab.com.au>, Chung-hong Chan <chainsawtiney@gmail.com>
+#' @author Thomas J. Leeper <thosjleeper@@gmail.com>, John Foster <john.x.foster@@nab.com.au>, Chung-hong Chan <chainsawtiney@@gmail.com>
 #' @export
 write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, verbose = FALSE, overwrite = NULL) {
     if (!is.null(overwrite)) {

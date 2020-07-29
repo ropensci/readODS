@@ -236,7 +236,7 @@
 #' @param verbose logical, if messages should be displayed.
 #' @return A data frame (\code{data.frame}) containing a representation of data in the ods file.
 #' @note Currently, ods files that linked to external data source cannot be read. Merged cells cannot be parsed correctly.
-#' @author Chung-hong Chan <chainsawtiney@gmail.com>, Gerrit-Jan Schutten <phonixor@gmail.com>
+#' @author Chung-hong Chan <chainsawtiney@@gmail.com>, Gerrit-Jan Schutten <phonixor@@gmail.com>
 #' @export
 read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL, na = "", skip = 0, formula_as_formula = FALSE, range = NULL,
                      row_names = FALSE, strings_as_factors = FALSE, verbose = FALSE) {
@@ -282,7 +282,7 @@ read.ods <- function(file = NULL, sheet = NULL, formulaAsFormula = FALSE) {
 #'
 #' @param path path to the ods file
 #' @return Number of sheets
-#' @author Chung-hong Chan <chainsawtiney@gmail.com>, Gerrit-Jan Schutten <phonixor@gmail.com>
+#' @author Chung-hong Chan <chainsawtiney@@gmail.com>, Gerrit-Jan Schutten <phonixor@@gmail.com>
 #' @seealso
 #' use \code{\link{read_ods}} to read the data
 #' @export
