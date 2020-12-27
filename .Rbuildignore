@@ -8,3 +8,5 @@ notes.R
 ^codecov\.yml$
 ^starwars\.ods$
 ^CRAN-RELEASE$
+^doc$
+^Meta$

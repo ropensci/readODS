@@ -22,7 +22,7 @@ library(readODS)
 
 You probably only need to use two functions from this package: `read_ods` and `write_ods`.
 
-Write the data PlantGrowth as a new file `plant.ods`
+Write the data PlantGrowth (from the built-in `datasets` package) as a new file `plant.ods` in the current working directory of the user's session.
 
 ```{r write_ods1}
 write_ods(PlantGrowth, "plant.ods")
@@ -82,6 +82,14 @@ You cannot update a missing sheet.
 
 ```{r update_error, error = TRUE}
 write_ods(iris, "plant.ods", sheet = "iris", update = TRUE)
+```
+
+## Misc.
+
+Use the function `list_ods_sheets()` to list out all sheets in an ODS file.
+
+```{r, list_ods_sheets}
+list_ods_sheets("plant.ods")
 ```
 
 ```{r, echo = FALSE, message = FALSE}
