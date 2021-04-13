@@ -59,28 +59,28 @@ Reading from the 2nd sheet
 
 ``` r
 read_ods("starwars.ods", sheet = 2)
-#>                  Name height mass    hair_color skin_color eye_color
-#> 1      Luke Skywalker    172   77         blond       fair      blue
-#> 2               C-3PO    202  136          none      white    yellow
-#> 3               R2-D2    150   49         brown      light     brown
-#> 4         Darth Vader    178  120   brown, grey      light      blue
-#> 5         Leia Organa    165   75         brown      light      blue
-#> 6           Owen Lars    183   84         black      light     brown
-#> 7  Beru Whitesun lars    182   77 auburn, white       fair blue-gray
-#> 8               R5-D4    188   84         blond       fair      blue
-#> 9   Biggs Darklighter    228  112         brown    unknown      blue
-#> 10     Obi-Wan Kenobi    180   80         brown       fair     brown
-#>    birth_year gender
-#> 1        19.0   male
-#> 2        41.9   male
-#> 3        19.0 female
-#> 4        52.0   male
-#> 5        47.0 female
-#> 6        24.0   male
-#> 7        57.0   male
-#> 8        41.9   male
-#> 9       200.0   male
-#> 10       29.0   male
+#>                  Name height mass    hair_color skin_color eye_color birth_year
+#> 1      Luke Skywalker    172   77         blond       fair      blue       19.0
+#> 2               C-3PO    202  136          none      white    yellow       41.9
+#> 3               R2-D2    150   49         brown      light     brown       19.0
+#> 4         Darth Vader    178  120   brown, grey      light      blue       52.0
+#> 5         Leia Organa    165   75         brown      light      blue       47.0
+#> 6           Owen Lars    183   84         black      light     brown       24.0
+#> 7  Beru Whitesun lars    182   77 auburn, white       fair blue-gray       57.0
+#> 8               R5-D4    188   84         blond       fair      blue       41.9
+#> 9   Biggs Darklighter    228  112         brown    unknown      blue      200.0
+#> 10     Obi-Wan Kenobi    180   80         brown       fair     brown       29.0
+#>    gender
+#> 1    male
+#> 2    male
+#> 3  female
+#> 4    male
+#> 5  female
+#> 6    male
+#> 7    male
+#> 8    male
+#> 9    male
+#> 10   male
 ```
 
 Reading from a specific range
@@ -179,7 +179,7 @@ Unported License](https://creativecommons.org/licenses/by-sa/3.0/).
 The creator of this package is Gerrit-Jan Schutten. The current
 maintainer is Chung-hong Chan. This package benefits from contributions
 by Thomas J. Leeper, John Foster, Sergio Oller, Jim Hester, Stephen
-Watts, Arthur Katossky, and Stas Malavin.
+Watts, Arthur Katossky, Stas Malavin, and Duncan Garmonsway.
 
 This package emulates the behaviors of `readxl::read_xlsx`,
 `writexl::write_xlsx` and `xlsx::write.xlsx`.
