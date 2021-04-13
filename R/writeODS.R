@@ -23,8 +23,9 @@
             
             # add value to row
             thiscell <- xml2::xml_add_child(thisrow, "table:table-cell")
-            xml2::xml_attr(thiscell, "office:value-type") <- if (i == 0 || j == 0) "string" else types[j]
-            xml2::xml_attr(thiscell, "office:value") <- value
+            is_string <- i == 0 || j == 0
+            xml2::xml_attr(thiscell, "office:value-type") <- if (is_string) "string" else types[j]
+            if (!is_string) xml2::xml_attr(thiscell, "office:value") <- value
             xml2::xml_attr(thiscell, "table:style-name") <- "ce1"
             thistext <- xml2::xml_add_child(thiscell, "text:p")
             xml2::xml_text(thistext) <- value
