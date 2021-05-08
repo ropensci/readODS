@@ -77,11 +77,11 @@
 #' @param x a data.frame
 #' @param path Path to the ods file to write
 #' @param sheet Name of the sheet
-#' @param row_names logical, TRUE indicates that row names of x are to be included in the sheet
-#' @param col_names logical, TRUE indicates that column names of x are to be included in the sheet
-#' @param append logical, TRUE indicates that x should be appended to the existing file (path) as a new sheet. If a sheet with the same sheet_name exists, an exception is thrown. See update.
-#' @param update logical, TRUE indicates that the sheet with sheet_name in the existing file (path) should be updated with the content of x. If a sheet with sheet_name does not exist, an exception is thrown.
-#' @param verbose logical, if messages should be displayed
+#' @param append logical, TRUE indicates that x should be appended to the existing file (path) as a new sheet. If a sheet with the same sheet_name exists, an exception is thrown. See update. Default is FALSE.
+#' @param update logical, TRUE indicates that the sheet with sheet_name in the existing file (path) should be updated with the content of x. If a sheet with sheet_name does not exist, an exception is thrown. Default is FALSE.
+#' @param row_names logical, TRUE indicates that row names of x are to be included in the sheet. Default is FALSE.
+#' @param col_names logical, TRUE indicates that column names of x are to be included in the sheet. Default is FALSE.
+#' @param verbose logical, if messages should be displayed. Default is FALSE.
 #' @param overwrite logical, deprecated.
 #' @return the value of \code{path} invisibly.
 #' @author Thomas J. Leeper <thosjleeper@@gmail.com>, John Foster <john.x.foster@@nab.com.au>, Chung-hong Chan <chainsawtiney@@gmail.com>

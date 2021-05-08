@@ -223,17 +223,17 @@
 #' @aliases read_ods read.ods
 #' @param path path to the ods file.
 #' @param sheet sheet to read. Either a string (the sheet name), or an integer sheet number. The default is 1.
-#' @param col_names indicating whether the file contains the names of the variables as its first line.
+#' @param col_names logical, indicating whether the file contains the names of the variables as its first line. Default is TRUE.
 #' @param col_types Either NULL to guess from the spreadsheet or refer to readr::type_convert to specify cols specification. NA will return a data frame with all columns being "characters".
 #' @param na Character vector of strings to use for missing values. By default read_ods converts blank cells to missing data.
 #' @param skip the number of lines of the data file to skip before beginning to read data.
-#' @param formula_as_formula a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..
+#' @param formula_as_formula logical, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8".. . Default is FALSE.
 #' @param range selection of rectangle using Excel-like cell range, such as \code{range = "D12:F15"} or \code{range = "R1C12:R6C15"}. Cell range processing is handled by the \code{\link[=cellranger]{cellranger}} package.
 #' @param file for read.ods only, path to the ods file.
 #' @param formulaAsFormula for read.ods only, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..
-#' @param row_names indicating whether the file contains the names of the rows as its first column
-#' @param strings_as_factors logical, if character columns to be converted to factors.
-#' @param verbose logical, if messages should be displayed.
+#' @param row_names logical, indicating whether the file contains the names of the rows as its first column. Default is FALSE.
+#' @param strings_as_factors logical, if character columns to be converted to factors. Default is FALSE.
+#' @param verbose logical, if messages should be displayed. Default is FALSE.
 #' @return A data frame (\code{data.frame}) containing a representation of data in the ods file.
 #' @note Currently, ods files that linked to external data source cannot be read. Merged cells cannot be parsed correctly.
 #' @author Chung-hong Chan <chainsawtiney@@gmail.com>, Gerrit-Jan Schutten <phonixor@@gmail.com>
