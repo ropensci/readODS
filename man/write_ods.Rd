@@ -23,15 +23,15 @@ write_ods(
 
 \item{sheet}{Name of the sheet}
 
-\item{append}{logical, TRUE indicates that x should be appended to the existing file (path) as a new sheet. If a sheet with the same sheet_name exists, an exception is thrown. See update.}
+\item{append}{logical, TRUE indicates that x should be appended to the existing file (path) as a new sheet. If a sheet with the same sheet_name exists, an exception is thrown. See update. Default is FALSE.}
 
-\item{update}{logical, TRUE indicates that the sheet with sheet_name in the existing file (path) should be updated with the content of x. If a sheet with sheet_name does not exist, an exception is thrown.}
+\item{update}{logical, TRUE indicates that the sheet with sheet_name in the existing file (path) should be updated with the content of x. If a sheet with sheet_name does not exist, an exception is thrown. Default is FALSE.}
 
-\item{row_names}{logical, TRUE indicates that row names of x are to be included in the sheet}
+\item{row_names}{logical, TRUE indicates that row names of x are to be included in the sheet. Default is FALSE.}
 
-\item{col_names}{logical, TRUE indicates that column names of x are to be included in the sheet}
+\item{col_names}{logical, TRUE indicates that column names of x are to be included in the sheet. Default is FALSE.}
 
-\item{verbose}{logical, if messages should be displayed}
+\item{verbose}{logical, if messages should be displayed. Default is FALSE.}
 
 \item{overwrite}{logical, deprecated.}
 }
