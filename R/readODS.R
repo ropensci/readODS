@@ -37,6 +37,11 @@
   return(return_value)
 }
 
+.unzip_ods <- function(file) {
+    exdir <- tempdir()
+    unzip(file, files = "content.xml", exdir = exdir)
+    return(file.path(exdir, "content.xml"))
+}
 
 ### return a parsed XML tree from an ODS file
 .parse_ods_file <- function(file = NULL){
@@ -46,8 +51,9 @@
     if(!file.exists(file)) {
         stop("file does not exist")
     }
-    con <- unz(file,filename="content.xml")
-    parsed_ods <- xml2::read_xml(con)
+    ## con <- unz(file,filename="content.xml")
+    con <- .unzip_ods(file)
+    parsed_ods <- xml2::read_xml(con, options = c("NOBLANKS", "HUGE"))
     return(parsed_ods)
 }
 
