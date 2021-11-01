@@ -18,8 +18,8 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/readODS)](https://CRAN.R-project.org/package=readODS)
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
-[![Travis build status](https://travis-ci.org/chainsawriot/readODS.svg?branch=master)](https://travis-ci.org/chainsawriot/readODS)
 [![Codecov test coverage](https://codecov.io/gh/chainsawriot/readODS/branch/master/graph/badge.svg)](https://codecov.io/gh/chainsawriot/readODS?branch=master)
+[![R-CMD-check](https://github.com/chainsawriot/readODS/workflows/R-CMD-check/badge.svg)](https://github.com/chainsawriot/readODS/actions)
 <!-- badges: end -->
 
 The only goal of readODS is to enable R to read and write OpenDocument Spreadsheet (ODS) files.

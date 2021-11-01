@@ -10,3 +10,4 @@ notes.R
 ^CRAN-RELEASE$
 ^doc$
 ^Meta$
+^\.github$
