@@ -78,8 +78,30 @@
     return(length(xml2::xml_find_all(cell, ".//text:p", ods_ns)) != 0)
 }
 
+.parse_textp <- function(cell, ods_ns) {
+    textp <- xml2::xml_find_all(cell, "./text:p", ods_ns)
+    sapply(textp, .parse_p, ods_ns = ods_ns)    
+}
+
+### this function parses cell but with consideration of <text:s>
+### make it extensible through here
+.parse_p <- function(ppart, ods_ns) {
+    p_content <- xml2::xml_contents(ppart)
+    output <- ""
+    for (x in p_content) {
+        if (xml2::xml_name(x, ods_ns) == "text:s") {
+            rep_space <- as.numeric(xml2::xml_attr(x, "text:c", ns = ods_ns))
+            output <- paste0(output, paste0(rep(" ", rep_space), collapse = ""))
+        } else {
+            output <- paste0(output, xml2::xml_text(x))
+        }
+    }
+    return(output)
+}
+
+
 .parse_single_cell <- function(cell, ods_ns, formula_as_formula = FALSE, use_office_value = TRUE) {
-    cell_value <- paste0(xml2::xml_text(xml2::xml_find_all(cell, "./text:p", ods_ns)), collapse = "\n") ## handle multiline values, #23
+    cell_value <- paste0(.parse_textp(cell, ods_ns), collapse = "\n") ## handle multiline values, #23
     if (xml2::xml_has_attr(cell, "office:value-type", ods_ns) &&
         xml2::xml_attr(cell, "office:value-type", ods_ns) %in% c("float", "currency", "percentage")) {
       cell_value <- xml2::xml_attr(cell, "office:value", ods_ns)
