@@ -17,3 +17,13 @@ test_that('read_ods reads decimals properly with comma', {
   expect_equal(df, df_expected)
 })
 
+test_that("eating space issue #74", {
+    df <- read_ods("../testdata/eating_spaces.ods", sheet = 2, col_names = FALSE)
+    expect_equal(df[1,1], "A   B")
+    df <- read_ods("../testdata/eating_spaces.ods", sheet = 3, col_names = FALSE)
+    expect_equal(df[1,1], "A    B C")
+    df <- read_ods("../testdata/eating_spaces.ods", sheet = 4, col_names = FALSE)
+    expect_equal(df[1,1], "A     B   C")
+    df <- read_ods("../testdata/eating_spaces.ods", sheet = 5, col_names = FALSE)
+    expect_equal(df[1,1], "A     B\nC")
+})
