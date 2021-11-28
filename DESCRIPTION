@@ -2,11 +2,11 @@ Package: readODS
 Type: Package
 Title: Read and Write ODS Files
 Version: 1.7.2
-Date: 2021-11-27
-Author: Gerrit-Jan Schutten, Chung-hong Chan, Thomas J. Leeper, John Foster,  and other contributors
-Maintainer: Chung-hong Chan <chainsawtiney@gmail.com>
+Authors@R: c(person("Gerrit-Jan", "Schutten", role = c("aut")), person("Chung-hong", "Chan", role = c("aut", "cre"), email = "chainsawtiney@gmail.com", comment = c(ORCID = "0000-0002-6232-7530")), person("Thomas J.", "Leeper", role = c("aut"), email = "thosjleeper@gmail.com", comment = c(ORCID = "0000-0003-4097-6326")), person("John", "Foster", role = c("ctb")), person("Sergio", "Oller", role = c("ctb")), person("Jim", "Hester", role = c("ctb"), email = "jim.hester@rstudio.com", comment = c(ORCID = "0000-0002-2739-7082")), person("Stephen", "Watts", role = c("ctb")), person("Arthur", "Katossky", role = c("ctb")), person("Stas", "Malavin", role = c("ctb")), person("Duncan", "Garmonsway", role = c("ctb")), person("Mehrad", "Mahmoudian", role = c("ctb")))
 Contact: https://github.com/chainsawriot/readODS/
 Description: Import ODS (OpenDocument Spreadsheet) into R as a data frame. Also support writing data frame into ODS file.
+URL: https://github.com/chainsawriot/readODS
+BugReports: https://github.com/chainsawriot/readODS/issues
 Imports:
     xml2 (>= 1.3.2),
     cellranger,
