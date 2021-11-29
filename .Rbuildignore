@@ -4,6 +4,7 @@ notes.R
 .~lock*
 .DS_Store
 ^README\.Rmd$
+^README\.html$
 ^\.travis\.yml$
 ^codecov\.yml$
 ^starwars\.ods$

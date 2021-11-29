@@ -1,3 +1,4 @@
+#' @importFrom utils unzip
 
 ## ' @keywords internal
 ## ' @description

@@ -6,6 +6,36 @@
 \alias{readODS-package}
 \title{readODS: Read and Write ODS Files}
 \description{
-Import ODS (OpenDocument Spreadsheet) into R as a data frame. Also support writing data frame into ODS file.
+Read ODS (OpenDocument Spreadsheet) into R as data frame. Also support writing data frame into ODS file.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/chainsawriot/readODS}
+  \item Report bugs at \url{https://github.com/chainsawriot/readODS/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Chung-hong Chan \email{chainsawtiney@gmail.com} (\href{https://orcid.org/0000-0002-6232-7530}{ORCID})
+
+Authors:
+\itemize{
+  \item Gerrit-Jan Schutten
+  \item Thomas J. Leeper \email{thosjleeper@gmail.com} (\href{https://orcid.org/0000-0003-4097-6326}{ORCID})
+}
+
+Other contributors:
+\itemize{
+  \item John Foster [contributor]
+  \item Sergio Oller [contributor]
+  \item Jim Hester \email{jim.hester@rstudio.com} (\href{https://orcid.org/0000-0002-2739-7082}{ORCID}) [contributor]
+  \item Stephen Watts [contributor]
+  \item Arthur Katossky [contributor]
+  \item Stas Malavin [contributor]
+  \item Duncan Garmonsway [contributor]
+  \item Mehrad Mahmoudian [contributor]
+}
+
 }
 \keyword{internal}
