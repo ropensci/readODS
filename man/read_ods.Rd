@@ -6,7 +6,7 @@
 \title{Read Data From ODS File}
 \usage{
 read_ods(
-  path = NULL,
+  path,
   sheet = 1,
   col_names = TRUE,
   col_types = NULL,

@@ -277,9 +277,11 @@
 #' read_ods("starwars.ods", sheet = 2, range = "A1:C11")
 #' }
 #' @export
-read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL, na = "", skip = 0, formula_as_formula = FALSE, range = NULL,
+read_ods <- function(path, sheet = 1, col_names = TRUE, col_types = NULL, na = "", skip = 0, formula_as_formula = FALSE, range = NULL,
                      row_names = FALSE, strings_as_factors = FALSE, verbose = FALSE) {
-  
+    if (missing(path)) {
+        stop("No file path was provided for the 'path' argument. Please provide a path to a file to import.")
+    }
     res <- .parse_ods_to_sheets(path)
     ods_ns <- res[[2]]
     sheets <- res[[1]]

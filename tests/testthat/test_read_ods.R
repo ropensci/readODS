@@ -1,3 +1,7 @@
+test_that("No path", {
+    expect_error(read_ods(), "No file path was provided for the")
+})
+
 test_that("Single column ODS", {
     single_col <- read_ods('../testdata/sum.ods', sheet = 1)
     expect_equal(ncol(single_col),1)
