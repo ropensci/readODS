@@ -165,6 +165,23 @@ read_ods("mtcars.ods", sheet = "plant", range = "A1:B10")
 #> 9   5.33  ctrl
 ```
 
+### About the speed and file size
+
+This package is written entirely in R. Although the efficiency has been
+improved, please don’t expect the heavily optimized performance of
+[readxl](https://readxl.tidyverse.org/),
+[readr](https://readr.tidyverse.org/) and data.table’s
+[fread](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html).
+
+Also, this package can’t handle ODS files larger than “medium size”. See
+[issue \#71](https://github.com/chainsawriot/readODS/issues/71).
+
+If you need to read and write large ODS files efficiently, the [headless
+interface of
+LibreOffice](https://help.libreoffice.org/Common/Starting_the_Software_With_Parameters)
+is recommended. See [issue
+\#49](https://github.com/chainsawriot/readODS/issues/49) for an example.
+
 ### Misc
 
 The logo of readODS is a remix of LibreOffice Calc v6.1 icon created by
