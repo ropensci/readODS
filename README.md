@@ -171,7 +171,7 @@ This package is written entirely in R. Although the efficiency has been
 improved, please don’t expect the heavily optimized performance of
 [readxl](https://readxl.tidyverse.org/),
 [readr](https://readr.tidyverse.org/) and data.table’s
-[fread](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html).
+[fread](https://cran.r-project.org/package=data.table).
 
 Also, this package can’t handle ODS files larger than “medium size”. See
 [issue \#71](https://github.com/chainsawriot/readODS/issues/71).
