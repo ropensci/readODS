@@ -47,10 +47,10 @@
 ### return a parsed XML tree from an ODS file
 .parse_ods_file <- function(file = NULL){
     if(is.null(file)) {
-        stop("no filename given")
+        stop("no filename given", call. = FALSE)
     }
     if(!file.exists(file)) {
-        stop("file does not exist")
+        stop("file does not exist", call. = FALSE)
     }
     ## con <- unz(file,filename="content.xml")
     con <- .unzip_ods(file)
@@ -99,7 +99,6 @@
     }
     return(output)
 }
-
 
 .parse_single_cell <- function(cell, ods_ns, formula_as_formula = FALSE, use_office_value = TRUE) {
     cell_value <- paste0(.parse_textp(cell, ods_ns), collapse = "\n") ## handle multiline values, #23
@@ -207,7 +206,7 @@
 
 .select_sheet <- function(sheets, ods_ns, which_sheet) {
     if (is.numeric(which_sheet) && which_sheet > length(sheets)) {
-        stop("sheet larger than number of sheets in the ods file.")
+        stop("sheet larger than number of sheets in the ods file.", call. = FALSE)
     }
     if (is.character(which_sheet)) {
         sheet_names <- sapply(sheets, function(x) xml2::xml_attr(x, "table:name", ods_ns))
@@ -297,7 +296,7 @@ read_ods <- function(path, sheet = 1, col_names = TRUE, col_types = NULL, na = "
     } else if (length(col_types) == 1 & is.na(col_types[1])) {
         res <- parsed_df
     } else {
-        stop("Unknown col_types. Can either be a class col_spec, NULL or NA.")
+        stop("Unknown col_types. Can either be a class col_spec, NULL or NA.", call. = FALSE)
     }
     if (strings_as_factors) {
         res <- .convert_strings_to_factors(res)

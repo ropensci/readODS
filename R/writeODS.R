@@ -94,7 +94,7 @@ write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE,
         overwrite <- TRUE
     }
     if (!is.data.frame(x)) {
-        stop("x must be a data.frame.")
+        stop("x must be a data.frame.", call. = FALSE)
     }
     ##setup temp directory
     ## one can't just use tempdir() because it is the same in the same session
@@ -120,10 +120,10 @@ write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE,
             sn <- .find_named_sheet(spreadsheet, sheet)
             if ((!is.null(sn) & append & !update) | (!is.null(sn) & !update)) {
                 ## Sheet exists so we cannot append
-                stop(paste0("Sheet ", sheet, " exists. Set update to TRUE is you want to update this sheet."))
+                stop(paste0("Sheet ", sheet, " exists. Set update to TRUE is you want to update this sheet."), call. = FALSE)
             }
             if (is.null(sn) & update) {
-                stop(paste0("Sheet ", sheet, " does not exist. Cannot update."))
+                stop(paste0("Sheet ", sheet, " does not exist. Cannot update."), call. = FALSE)
             }
             if (!is.null(sn) & update) {
                 ## clean up the sheet
