@@ -6,7 +6,7 @@ tmp <- tempfile(fileext=".ods")
 cols_to_letters <- function(n) {
     stopifnot(n <= 26)
     
-    seq <- 1:n
+    seq <- seq_len(n)
     sapply(seq, function(n) LETTERS[n])
 }
 
@@ -30,8 +30,8 @@ test_that("Write Excel sheets", {
     expect_silent(write_ods(starwars10, tmp, "SWR", row_names=TRUE, col_names = FALSE, append = TRUE))
     expect_silent(write_ods(starwars10, tmp, "SWC", row_names = FALSE, col_names = TRUE, append = TRUE))
     expect_silent(write_ods(starwars10, tmp, "SWRC", row_names=TRUE, col_names = TRUE, append = TRUE))
-    expect_silent(write_ods(starwars10[1, 1:ncol(starwars10)], tmp, "SW1", row_names=TRUE, col_names = TRUE, append = TRUE))
-    expect_silent(write_ods(starwars10[1:nrow(starwars10), 1, drop=FALSE], tmp, "SW10", row_names=TRUE, col_names = TRUE, append = TRUE))
+    expect_silent(write_ods(starwars10[1, seq_len(ncol(starwars10))], tmp, "SW1", row_names=TRUE, col_names = TRUE, append = TRUE))
+    expect_silent(write_ods(starwars10[seq_len(nrow(starwars10)), 1, drop=FALSE], tmp, "SW10", row_names=TRUE, col_names = TRUE, append = TRUE))
 
     ## SWRC is there
     expect_error(write_ods(starwars10, tmp, "SWRC", row_names=TRUE, col_names = TRUE, append = TRUE))
@@ -65,9 +65,9 @@ test_that("Write Excel sheets", {
 
     df <- read_ods(tmp, "SW1", row_names = TRUE, col_names = TRUE, strings_as_factors = TRUE)
 
-    expect_false(isTRUE(all.equal(starwars10[1, 1:ncol(starwars10)], df))) # factor mismatch
-    expect_true(all((df == starwars10[1, 1:ncol(starwars10)])[1,]))
+    expect_false(isTRUE(all.equal(starwars10[1, seq_len(ncol(starwars10))], df))) # factor mismatch
+    expect_true(all((df == starwars10[1, seq_len(ncol(starwars10))])[1,]))
 
     df <- read_ods(tmp, "SW10", row_names = TRUE, col_names = TRUE, strings_as_factors = TRUE)
-    expect_true(all.equal(starwars10[1:nrow(starwars10), 1, drop=FALSE], df))
+    expect_true(all.equal(starwars10[seq_len(nrow(starwars10)), 1, drop=FALSE], df))
 })

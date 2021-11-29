@@ -49,7 +49,7 @@
 
 .find_named_sheet <- function(ss, name) {
     sheet <- NULL
-    sapply(2:length(xml2::xml_children(ss)),
+    sapply(seq(2, length(xml2::xml_children(ss))),
            function(i) {
                if (!is.na(xml2::xml_attr(xml2::xml_children(ss)[[i]], "name") == name) & xml2::xml_attr(xml2::xml_children(ss)[[i]], "name") == name) {
                    sheet <<- xml2::xml_children(ss)[[i]]
@@ -98,7 +98,7 @@ write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE,
     }
     ##setup temp directory
     ## one can't just use tempdir() because it is the same in the same session
-    tmp <- file.path(tempdir(), sample(1:1000000, 1))
+    tmp <- file.path(tempdir(), sample(seq_len(1000000), 1))
     dir.create(tmp)    
     tryCatch({
         if (!file.exists(path) | (!append & !update)) {

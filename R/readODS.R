@@ -18,7 +18,7 @@
 ## ' 
 .convert_numbers_to_letters <- function(list_of_numbers = NULL) {
   return_value <- NULL
-  for(i in 1:length(list_of_numbers)) {
+  for(i in seq_len(length(list_of_numbers))) {
       remainder <- list_of_numbers[[i]]
       return_letters <- ""
       while(TRUE) {
@@ -146,7 +146,7 @@
                     current_col <- current_col + bump_cell - 1
                 }
                 if (bump_cell > 1 && cell_with_textp) {
-                    for (bump in 1:(bump_cell-1)) {
+                    for (bump in seq_len(bump_cell - 1)) {
                         current_col <- current_col + 1
                         cell_values[[paste0(current_row, ",", current_col)]] <- cell_value
                     }
@@ -166,8 +166,8 @@
     jcol <- ifelse(row_header, 2, 1)
     
     g <- x[irow:nrow(x), jcol:ncol(x), drop=FALSE] # maintain as dataframe for single column
-    rownames(g) <- if (row_header) x[irow:nrow(x), 1] else NULL # dont want character row headers given by 1:nrow(g)
-    colnames(g) <- if (col_header) x[1, jcol:ncol(x)] else .convert_numbers_to_letters(1:ncol(g))
+    rownames(g) <- if (row_header) x[seq(irow, nrow(x)), 1] else NULL # dont want character row headers given by 1:nrow(g)
+    colnames(g) <- if (col_header) x[1, seq(jcol, ncol(x))] else .convert_numbers_to_letters(seq_len(ncol(g)))
     return(g)
 }
 
