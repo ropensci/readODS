@@ -81,7 +81,7 @@
 
 .parse_textp <- function(cell, ods_ns) {
     textp <- xml2::xml_find_all(cell, "./text:p", ods_ns)
-    sapply(textp, .parse_p, ods_ns = ods_ns)    
+    purrr::map_chr(textp, .parse_p, ods_ns = ods_ns)    
 }
 
 ### this function parses cell but with consideration of <text:s>
@@ -177,8 +177,8 @@
         warning("empty sheet, return empty data frame.", call. = FALSE)
         return(data.frame())
     }
-    row_id <- as.numeric(sapply(strsplit(cv_keys, ","), function(x) x[1]))
-    col_id <- as.numeric(sapply(strsplit(cv_keys, ","), function(x) x[2]))
+    row_id <- purrr::map_dbl(strsplit(cv_keys, ","), ~as.numeric(.[1]))
+    col_id <- purrr::map_dbl(strsplit(cv_keys, ","), ~as.numeric(.[2]))
     res <- data.frame(matrix(data = "", nrow = max(row_id) ,ncol= max(col_id)), stringsAsFactors = FALSE)
     if (is.null(na)) { 
         for(key in cv_keys){
@@ -208,7 +208,7 @@
         stop("sheet larger than number of sheets in the ods file.", call. = FALSE)
     }
     if (is.character(which_sheet)) {
-        sheet_names <- sapply(sheets, function(x) xml2::xml_attr(x, "table:name", ods_ns))
+        sheet_names <- purrr::map_chr(sheets, function(x) xml2::xml_attr(x, "table:name", ods_ns))
         is_in_sheet_names <- stringi::stri_cmp(which_sheet, sheet_names)==0
         if (any(is_in_sheet_names)) {
             which_sheet <- which(is_in_sheet_names)
@@ -226,7 +226,7 @@
 }
 
 .convert_strings_to_factors <- function(df) {
-    i <- sapply(df, is.character)
+    i <- purrr::map_lgl(df, is.character)
     df[i] <- lapply(df[i], as.factor)
     return (df)
 }
@@ -346,7 +346,7 @@ getNrOfSheetsInODS <- function(path) {
 #' @export
 list_ods_sheets <- function(path) {
     res <- .parse_ods_to_sheets(path)
-    return(sapply(res[[1]], function(x) xml2::xml_attr(x, "table:name", res[[2]])))
+    return(purrr::map_chr(res[[1]], function(x) xml2::xml_attr(x, "table:name", res[[2]])))
 }
 
 #' @rdname list_ods_sheets
