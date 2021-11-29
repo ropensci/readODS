@@ -85,6 +85,13 @@
 #' @param overwrite logical, deprecated.
 #' @return An ODS file written to the file path location specified by the user. The value of \code{path} is also returned invisibly.
 #' @author Thomas J. Leeper <thosjleeper@@gmail.com>, John Foster <john.x.foster@@nab.com.au>, Chung-hong Chan <chainsawtiney@@gmail.com>
+#' @examples
+#' \dontrun{
+#' # preserve the row names
+#' write_ods(mtcars, "mtcars.ods", row_names = TRUE)
+#' # append a sheet to an existing file
+#' write_ods(PlantGrowth, "mtcars.ods", append = TRUE, sheet = "plant")
+#' }
 #' @export
 write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, verbose = FALSE, overwrite = NULL) {
     if (!is.null(overwrite)) {

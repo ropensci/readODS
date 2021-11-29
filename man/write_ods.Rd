@@ -41,6 +41,14 @@ An ODS file written to the file path location specified by the user. The value o
 \description{
 Function to write a single data.frame to an ods file.
 }
+\examples{
+\dontrun{
+# preserve the row names
+write_ods(mtcars, "mtcars.ods", row_names = TRUE)
+# append a sheet to an existing file
+write_ods(PlantGrowth, "mtcars.ods", append = TRUE, sheet = "plant")
+}
+}
 \author{
 Thomas J. Leeper \href{mailto:thosjleeper@gmail.com}{thosjleeper@gmail.com}, John Foster \href{mailto:john.x.foster@nab.com.au}{john.x.foster@nab.com.au}, Chung-hong Chan \href{mailto:chainsawtiney@gmail.com}{chainsawtiney@gmail.com}
 }

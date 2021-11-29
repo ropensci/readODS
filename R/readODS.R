@@ -267,6 +267,15 @@
 #' @return A data frame (\code{data.frame}) containing a representation of data in the ods file.
 #' @note Currently, ods files that linked to external data source cannot be read. Merged cells cannot be parsed correctly.
 #' @author Chung-hong Chan <chainsawtiney@@gmail.com>, Gerrit-Jan Schutten <phonixor@@gmail.com>
+#' @examples
+#' \dontrun{
+#' # Read a file
+#' read_ods("starwars.ods")
+#' # Read a specific sheet, e.g. the 2nd sheet
+#' read_ods("starwars.ods", sheet = 2)
+#' # Read a specific range, e.g. A1:C11
+#' read_ods("starwars.ods", sheet = 2, range = "A1:C11")
+#' }
 #' @export
 read_ods <- function(path = NULL, sheet = 1, col_names = TRUE, col_types = NULL, na = "", skip = 0, formula_as_formula = FALSE, range = NULL,
                      row_names = FALSE, strings_as_factors = FALSE, verbose = FALSE) {

@@ -59,6 +59,16 @@ read.ods always returns a list of data frames with one data frame per sheet. Thi
 \note{
 Currently, ods files that linked to external data source cannot be read. Merged cells cannot be parsed correctly.
 }
+\examples{
+\dontrun{
+# Read a file
+read_ods("starwars.ods")
+# Read a specific sheet, e.g. the 2nd sheet
+read_ods("starwars.ods", sheet = 2)
+# Read a specific range, e.g. A1:C11
+read_ods("starwars.ods", sheet = 2, range = "A1:C11")
+}
+}
 \author{
 Chung-hong Chan \href{mailto:chainsawtiney@gmail.com}{chainsawtiney@gmail.com}, Gerrit-Jan Schutten \href{mailto:phonixor@gmail.com}{phonixor@gmail.com}
 }
