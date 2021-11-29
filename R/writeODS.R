@@ -33,12 +33,6 @@
     }
 }
 
-.make_temp_dir <- function() {
-    tmp <- tempfile()
-    dir.create(tmp)
-    return (tmp)
-}
-
 .zip_tmp_to_path <- function(tmp, path, overwrite, verbose) {
     if (verbose) {
         zip_flags <- "-r9X"
@@ -102,8 +96,10 @@ write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE,
     if (!is.data.frame(x)) {
         stop("x must be a data.frame.")
     }
-    # setup temp directory
-    tmp <- .make_temp_dir()
+    ##setup temp directory
+    ## one can't just use tempdir() because it is the same in the same session
+    tmp <- file.path(tempdir(), sample(1:1000000, 1))
+    dir.create(tmp)    
     tryCatch({
         if (!file.exists(path) | (!append & !update)) {
             ## The file doesn't exist, no need to consider overwrite or append
