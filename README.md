@@ -8,9 +8,9 @@
 [![CRAN
 status](https://www.r-pkg.org/badges/version/readODS)](https://CRAN.R-project.org/package=readODS)
 [![Lifecycle:
-stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![Codecov test
-coverage](https://codecov.io/gh/chainsawriot/readODS/branch/master/graph/badge.svg)](https://codecov.io/gh/chainsawriot/readODS?branch=master)
+coverage](https://codecov.io/gh/chainsawriot/readODS/branch/master/graph/badge.svg)](https://app.codecov.io/gh/chainsawriot/readODS?branch=master)
 [![R-CMD-check](https://github.com/chainsawriot/readODS/workflows/R-CMD-check/badge.svg)](https://github.com/chainsawriot/readODS/actions)
 <!-- badges: end -->
 
