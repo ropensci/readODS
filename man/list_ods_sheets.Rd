@@ -3,7 +3,7 @@
 \name{list_ods_sheets}
 \alias{list_ods_sheets}
 \alias{ods_sheets}
-\title{List all sheets in an ods file.}
+\title{List All Sheets in an ODS File}
 \usage{
 list_ods_sheets(path)
 

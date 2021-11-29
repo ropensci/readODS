@@ -3,7 +3,7 @@
 \name{get_num_sheets_in_ods}
 \alias{get_num_sheets_in_ods}
 \alias{getNrOfSheetsInODS}
-\title{get the number of sheets in an ods file}
+\title{Get the Number of Sheets in an ODS File}
 \usage{
 get_num_sheets_in_ods(path)
 
@@ -16,7 +16,7 @@ getNrOfSheetsInODS(path)
 Number of sheets
 }
 \description{
-get the number of sheets in an ods file
+Get the number of sheets in an ods file
 }
 \seealso{
 use \code{\link{read_ods}} to read the data

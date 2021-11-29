@@ -70,7 +70,7 @@
     })
 }
 
-#' write data to ods file
+#' Write Data to ODS File
 #' @description 
 #' Function to write a single data.frame to an ods file.
 #' 
@@ -83,7 +83,7 @@
 #' @param col_names logical, TRUE indicates that column names of x are to be included in the sheet. Default is FALSE.
 #' @param verbose logical, if messages should be displayed. Default is FALSE.
 #' @param overwrite logical, deprecated.
-#' @return the value of \code{path} invisibly.
+#' @return An ODS file written to the file path location specified by the user. The value of \code{path} is also returned invisibly.
 #' @author Thomas J. Leeper <thosjleeper@@gmail.com>, John Foster <john.x.foster@@nab.com.au>, Chung-hong Chan <chainsawtiney@@gmail.com>
 #' @export
 write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, verbose = FALSE, overwrite = NULL) {

@@ -2,7 +2,7 @@
 % Please edit documentation in R/writeODS.R
 \name{write_ods}
 \alias{write_ods}
-\title{write data to ods file}
+\title{Write Data to ODS File}
 \usage{
 write_ods(
   x,
@@ -36,7 +36,7 @@ write_ods(
 \item{overwrite}{logical, deprecated.}
 }
 \value{
-the value of \code{path} invisibly.
+An ODS file written to the file path location specified by the user. The value of \code{path} is also returned invisibly.
 }
 \description{
 Function to write a single data.frame to an ods file.

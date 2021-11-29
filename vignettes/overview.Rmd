@@ -1,5 +1,5 @@
 ---
-title: "An overview of readODS"
+title: "An Overview of readODS"
 output: rmarkdown::html_vignette
 author:
   - Chung-hong Chan ^[University of Mannheim]

@@ -244,7 +244,7 @@
     return(res)
 }
 
-#' read data from ods files
+#' Read Data From ODS File
 #' 
 #' read_ods is a function to read a single sheet from an ods file and return a data frame.
 #' read.ods always returns a list of data frames with one data frame per sheet. This is a wrapper to read_ods for backward compatibility with previous version of readODS. Please use read_ods if possible.
@@ -253,8 +253,9 @@
 #' @param path path to the ods file.
 #' @param sheet sheet to read. Either a string (the sheet name), or an integer sheet number. The default is 1.
 #' @param col_names logical, indicating whether the file contains the names of the variables as its first line. Default is TRUE.
-#' @param col_types Either NULL to guess from the spreadsheet or refer to readr::type_convert to specify cols specification. NA will return a data frame with all columns being "characters".
-#' @param na Character vector of strings to use for missing values. By default read_ods converts blank cells to missing data.
+#' @param col_types Either NULL to guess from the spreadsheet or refer to [readr::type_convert()] to specify cols specification. NA will return a data frame with all columns being "characters".
+#' @param na Character vector of strings to use for missing values. By default read_ods converts blank cells to missing data. It can also be set to
+#' NULL, so that empty cells are treated as NA.
 #' @param skip the number of lines of the data file to skip before beginning to read data.
 #' @param formula_as_formula logical, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8".. . Default is FALSE.
 #' @param range selection of rectangle using Excel-like cell range, such as \code{range = "D12:F15"} or \code{range = "R1C12:R6C15"}. Cell range processing is handled by the \code{\link[=cellranger]{cellranger}} package.
@@ -305,9 +306,9 @@ read.ods <- function(file = NULL, sheet = NULL, formulaAsFormula = FALSE) {
 }
 
 
-#' get the number of sheets in an ods file
+#' Get the Number of Sheets in an ODS File
 #' 
-#' get the number of sheets in an ods file
+#' Get the number of sheets in an ods file
 #'
 #' @param path path to the ods file
 #' @return Number of sheets
@@ -327,7 +328,7 @@ getNrOfSheetsInODS <- function(path) {
     return(get_num_sheets_in_ods(path))
 }
 
-#' List all sheets in an ods file.
+#' List All Sheets in an ODS File
 #'
 #' List all sheets in an ods file.
 #'

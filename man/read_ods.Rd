@@ -3,7 +3,7 @@
 \name{read_ods}
 \alias{read_ods}
 \alias{read.ods}
-\title{read data from ods files}
+\title{Read Data From ODS File}
 \usage{
 read_ods(
   path = NULL,
@@ -28,9 +28,10 @@ read.ods(file = NULL, sheet = NULL, formulaAsFormula = FALSE)
 
 \item{col_names}{logical, indicating whether the file contains the names of the variables as its first line. Default is TRUE.}
 
-\item{col_types}{Either NULL to guess from the spreadsheet or refer to readr::type_convert to specify cols specification. NA will return a data frame with all columns being "characters".}
+\item{col_types}{Either NULL to guess from the spreadsheet or refer to \code{\link[readr:type_convert]{readr::type_convert()}} to specify cols specification. NA will return a data frame with all columns being "characters".}
 
-\item{na}{Character vector of strings to use for missing values. By default read_ods converts blank cells to missing data.}
+\item{na}{Character vector of strings to use for missing values. By default read_ods converts blank cells to missing data. It can also be set to
+NULL, so that empty cells are treated as NA.}
 
 \item{skip}{the number of lines of the data file to skip before beginning to read data.}
 

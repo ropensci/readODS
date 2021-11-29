@@ -21,13 +21,13 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Gerrit-Jan Schutten
+  \item Gerrit-Jan Schutten \email{phonixor@gmail.com}
   \item Thomas J. Leeper \email{thosjleeper@gmail.com} (\href{https://orcid.org/0000-0003-4097-6326}{ORCID})
 }
 
 Other contributors:
 \itemize{
-  \item John Foster [contributor]
+  \item John Foster \email{john.x.foster@nab.com.au} [contributor]
   \item Sergio Oller [contributor]
   \item Jim Hester \email{jim.hester@rstudio.com} (\href{https://orcid.org/0000-0002-2739-7082}{ORCID}) [contributor]
   \item Stephen Watts [contributor]
