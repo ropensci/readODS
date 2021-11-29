@@ -117,14 +117,13 @@
 
 .parse_rows <- function(parsed_sheet, ods_ns, formula_as_formula, skip = 0) {
     rows <- xml2::xml_find_all(parsed_sheet, ".//table:table-row", ods_ns)
+    cell_values <- new.env(hash = TRUE)
     if (skip > 0 && skip >= length(rows)) {
-        warning("skip value >=  number of rows, ignore the skip setting")
-        skip <- 0
+        return(cell_values)
     }
     if (skip > 0) {
         rows <- rows[(skip + 1):length(rows)]
     }
-    cell_values <- new.env(hash = TRUE)
     current_row <- 0
     for (row in rows) {
         current_row <- current_row + 1
@@ -175,7 +174,7 @@
 .convert_to_data_frame <- function(cell_values, header = FALSE, na = NULL, row_header = FALSE, range) {
     cv_keys <- ls(cell_values)
     if (length(cv_keys) == 0) {
-        warning("empty sheet, return empty data frame.")
+        warning("empty sheet, return empty data frame.", call. = FALSE)
         return(data.frame())
     }
     row_id <- as.numeric(sapply(strsplit(cv_keys, ","), function(x) x[1]))
@@ -255,7 +254,7 @@
 #' @param col_types Either NULL to guess from the spreadsheet or refer to [readr::type_convert()] to specify cols specification. NA will return a data frame with all columns being "characters".
 #' @param na Character vector of strings to use for missing values. By default read_ods converts blank cells to missing data. It can also be set to
 #' NULL, so that empty cells are treated as NA.
-#' @param skip the number of lines of the data file to skip before beginning to read data.
+#' @param skip the number of lines of the data file to skip before beginning to read data. If this parameter is larger than the total number of lines in the ods file, an empty data frame is returned.
 #' @param formula_as_formula logical, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8".. . Default is FALSE.
 #' @param range selection of rectangle using Excel-like cell range, such as \code{range = "D12:F15"} or \code{range = "R1C12:R6C15"}. Cell range processing is handled by the \code{\link[=cellranger]{cellranger}} package.
 #' @param file for read.ods only, path to the ods file.

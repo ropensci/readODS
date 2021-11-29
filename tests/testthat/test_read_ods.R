@@ -31,3 +31,12 @@ test_that("eating space issue #74", {
     df <- read_ods("../testdata/eating_spaces.ods", sheet = 5, col_names = FALSE)
     expect_equal(df[1,1], "A     B\nC")
 })
+
+test_that("skip", {
+    expect_silent(x <- read_ods("../testdata/starwars.ods", skip = 0))
+    expect_equal(nrow(x), 10)
+    expect_silent(x <- read_ods("../testdata/starwars.ods", skip = 1, col_names = FALSE))
+    expect_equal(nrow(x), 10)    
+    expect_warning(x <- read_ods("../testdata/starwars.ods", skip = 11))
+    expect_equal(nrow(x), 0)
+})

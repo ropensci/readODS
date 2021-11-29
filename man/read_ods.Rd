@@ -33,7 +33,7 @@ read.ods(file = NULL, sheet = NULL, formulaAsFormula = FALSE)
 \item{na}{Character vector of strings to use for missing values. By default read_ods converts blank cells to missing data. It can also be set to
 NULL, so that empty cells are treated as NA.}
 
-\item{skip}{the number of lines of the data file to skip before beginning to read data.}
+\item{skip}{the number of lines of the data file to skip before beginning to read data. If this parameter is larger than the total number of lines in the ods file, an empty data frame is returned.}
 
 \item{formula_as_formula}{logical, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8".. . Default is FALSE.}
 
