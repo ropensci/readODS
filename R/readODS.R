@@ -231,12 +231,12 @@
     return (df)
 }
 
-.silent_type_convert <- function(x, verbose = TRUE) {
+.silent_type_convert <- function(x, verbose = TRUE, na = c("", "NA")) {
     if (verbose) {
-        res <- readr::type_convert(df = x)
+        res <- readr::type_convert(df = x, na = na)
     } else {
         suppressMessages({
-            res <- readr::type_convert(df = x)
+            res <- readr::type_convert(df = x, na = na)
         })
     }
     return(res)
@@ -289,9 +289,9 @@ read_ods <- function(path, sheet = 1, col_names = TRUE, col_types = NULL, na = "
     ## emulate readxl to first select range.
     ## Kill unknown col_types
     if (class(col_types) == 'col_spec') {
-        res <- readr::type_convert(df = parsed_df, col_types = col_types)
+        res <- readr::type_convert(df = parsed_df, col_types = col_types, na = na)
     } else if (length(col_types) == 0 & is.null(col_types)) {
-        res <- .silent_type_convert(parsed_df, verbose)
+        res <- .silent_type_convert(x = parsed_df, verbose = verbose, na = na)
     } else if (length(col_types) == 1 & is.na(col_types[1])) {
         res <- parsed_df
     } else {
