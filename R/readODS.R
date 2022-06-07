@@ -92,6 +92,9 @@
     for (x in p_content) {
         if (xml2::xml_name(x, ods_ns) == "text:s") {
             rep_space <- as.numeric(xml2::xml_attr(x, "text:c", ns = ods_ns))
+            if (is.na(rep_space)) {
+                rep_space <- 0
+            }
             output <- paste0(output, paste0(rep(" ", rep_space), collapse = ""))
         } else {
             output <- paste0(output, xml2::xml_text(x))
