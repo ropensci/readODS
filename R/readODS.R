@@ -126,13 +126,20 @@
     }
     current_row <- 0
     for (row in rows) {
-        current_row <- current_row + 1
+        
         if (xml2::xml_has_attr(row, "table:number-rows-repeated", ods_ns)) {
-            ## empty row, just bump the current_row
-            current_row <- current_row + as.numeric(xml2::xml_attr(row, "table:number-rows-repeated", ods_ns)) - 1
+            ## number of repeats
+            row_repeats <- as.numeric(xml2::xml_attr(row, "table:number-rows-repeated", ods_ns))
         } else {
-            ##parse the value in each column
+            ## if no repeat
+            row_repeats <- 1
+        }
+        
+        for (rep_row in seq_len(row_repeats)) {
+            current_row <- current_row + 1
+            
             current_col <- 0
+            
             for (cell in xml2::xml_find_all(row, ".//table:table-cell", ods_ns)) {
                 bump_cell <- .check_cell_repeat(cell, ods_ns)
                 cell_with_textp <- .check_cell_with_textp(cell, ods_ns)
@@ -153,6 +160,7 @@
                 }
             }
         }
+        
     }
     return(cell_values)
 }
