@@ -40,8 +40,3 @@ test_that("skip", {
     expect_warning(x <- read_ods("../testdata/starwars.ods", skip = 11))
     expect_equal(nrow(x), 0)
 })
-
-test_that("Repeated values #81", {
-    res <- read_ods("../testdata/Civil-servants-by-postcode-department-responsibility-level-and-leaving-cause-2021.ods", sheet = 2, skip = 4)
-    testthat::expect_equal(sum(is.na(res[,1])), 0)
-})
