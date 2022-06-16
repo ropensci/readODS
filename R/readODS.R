@@ -126,33 +126,42 @@
     }
     current_row <- 0
     for (row in rows) {
-        current_row <- current_row + 1
         if (xml2::xml_has_attr(row, "table:number-rows-repeated", ods_ns)) {
-            ## empty row, just bump the current_row
-            current_row <- current_row + as.numeric(xml2::xml_attr(row, "table:number-rows-repeated", ods_ns)) - 1
+            ## number of repeats
+            row_repeats <- as.numeric(xml2::xml_attr(row, "table:number-rows-repeated", ods_ns))
         } else {
-            ##parse the value in each column
-            current_col <- 0
-            for (cell in xml2::xml_find_all(row, ".//table:table-cell", ods_ns)) {
-                bump_cell <- .check_cell_repeat(cell, ods_ns)
-                cell_with_textp <- .check_cell_with_textp(cell, ods_ns)
-                current_col <- current_col + 1
-                if (cell_with_textp) {
-                    ## non_empty cell, get the value
-                    cell_value <- .parse_single_cell(cell, ods_ns, formula_as_formula = formula_as_formula)
-                    cell_values[[paste0(current_row, ",", current_col)]] <- cell_value
-                }
-                if (bump_cell > 1 && !cell_with_textp) {
-                    current_col <- current_col + bump_cell - 1
-                }
-                if (bump_cell > 1 && cell_with_textp) {
-                    for (bump in seq_len(bump_cell - 1)) {
-                        current_col <- current_col + 1
+            ## if no repeat
+            row_repeats <- 1
+        }
+        if (!any(purrr::map_lgl(xml2::xml_find_all(row, ".//table:table-cell", ods_ns), .check_cell_with_textp, ods_ns = ods_ns))) {
+            ## Empty row; skip to prevent the below expensive parsing.
+            current_row <- current_row + row_repeats
+        } else {
+            for (rep_row in seq_len(row_repeats)) {
+                current_row <- current_row + 1
+                current_col <- 0
+                for (cell in xml2::xml_find_all(row, ".//table:table-cell", ods_ns)) {
+                    bump_cell <- .check_cell_repeat(cell, ods_ns)
+                    cell_with_textp <- .check_cell_with_textp(cell, ods_ns)
+                    current_col <- current_col + 1
+                    if (cell_with_textp) {
+                        ## non_empty cell, get the value
+                        cell_value <- .parse_single_cell(cell, ods_ns, formula_as_formula = formula_as_formula)
                         cell_values[[paste0(current_row, ",", current_col)]] <- cell_value
+                    }
+                    if (bump_cell > 1 && !cell_with_textp) {
+                        current_col <- current_col + bump_cell - 1
+                    }
+                    if (bump_cell > 1 && cell_with_textp) {
+                        for (bump in seq_len(bump_cell - 1)) {
+                            current_col <- current_col + 1
+                            cell_values[[paste0(current_row, ",", current_col)]] <- cell_value
+                        }
                     }
                 }
             }
         }
+        
     }
     return(cell_values)
 }
