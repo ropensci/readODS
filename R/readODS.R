@@ -157,6 +157,57 @@
     return(cell_values)
 }
 
+.parse_rows2 <- function(parsed_sheet, ods_ns, formula_as_formula, skip = 0) {
+    rows <- xml2::xml_find_all(parsed_sheet, ".//table:table-row", ods_ns)
+    cell_values <- new.env(hash = TRUE)
+    if (skip > 0 && skip >= length(rows)) {
+        return(cell_values)
+    }
+    if (skip > 0) {
+        rows <- rows[(skip + 1):length(rows)]
+    }
+    current_row <- 0
+    for (row in rows) {
+        if (xml2::xml_has_attr(row, "table:number-rows-repeated", ods_ns)) {
+            ## number of repeats
+            row_repeats <- as.numeric(xml2::xml_attr(row, "table:number-rows-repeated", ods_ns))
+        } else {
+            ## if no repeat
+            row_repeats <- 1
+        }
+        if (!any(purrr::map_lgl(xml2::xml_find_all(row, ".//table:table-cell", ods_ns), .check_cell_with_textp, ods_ns = ods_ns))) {
+            ## Empty row; skip to prevent the below expensive parsing.
+            current_row <- current_row + row_repeats
+        } else {
+            for (rep_row in seq_len(row_repeats)) {
+                current_row <- current_row + 1
+                current_col <- 0
+                for (cell in xml2::xml_find_all(row, ".//table:table-cell", ods_ns)) {
+                    bump_cell <- .check_cell_repeat(cell, ods_ns)
+                    cell_with_textp <- .check_cell_with_textp(cell, ods_ns)
+                    current_col <- current_col + 1
+                    if (cell_with_textp) {
+                        ## non_empty cell, get the value
+                        cell_value <- .parse_single_cell(cell, ods_ns, formula_as_formula = formula_as_formula)
+                        cell_values[[paste0(current_row, ",", current_col)]] <- cell_value
+                    }
+                    if (bump_cell > 1 && !cell_with_textp) {
+                        current_col <- current_col + bump_cell - 1
+                    }
+                    if (bump_cell > 1 && cell_with_textp) {
+                        for (bump in seq_len(bump_cell - 1)) {
+                            current_col <- current_col + 1
+                            cell_values[[paste0(current_row, ",", current_col)]] <- cell_value
+                        }
+                    }
+                }
+            }
+        }
+        
+    }
+    return(cell_values)
+}
+
 
 .change_df_with_col_row_header <- function(x, col_header, row_header, range) {
     if (!is.null(range)) {
@@ -284,7 +335,7 @@ read_ods <- function(path, sheet = 1, col_names = TRUE, col_types = NULL, na = "
     ods_ns <- res[[2]]
     sheets <- res[[1]]
     target_sheet <- .select_sheet(sheets, ods_ns = ods_ns, which_sheet = sheet)
-    cell_values <- .parse_rows(target_sheet, ods_ns, formula_as_formula = formula_as_formula, skip = skip)
+    cell_values <- .parse_rows2(target_sheet, ods_ns, formula_as_formula = formula_as_formula, skip = skip)
     parsed_df <- .convert_to_data_frame(cell_values = cell_values, header = col_names, na = na, row_header = row_names, range = range)
     ## emulate readxl to first select range.
     ## Kill unknown col_types
@@ -302,6 +353,35 @@ read_ods <- function(path, sheet = 1, col_names = TRUE, col_types = NULL, na = "
     }
     return(res)
 }
+
+read_ods2 <- function(path, sheet = 1, col_names = TRUE, col_types = NULL, na = "", skip = 0, formula_as_formula = FALSE, range = NULL,
+                     row_names = FALSE, strings_as_factors = FALSE, verbose = FALSE) {
+    if (missing(path)) {
+        stop("No file path was provided for the 'path' argument. Please provide a path to a file to import.")
+    }
+    res <- .parse_ods_to_sheets(path)
+    ods_ns <- res[[2]]
+    sheets <- res[[1]]
+    target_sheet <- .select_sheet(sheets, ods_ns = ods_ns, which_sheet = sheet)
+    cell_values <- .parse_rows2(target_sheet, ods_ns, formula_as_formula = formula_as_formula, skip = skip)
+    parsed_df <- .convert_to_data_frame(cell_values = cell_values, header = col_names, na = na, row_header = row_names, range = range)
+    ## emulate readxl to first select range.
+    ## Kill unknown col_types
+    if (class(col_types) == 'col_spec') {
+        res <- readr::type_convert(df = parsed_df, col_types = col_types, na = na)
+    } else if (length(col_types) == 0 & is.null(col_types)) {
+        res <- .silent_type_convert(x = parsed_df, verbose = verbose, na = na)
+    } else if (length(col_types) == 1 & is.na(col_types[1])) {
+        res <- parsed_df
+    } else {
+        stop("Unknown col_types. Can either be a class col_spec, NULL or NA.", call. = FALSE)
+    }
+    if (strings_as_factors) {
+        res <- .convert_strings_to_factors(res)
+    }
+    return(res)
+}
+
 
 #' @rdname read_ods
 #' @export
