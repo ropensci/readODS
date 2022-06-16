@@ -35,6 +35,7 @@ Other contributors:
   \item Stas Malavin [contributor]
   \item Duncan Garmonsway [contributor]
   \item Mehrad Mahmoudian [contributor]
+  \item Matt Kerlogue [contributor]
 }
 
 }
