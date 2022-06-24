@@ -12,6 +12,7 @@ stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://
 [![Codecov test
 coverage](https://codecov.io/gh/ropensci/readODS/branch/master/graph/badge.svg)](https://app.codecov.io/gh/ropensci/readODS?branch=master)
 [![R-CMD-check](https://github.com/ropensci/readODS/workflows/R-CMD-check/badge.svg)](https://github.com/ropensci/readODS/actions)
+[![rOpenSci](https://badges.ropensci.org/302_status.svg)](https://github.com/ropensci/software-review/issues/386)
 <!-- badges: end -->
 
 The only goal of readODS is to enable R to read and write OpenDocument
@@ -226,3 +227,7 @@ are welcome.
   - Github is not your thing? Contact Chung-hong Chan by e-mail, post,
     or other methods listed on this
     [page](https://www.mzes.uni-mannheim.de/d7/en/profiles/chung-hong-chan).
+
+Please note that this package is released with a [Contributor Code of
+Conduct](https://ropensci.org/code-of-conduct/). By contributing to this
+project, you agree to abide by its terms.
