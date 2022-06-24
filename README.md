@@ -10,8 +10,8 @@ status](https://www.r-pkg.org/badges/version/readODS)](https://CRAN.R-project.or
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![Codecov test
-coverage](https://codecov.io/gh/chainsawriot/readODS/branch/master/graph/badge.svg)](https://app.codecov.io/gh/chainsawriot/readODS?branch=master)
-[![R-CMD-check](https://github.com/chainsawriot/readODS/workflows/R-CMD-check/badge.svg)](https://github.com/chainsawriot/readODS/actions)
+coverage](https://codecov.io/gh/ropensci/readODS/branch/master/graph/badge.svg)](https://app.codecov.io/gh/ropensci/readODS?branch=master)
+[![R-CMD-check](https://github.com/ropensci/readODS/workflows/R-CMD-check/badge.svg)](https://github.com/ropensci/readODS/actions)
 <!-- badges: end -->
 
 The only goal of readODS is to enable R to read and write OpenDocument
@@ -25,10 +25,16 @@ Install the latest stable version from CRAN:
 install.packages("readODS")
 ```
 
+from R-universe:
+
+``` r
+install.packages("readODS", repos = "https://ropensci.r-universe.dev")
+```
+
 Or install the development version from Github:
 
 ``` r
-devtools::install_github("chainsawriot/readODS")
+devtools::install_github("ropensci/readODS")
 ```
 
 ## Usage
@@ -174,13 +180,13 @@ improved, please don’t expect the heavily optimized performance of
 [fread](https://cran.r-project.org/package=data.table).
 
 Also, this package can’t handle ODS files larger than “medium size”. See
-[issue \#71](https://github.com/chainsawriot/readODS/issues/71).
+[issue \#71](https://github.com/ropensci/readODS/issues/71).
 
 If you need to read and write large ODS files efficiently, the [headless
 interface of
 LibreOffice](https://help.libreoffice.org/Common/Starting_the_Software_With_Parameters)
 is recommended. See [issue
-\#49](https://github.com/chainsawriot/readODS/issues/49) for an example.
+\#49](https://github.com/ropensci/readODS/issues/49) for an example.
 
 ### Misc
 
@@ -220,10 +226,3 @@ are welcome.
   - Github is not your thing? Contact Chung-hong Chan by e-mail, post,
     or other methods listed on this
     [page](https://www.mzes.uni-mannheim.de/d7/en/profiles/chung-hong-chan).
-
-## Code of Conduct
-
-Please note that the readODS project is released with a [Contributor
-Code of
-Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
-By contributing to this project, you agree to abide by its terms.
