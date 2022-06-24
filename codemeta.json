@@ -1,0 +1,251 @@
+{
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+  "@type": "SoftwareSourceCode",
+  "identifier": "readODS",
+  "description": "Read ODS (OpenDocument Spreadsheet) into R as data frame. Also support writing data frame into ODS file.",
+  "name": "readODS: Read and Write ODS Files",
+  "codeRepository": "https://github.com/ropensci/readODS",
+  "issueTracker": "https://github.com/ropensci/readODS/issues",
+  "license": "https://spdx.org/licenses/GPL-3.0",
+  "version": "1.7.3",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "R",
+    "url": "https://r-project.org"
+  },
+  "runtimePlatform": "R version 4.2.0 (2022-04-22)",
+  "provider": {
+    "@id": "https://cran.r-project.org",
+    "@type": "Organization",
+    "name": "Comprehensive R Archive Network (CRAN)",
+    "url": "https://cran.r-project.org"
+  },
+  "author": [
+    {
+      "@type": "Person",
+      "givenName": "Gerrit-Jan",
+      "familyName": "Schutten",
+      "email": "phonixor@gmail.com"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Chung-hong",
+      "familyName": "Chan",
+      "email": "chainsawtiney@gmail.com",
+      "@id": "https://orcid.org/0000-0002-6232-7530"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Thomas J.",
+      "familyName": "Leeper",
+      "email": "thosjleeper@gmail.com",
+      "@id": "https://orcid.org/0000-0003-4097-6326"
+    }
+  ],
+  "contributor": [
+    {
+      "@type": "Person",
+      "givenName": "John",
+      "familyName": "Foster",
+      "email": "john.x.foster@nab.com.au"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Sergio",
+      "familyName": "Oller"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Jim",
+      "familyName": "Hester",
+      "email": "jim.hester@rstudio.com",
+      "@id": "https://orcid.org/0000-0002-2739-7082"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Stephen",
+      "familyName": "Watts"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Arthur",
+      "familyName": "Katossky"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Stas",
+      "familyName": "Malavin"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Duncan",
+      "familyName": "Garmonsway"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Mehrad",
+      "familyName": "Mahmoudian"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Matt",
+      "familyName": "Kerlogue"
+    }
+  ],
+  "maintainer": [
+    {
+      "@type": "Person",
+      "givenName": "Chung-hong",
+      "familyName": "Chan",
+      "email": "chainsawtiney@gmail.com",
+      "@id": "https://orcid.org/0000-0002-6232-7530"
+    }
+  ],
+  "softwareSuggestions": [
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "dplyr",
+      "name": "dplyr",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=dplyr"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "testthat",
+      "name": "testthat",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=testthat"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "datasets",
+      "name": "datasets"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "covr",
+      "name": "covr",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=covr"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "knitr",
+      "name": "knitr",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=knitr"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "rmarkdown",
+      "name": "rmarkdown",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=rmarkdown"
+    }
+  ],
+  "softwareRequirements": {
+    "1": {
+      "@type": "SoftwareApplication",
+      "identifier": "xml2",
+      "name": "xml2",
+      "version": ">= 1.3.2",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=xml2"
+    },
+    "2": {
+      "@type": "SoftwareApplication",
+      "identifier": "cellranger",
+      "name": "cellranger",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=cellranger"
+    },
+    "3": {
+      "@type": "SoftwareApplication",
+      "identifier": "readr",
+      "name": "readr",
+      "version": ">= 1.2.1",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=readr"
+    },
+    "4": {
+      "@type": "SoftwareApplication",
+      "identifier": "stringi",
+      "name": "stringi",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=stringi"
+    },
+    "5": {
+      "@type": "SoftwareApplication",
+      "identifier": "utils",
+      "name": "utils"
+    },
+    "6": {
+      "@type": "SoftwareApplication",
+      "identifier": "purrr",
+      "name": "purrr",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=purrr"
+    },
+    "SystemRequirements": null
+  },
+  "fileSize": "71469.591KB",
+  "readme": "https://github.com/ropensci/readODS/blob/master/README.md",
+  "contIntegration": ["https://app.codecov.io/gh/ropensci/readODS?branch=master", "https://github.com/ropensci/readODS/actions"],
+  "developmentStatus": "https://lifecycle.r-lib.org/articles/stages.html#stable",
+  "review": {
+    "@type": "Review",
+    "url": "https://github.com/ropensci/software-review/issues/386",
+    "provider": "https://ropensci.org"
+  },
+  "relatedLink": "https://CRAN.R-project.org/package=readODS"
+}

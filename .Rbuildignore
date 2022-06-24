@@ -12,3 +12,4 @@ notes.R
 ^doc$
 ^Meta$
 ^\.github$
+^codemeta\.json$
