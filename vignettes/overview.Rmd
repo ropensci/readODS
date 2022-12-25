@@ -2,7 +2,7 @@
 title: "An Overview of readODS"
 output: rmarkdown::html_vignette
 author:
-  - Chung-hong Chan ^[University of Mannheim]
+  - Chung-hong Chan ^[GESIS Leibniz-Institut für Sozialwissenschaften]
 vignette: >
   %\VignetteIndexEntry{An overview of readODS}
   %\VignetteEngine{knitr::rmarkdown}
