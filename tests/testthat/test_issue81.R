@@ -12,3 +12,8 @@ test_that("issue 81 real test", {
     res <- read_ods(file, sheet = 2, skip = 4)
     testthat::expect_equal(sum(is.na(res[,1])), 0)
 })
+
+test_that("issue 84", {
+    file <- "../testdata/issue81.ods"
+    testthat::expect_error(readODS::read_ods(file, sheet = "Leavers"), NA)
+})
