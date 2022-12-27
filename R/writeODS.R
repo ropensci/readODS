@@ -50,12 +50,12 @@
 .find_named_sheet <- function(ss, name) {
     sheet <- NULL
     for (i in seq(2, length(xml2::xml_children(ss)))) {
-        if (!is.na(xml2::xml_attr(xml2::xml_children(ss)[[i]], "name") == name) &
+        if (!is.na(xml2::xml_attr(xml2::xml_children(ss)[[i]], "name") == name) &&
             xml2::xml_attr(xml2::xml_children(ss)[[i]], "name") == name) {
             sheet <- xml2::xml_children(ss)[[i]]
         }
     }
-    return (sheet)
+    return(sheet)
 }
 
 .silent_add_sheet_node <- function(sheet) {

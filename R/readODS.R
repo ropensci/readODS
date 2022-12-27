@@ -45,7 +45,7 @@
 }
 
 ### return a parsed XML tree from an ODS file
-.parse_ods_file <- function(file = NULL){
+.parse_ods_file <- function(file = NULL) {
     if(is.null(file)) {
         stop("no filename given", call. = FALSE)
     }
@@ -92,7 +92,7 @@
     for (x in p_content) {
         if (xml2::xml_name(x, ods_ns) == "text:s") {
             rep_space <- as.numeric(xml2::xml_attr(x, "text:c", ns = ods_ns))
-            if (is.na(rep_space)){
+            if (is.na(rep_space)) {
                 rep_space <- 1
             }
             output <- paste0(output, paste0(rep(" ", rep_space), collapse = ""))
@@ -109,7 +109,7 @@
         xml2::xml_attr(cell, "office:value-type", ods_ns) %in% c("float", "currency", "percentage")) {
       cell_value <- xml2::xml_attr(cell, "office:value", ods_ns)
     }
-    if (cell_value == "" && use_office_value & xml2::xml_has_attr(cell, "office:value", ods_ns)) {
+    if (cell_value == "" && use_office_value && xml2::xml_has_attr(cell, "office:value", ods_ns)) {
         cell_value <- xml2::xml_attr(cell, "office:value", ods_ns)
     }
     if (formula_as_formula && xml2::xml_has_attr(cell, "table:formula", ods_ns)) {
@@ -300,11 +300,11 @@ read_ods <- function(path, sheet = 1, col_names = TRUE, col_types = NULL, na = "
     parsed_df <- .convert_to_data_frame(cell_values = cell_values, header = col_names, na = na, row_header = row_names, range = range)
     ## emulate readxl to first select range.
     ## Kill unknown col_types
-    if (class(col_types) == 'col_spec') {
+    if (inherits(col_types, 'col_spec')) {
         res <- readr::type_convert(df = parsed_df, col_types = col_types, na = na)
-    } else if (length(col_types) == 0 & is.null(col_types)) {
+    } else if (length(col_types) == 0 && is.null(col_types)) {
         res <- .silent_type_convert(x = parsed_df, verbose = verbose, na = na)
-    } else if (length(col_types) == 1 & is.na(col_types[1])) {
+    } else if (length(col_types) == 1 && is.na(col_types[1])) {
         res <- parsed_df
     } else {
         stop("Unknown col_types. Can either be a class col_spec, NULL or NA.", call. = FALSE)
