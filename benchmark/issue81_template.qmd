@@ -1,0 +1,19 @@
+---
+title: Testing the speed of reading the ODS file `issue81.ods`
+format: gfm
+---
+
+```{r}
+date()
+devtools::load_all()
+file <- here::here("tests/testdata/issue81.ods")
+system.time(x <- read_ods(file, sheet = 2, skip = 4))
+```
+
+```{r}
+dim(x)
+```
+
+```{r}
+sessionInfo()
+```

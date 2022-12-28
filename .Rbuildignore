@@ -13,3 +13,5 @@ notes.R
 ^Meta$
 ^\.github$
 ^codemeta\.json$
+^benchmark$
+
