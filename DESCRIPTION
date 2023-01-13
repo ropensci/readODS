@@ -25,3 +25,5 @@ RoxygenNote: 7.2.1
 Roxygen: list(markdown = TRUE)
 Encoding: UTF-8
 VignetteBuilder: knitr
+Depends: 
+    R (>= 2.10)

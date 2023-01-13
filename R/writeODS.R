@@ -64,6 +64,72 @@
     })
 }
 
+
+.cell_out <- function(type, value, con) {
+    cat("<table:table-cell office:value-type=\"", type,
+        "\" office:value=\"", value,
+        "\" table:style-name=\"ce1\"><text:p>", value,
+        "</text:p></table:table-cell>",
+        sep = "",
+        file = con)
+}
+
+## CREATION OF sysdata
+## tmp <- file.path(tempdir(), sample(seq_len(1000000), 1))
+## dir.create(tmp)
+## templatedir <- system.file("template", package = "readODS")
+## file.copy(dir(templatedir, full.names = TRUE), tmp, recursive = TRUE)
+## contentfile <- file.path(tmp, "content.xml")
+## .content <- suppressWarnings(readLines(contentfile))
+## .footer <- substr(.content[2], 1926, 2000)
+## .content[2] <- substr(.content[2],1,1925)
+## usethis::use_data(.content, .footer, internal = TRUE, overwrite = TRUE)
+
+## https://github.com/ropensci/readODS/issues/88
+.vfwrite_ods <- function(x, tmp, sheet = "Sheet1", row_names = FALSE, col_names = FALSE) {
+    ## tmp <- file.path(tempdir(), sample(seq_len(1000000), 1))
+    ## dir.create(tmp)
+    templatedir <- system.file("template", package = "readODS")
+    file.copy(dir(templatedir, full.names = TRUE), tmp, recursive = TRUE)
+    ## content <- suppressWarnings(readLines(contentfile))
+    ## footer <- substr(content[2], 1926, 2000)
+    ## content[2] <- substr(content[2],1,1925)
+    con <- file(file.path(tmp, "content.xml"), open="w")
+    cat(.content[1], file = con)
+    cat(.content[2], file = con)
+
+    types <- unlist(lapply(x, class))
+    types <- ifelse(types %in% c("integer", "numeric"), "float", "string")
+
+    colj <- seq_len(NCOL(x))
+    # add data
+    if (col_names) {
+        cat("<table:table-row>", file = con)
+        if (row_names) {
+            .cell_out("string", value = "", file = con)
+        }
+        for (j in colj) {
+            .cell_out(type = "string", value = colnames(x)[j], con = con)
+        }
+        cat("</table:table-row>", file = con)
+    }
+    for (i in seq_len(NROW(x))) {
+        ## create a row
+        cat("<table:table-row>", file = con)
+        if (row_names) {
+            .cell_out(type = "string", value = rownames(x)[i], con = con)
+        }
+        for (j in colj) {
+            .cell_out(type = types[j], value = as.character(x[i, j, drop = TRUE]), con = con)
+        }
+        cat("</table:table-row>", file = con)
+    }
+    cat(.footer, file = con)
+    close(con)
+    ## .zip_tmp_to_path(tmp, path, overwrite=TRUE, verbose=FALSE)
+    ## unlink(tmp)
+}
+
 #' Write Data to ODS File
 #' @description 
 #' Function to write a single data.frame to an ods file.
@@ -99,18 +165,19 @@ write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE,
     ##setup temp directory
     ## one can't just use tempdir() because it is the same in the same session
     tmp <- file.path(tempdir(), sample(seq_len(1000000), 1))
-    dir.create(tmp)    
+    dir.create(tmp)
     tryCatch({
         if (!file.exists(path) | (!append & !update)) {
+            .vfwrite_ods(x = x, tmp = tmp, sheet = sheet, row_names = row_names, col_names = col_names)
             ## The file doesn't exist, no need to consider overwrite or append
-            templatedir <- system.file("template", package = "readODS")
-            file.copy(dir(templatedir, full.names = TRUE), tmp, recursive = TRUE)
-            contentfile <- file.path(tmp, "content.xml")
-            content <- xml2::read_xml(contentfile)
-            spreadsheet <- xml2::xml_children(xml2::xml_children(content)[[3]])[[1]]
-            target_sheet <- xml2::xml_children(spreadsheet)[[2]]
-            xml2::xml_set_attr(target_sheet, "table:name", sheet)
-            .convert_df_to_sheet(x, target_sheet, row_names, col_names)
+            ## templatedir <- system.file("template", package = "readODS")
+            ## file.copy(dir(templatedir, full.names = TRUE), tmp, recursive = TRUE)
+            ## contentfile <- file.path(tmp, "content.xml")
+            ## content <- xml2::read_xml(contentfile)
+            ## spreadsheet <- xml2::xml_children(xml2::xml_children(content)[[3]])[[1]]
+            ## target_sheet <- xml2::xml_children(spreadsheet)[[2]]
+            ## xml2::xml_set_attr(target_sheet, "table:name", sheet)
+            ## .convert_df_to_sheet(x, target_sheet, row_names, col_names)
         } else {
             ## The file must be there.
             utils::unzip(path, exdir = tmp)
@@ -133,10 +200,10 @@ write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE,
                 ## Add a new sheet
                 sn <- xml2::xml_add_child(spreadsheet, .silent_add_sheet_node(sheet))
             }
-            .convert_df_to_sheet(x, sn, row_names, col_names)        
+            .convert_df_to_sheet(x, sn, row_names, col_names)
+            ## write xml to contentfile
+            xml2::write_xml(content, contentfile)
         }
-        ## write xml to contentfile
-        xml2::write_xml(content, contentfile)
         ## zip up ODS archive
         .zip_tmp_to_path(tmp, path, overwrite, verbose)
     },
