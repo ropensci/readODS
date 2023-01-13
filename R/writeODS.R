@@ -75,32 +75,24 @@
 }
 
 ## CREATION OF sysdata
-## tmp <- file.path(tempdir(), sample(seq_len(1000000), 1))
-## dir.create(tmp)
-## templatedir <- system.file("template", package = "readODS")
-## file.copy(dir(templatedir, full.names = TRUE), tmp, recursive = TRUE)
-## contentfile <- file.path(tmp, "content.xml")
-## .content <- suppressWarnings(readLines(contentfile))
-## .footer <- substr(.content[2], 1926, 2000)
-## .content[2] <- substr(.content[2],1,1925)
+## .content <- readLines("benchmark/header.xml")
+## .footer <- readLines("benchmark/footer.xml")
 ## usethis::use_data(.content, .footer, internal = TRUE, overwrite = TRUE)
+
+.gen_sheet_tag <- function(sheet = "Sheet1") {
+    sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="16384" table:default-cell-style-name="ce1"/>', sheet)
+}
 
 ## https://github.com/ropensci/readODS/issues/88
 .vfwrite_ods <- function(x, tmp, sheet = "Sheet1", row_names = FALSE, col_names = FALSE) {
-    ## tmp <- file.path(tempdir(), sample(seq_len(1000000), 1))
-    ## dir.create(tmp)
     templatedir <- system.file("template", package = "readODS")
     file.copy(dir(templatedir, full.names = TRUE), tmp, recursive = TRUE)
-    ## content <- suppressWarnings(readLines(contentfile))
-    ## footer <- substr(content[2], 1926, 2000)
-    ## content[2] <- substr(content[2],1,1925)
     con <- file(file.path(tmp, "content.xml"), open="w")
     cat(.content[1], file = con)
     cat(.content[2], file = con)
-
+    cat(.gen_sheet_tag(sheet), file = con)
     types <- unlist(lapply(x, class))
     types <- ifelse(types %in% c("integer", "numeric"), "float", "string")
-
     colj <- seq_len(NCOL(x))
     # add data
     if (col_names) {
@@ -126,8 +118,6 @@
     }
     cat(.footer, file = con)
     close(con)
-    ## .zip_tmp_to_path(tmp, path, overwrite=TRUE, verbose=FALSE)
-    ## unlink(tmp)
 }
 
 #' Write Data to ODS File
