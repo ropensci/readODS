@@ -98,7 +98,7 @@
     if (col_names) {
         cat("<table:table-row>", file = con)
         if (row_names) {
-            .cell_out("string", value = "", file = con)
+            .cell_out("string", value = "", con = con)
         }
         for (j in colj) {
             .cell_out(type = "string", value = colnames(x)[j], con = con)
@@ -127,8 +127,8 @@
 #' @param x a data.frame
 #' @param path Path to the ods file to write
 #' @param sheet Name of the sheet
-#' @param append logical, TRUE indicates that x should be appended to the existing file (path) as a new sheet. If a sheet with the same sheet_name exists, an exception is thrown. See update. Default is FALSE.
-#' @param update logical, TRUE indicates that the sheet with sheet_name in the existing file (path) should be updated with the content of x. If a sheet with sheet_name does not exist, an exception is thrown. Default is FALSE.
+#' @param append logical, TRUE indicates that x should be appended to the existing file (path) as a new sheet. If a sheet with the same sheet_name exists, an exception is thrown. See update. Please also note that writing is slower if TRUE. Default is FALSE.
+#' @param update logical, TRUE indicates that the sheet with sheet_name in the existing file (path) should be updated with the content of x. If a sheet with sheet_name does not exist, an exception is thrown. Please also note that writing is slower if TRUE. Default is FALSE.
 #' @param row_names logical, TRUE indicates that row names of x are to be included in the sheet. Default is FALSE.
 #' @param col_names logical, TRUE indicates that column names of x are to be included in the sheet. Default is FALSE.
 #' @param verbose logical, if messages should be displayed. Default is FALSE.
