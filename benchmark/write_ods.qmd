@@ -1,0 +1,24 @@
+---
+title: Testing the speed of write_ods
+format: gfm
+---
+
+```{r}
+date()
+devtools::load_all()
+## generate a 3000 x 8 data.frame
+set.seed(721831)
+df1 <- data.frame(a1 = sample(c(1:100), size = 3000, replace = TRUE),
+                  b1 = sample(c(3.14, 3.1416, 12.345, 721.831), size = 3000, replace = TRUE),
+                  c1 = sample(LETTERS, size = 3000, replace = TRUE),
+                  d1 = sample(c(1L:100L), size = 3000, replace = TRUE),
+                  a2 = sample(c(1:100), size = 3000, replace = TRUE),
+                  b2 = sample(c(3.14, 3.1416, 12.345, 99.831), size = 3000, replace = TRUE),
+                  c2 = sample(LETTERS, size = 3000, replace = TRUE),
+                  d2 = sample(c(1L:100L), size = 3000, replace = TRUE))
+system.time(write_ods(df1, path = tempfile(fileext = ".ods")))
+```
+
+```{r}
+sessionInfo()
+```
