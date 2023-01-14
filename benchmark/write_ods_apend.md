@@ -5,7 +5,7 @@ Testing the speed of write_ods (append / update)
 date()
 ```
 
-    [1] "Sat Jan 14 10:39:02 2023"
+    [1] "Sat Jan 14 10:42:25 2023"
 
 ``` r
 devtools::load_all()
@@ -30,14 +30,14 @@ system.time(write_ods(df1, path = path, sheet = "aaaa", append = TRUE))
 ```
 
        user  system elapsed 
-     46.274   0.012  46.295 
+      2.897   0.124   3.027 
 
 ``` r
 system.time(write_ods(df1, path = path, sheet = "aaaa", update = TRUE))
 ```
 
        user  system elapsed 
-     45.701   0.008  45.719 
+      3.047   0.084   3.140 
 
 ``` r
 sessionInfo()
