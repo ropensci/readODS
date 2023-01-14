@@ -1,38 +1,3 @@
-.convert_df_to_sheet <- function(x, sheet, row_names, col_names) {
-    # identify variable types
-    types <- unlist(lapply(x, class))
-    types <- ifelse(types %in% c("integer", "numeric"), "float", "string")
-    
-    rowi <- if (col_names) c(0, seq_len(nrow(x))) else seq_len(nrow(x)) 
-    colj <- if (row_names) c(0, seq_along(x)) else seq_along(x)    
-    # add data
-    for (i in rowi) {
-        # create a row
-        thisrow <- xml2::xml_add_child(sheet, "table:table-row")
-        for (j in colj) {
-            if (i == 0) {
-                # get column name
-                value <- ifelse(j == 0, "", names(x)[j])
-            } else if (j == 0) {
-                
-                value <- rownames(x)[i]
-            } else {
-                # get value
-                value <- as.character(x[i, j, drop = TRUE])
-            }
-            
-            # add value to row
-            thiscell <- xml2::xml_add_child(thisrow, "table:table-cell")
-            is_string <- i == 0 || j == 0
-            xml2::xml_attr(thiscell, "office:value-type") <- if (is_string) "string" else types[j]
-            if (!is_string) xml2::xml_attr(thiscell, "office:value") <- value
-            xml2::xml_attr(thiscell, "table:style-name") <- "ce1"
-            thistext <- xml2::xml_add_child(thiscell, "text:p")
-            xml2::xml_text(thistext) <- value
-        }
-    }
-}
-
 .zip_tmp_to_path <- function(tmp, path, overwrite, verbose) {
     if (verbose) {
         zip_flags <- "-r9X"
@@ -58,12 +23,15 @@
     return(sheet)
 }
 
-.silent_add_sheet_node <- function(sheet) {
+.silent_read_xml <- function(x) {
     suppressWarnings({
-        return(xml2::read_xml(sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="16384" table:default-cell-style-name="ce1"/></table:table>', sheet)))
-    })
+        return(xml2::read_xml(x))
+    })    
 }
 
+.silent_add_sheet_node <- function(sheet) {
+    .silent_read_xml(sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="16384" table:default-cell-style-name="ce1"/></table:table>', sheet))
+}
 
 .cell_out <- function(type, value, con) {
     cat("<table:table-cell office:value-type=\"", type,
@@ -83,13 +51,7 @@
     sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="16384" table:default-cell-style-name="ce1"/>', sheet)
 }
 
-## https://github.com/ropensci/readODS/issues/88
-.vfwrite_ods <- function(x, tmp, sheet = "Sheet1", row_names = FALSE, col_names = FALSE) {
-    templatedir <- system.file("template", package = "readODS")
-    file.copy(dir(templatedir, full.names = TRUE), tmp, recursive = TRUE)
-    con <- file(file.path(tmp, "content.xml"), open="w")
-    cat(.content[1], file = con)
-    cat(.content[2], file = con)
+.write_sheet_con <- function(x, con, sheet = "Sheet1", row_names = FALSE, col_names = FALSE) {
     cat(.gen_sheet_tag(sheet), file = con)
     types <- unlist(lapply(x, class))
     types <- ifelse(types %in% c("integer", "numeric"), "float", "string")
@@ -116,6 +78,26 @@
         }
         cat("</table:table-row>", file = con)
     }
+    cat("</table:table>", file = con)
+    return(invisible(con))
+}
+
+.convert_df_to_sheet <- function(x, sheet = "Sheet1", row_names = FALSE, col_names = FALSE) {
+    throwaway_xml_file <- tempfile(fileext = ".xml")
+    con <- file(file.path(throwaway_xml_file), open="w")
+    .write_sheet_con(x = x, con = con, sheet = sheet, row_names = row_names, col_names = col_names)
+    close(con)
+    return(file.path(throwaway_xml_file))
+}
+
+## https://github.com/ropensci/readODS/issues/88
+.vfwrite_ods <- function(x, tmp, sheet = "Sheet1", row_names = FALSE, col_names = FALSE) {
+    templatedir <- system.file("template", package = "readODS")
+    file.copy(dir(templatedir, full.names = TRUE), tmp, recursive = TRUE)
+    con <- file(file.path(tmp, "content.xml"), open="w")
+    cat(.content[1], file = con)
+    cat(.content[2], file = con)
+    .write_sheet_con(x = x, con = con, sheet = sheet, row_names = row_names, col_names = col_names)
     cat(.footer, file = con)
     close(con)
 }
@@ -159,15 +141,6 @@ write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE,
     tryCatch({
         if (!file.exists(path) | (!append & !update)) {
             .vfwrite_ods(x = x, tmp = tmp, sheet = sheet, row_names = row_names, col_names = col_names)
-            ## The file doesn't exist, no need to consider overwrite or append
-            ## templatedir <- system.file("template", package = "readODS")
-            ## file.copy(dir(templatedir, full.names = TRUE), tmp, recursive = TRUE)
-            ## contentfile <- file.path(tmp, "content.xml")
-            ## content <- xml2::read_xml(contentfile)
-            ## spreadsheet <- xml2::xml_children(xml2::xml_children(content)[[3]])[[1]]
-            ## target_sheet <- xml2::xml_children(spreadsheet)[[2]]
-            ## xml2::xml_set_attr(target_sheet, "table:name", sheet)
-            ## .convert_df_to_sheet(x, target_sheet, row_names, col_names)
         } else {
             ## The file must be there.
             utils::unzip(path, exdir = tmp)
@@ -190,7 +163,8 @@ write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE,
                 ## Add a new sheet
                 sn <- xml2::xml_add_child(spreadsheet, .silent_add_sheet_node(sheet))
             }
-            .convert_df_to_sheet(x, sn, row_names, col_names)
+            throwaway_xml_file <- .convert_df_to_sheet(x = x, sheet = sheet, row_names = row_names, col_names = col_names)
+            xml2::xml_replace(sn, .silent_read_xml(throwaway_xml_file))
             ## write xml to contentfile
             xml2::write_xml(content, contentfile)
         }
