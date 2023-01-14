@@ -116,7 +116,7 @@
 #' @param verbose logical, if messages should be displayed. Default is FALSE.
 #' @param overwrite logical, deprecated.
 #' @return An ODS file written to the file path location specified by the user. The value of \code{path} is also returned invisibly.
-#' @author Thomas J. Leeper <thosjleeper@@gmail.com>, John Foster <john.x.foster@@nab.com.au>, Chung-hong Chan <chainsawtiney@@gmail.com>
+#' @author Detlef Steuer <steuer@@hsu-hh.de>, Thomas J. Leeper <thosjleeper@@gmail.com>, John Foster <john.x.foster@@nab.com.au>, Chung-hong Chan <chainsawtiney@@gmail.com>
 #' @examples
 #' \dontrun{
 #' # preserve the row names

@@ -50,5 +50,5 @@ write_ods(PlantGrowth, "mtcars.ods", append = TRUE, sheet = "plant")
 }
 }
 \author{
-Thomas J. Leeper \href{mailto:thosjleeper@gmail.com}{thosjleeper@gmail.com}, John Foster \href{mailto:john.x.foster@nab.com.au}{john.x.foster@nab.com.au}, Chung-hong Chan \href{mailto:chainsawtiney@gmail.com}{chainsawtiney@gmail.com}
+Detlef Steuer \href{mailto:steuer@hsu-hh.de}{steuer@hsu-hh.de}, Thomas J. Leeper \href{mailto:thosjleeper@gmail.com}{thosjleeper@gmail.com}, John Foster \href{mailto:john.x.foster@nab.com.au}{john.x.foster@nab.com.au}, Chung-hong Chan \href{mailto:chainsawtiney@gmail.com}{chainsawtiney@gmail.com}
 }
