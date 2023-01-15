@@ -1,4 +1,4 @@
-.zip_tmp_to_path <- function(tmp, path, overwrite, verbose) {
+.zip_tmp_to_path <- function(temp_ods_dir, path, overwrite, verbose) {
     if (verbose) {
         zip_flags <- "-r9X"
     } else {
@@ -6,10 +6,10 @@
     }
     wd <- getwd()
     on.exit(setwd(wd), add = TRUE)
-    setwd(tmp)
+    setwd(temp_ods_dir)
     utils::zip(basename(path), dir(), flags = zip_flags)
     setwd(wd)
-    file.copy(file.path(tmp, basename(path)), path, overwrite = overwrite)
+    file.copy(file.path(temp_ods_dir, basename(path)), path, overwrite = overwrite)
 }
 
 .find_named_sheet <- function(ss, name) {
@@ -26,7 +26,7 @@
 .silent_read_xml <- function(x) {
     suppressWarnings({
         return(xml2::read_xml(x))
-    })    
+    })
 }
 
 .silent_add_sheet_node <- function(sheet) {
@@ -91,10 +91,10 @@
 }
 
 ## https://github.com/ropensci/readODS/issues/88
-.vfwrite_ods <- function(x, tmp, sheet = "Sheet1", row_names = FALSE, col_names = FALSE) {
+.vfwrite_ods <- function(x, temp_ods_dir, sheet = "Sheet1", row_names = FALSE, col_names = FALSE) {
     templatedir <- system.file("template", package = "readODS")
-    file.copy(dir(templatedir, full.names = TRUE), tmp, recursive = TRUE)
-    con <- file(file.path(tmp, "content.xml"), open="w")
+    file.copy(dir(templatedir, full.names = TRUE), temp_ods_dir, recursive = TRUE)
+    con <- file(file.path(temp_ods_dir, "content.xml"), open="w")
     cat(.content[1], file = con)
     cat(.content[2], file = con)
     .write_sheet_con(x = x, con = con, sheet = sheet, row_names = row_names, col_names = col_names)
@@ -103,9 +103,9 @@
 }
 
 #' Write Data to ODS File
-#' @description 
+#' @description
 #' Function to write a single data.frame to an ods file.
-#' 
+#'
 #' @param x a data.frame
 #' @param path Path to the ods file to write
 #' @param sheet Name of the sheet
@@ -134,17 +134,17 @@ write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE,
     if (!is.data.frame(x)) {
         stop("x must be a data.frame.", call. = FALSE)
     }
-    ##setup temp directory
+    ## setup temp directory
     ## one can't just use tempdir() because it is the same in the same session
-    tmp <- file.path(tempdir(), sample(seq_len(1000000), 1))
-    dir.create(tmp)
+    temp_ods_dir <- file.path(tempdir(), sample(seq_len(1000000), 1))
+    dir.create(temp_ods_dir)
     tryCatch({
         if (!file.exists(path) | (!append & !update)) {
-            .vfwrite_ods(x = x, tmp = tmp, sheet = sheet, row_names = row_names, col_names = col_names)
+            .vfwrite_ods(x = x, temp_ods_dir = temp_ods_dir, sheet = sheet, row_names = row_names, col_names = col_names)
         } else {
             ## The file must be there.
-            utils::unzip(path, exdir = tmp)
-            contentfile <- file.path(tmp, "content.xml")
+            utils::unzip(path, exdir = temp_ods_dir)
+            contentfile <- file.path(temp_ods_dir, "content.xml")
             content <- xml2::read_xml(contentfile)
             spreadsheet <- xml2::xml_children(xml2::xml_children(content)[[which(!is.na(xml2::xml_find_first(xml2::xml_children(content),"office:spreadsheet")))]])[[1]]
             sn <- .find_named_sheet(spreadsheet, sheet)
@@ -169,10 +169,10 @@ write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE,
             xml2::write_xml(content, contentfile)
         }
         ## zip up ODS archive
-        .zip_tmp_to_path(tmp, path, overwrite, verbose)
+        .zip_temp_ods_dir_to_path(temp_ods_dir, path, overwrite, verbose)
     },
     finally =  {
-        unlink(tmp)
+        unlink(temp_ods_dir)
     })
     invisible(path)
 }
