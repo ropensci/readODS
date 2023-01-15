@@ -43,9 +43,9 @@
 }
 
 ## CREATION OF sysdata
-## .content <- readLines("benchmark/header.xml")
-## .footer <- readLines("benchmark/footer.xml")
-## usethis::use_data(.content, .footer, internal = TRUE, overwrite = TRUE)
+## .CONTENT <- readLines("benchmark/header.xml")
+## .FOOTER <- readLines("benchmark/footer.xml")
+## usethis::use_data(.CONTENT, .FOOTER, internal = TRUE, overwrite = TRUE)
 
 .gen_sheet_tag <- function(sheet = "Sheet1") {
     sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="16384" table:default-cell-style-name="ce1"/>', sheet)
@@ -95,10 +95,10 @@
     templatedir <- system.file("template", package = "readODS")
     file.copy(dir(templatedir, full.names = TRUE), temp_ods_dir, recursive = TRUE)
     con <- file(file.path(temp_ods_dir, "content.xml"), open="w")
-    cat(.content[1], file = con)
-    cat(.content[2], file = con)
+    cat(.CONTENT[1], file = con)
+    cat(.CONTENT[2], file = con)
     .write_sheet_con(x = x, con = con, sheet = sheet, row_names = row_names, col_names = col_names)
-    cat(.footer, file = con)
+    cat(.FOOTER, file = con)
     close(con)
 }
 
