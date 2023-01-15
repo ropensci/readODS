@@ -12,12 +12,12 @@
     file.copy(file.path(temp_ods_dir, basename(path)), path, overwrite = overwrite)
 }
 
-.find_named_sheet <- function(ss, name) {
+.find_named_sheet <- function(spreadsheet, name) {
     sheet <- NULL
-    for (i in seq(2, length(xml2::xml_children(ss)))) {
-        if (!is.na(xml2::xml_attr(xml2::xml_children(ss)[[i]], "name") == name) &&
-            xml2::xml_attr(xml2::xml_children(ss)[[i]], "name") == name) {
-            sheet <- xml2::xml_children(ss)[[i]]
+    for (i in seq(2, length(xml2::xml_children(spreadsheet)))) {
+        if (!is.na(xml2::xml_attr(xml2::xml_children(spreadsheet)[[i]], "name") == name) &&
+            xml2::xml_attr(xml2::xml_children(spreadsheet)[[i]], "name") == name) {
+            sheet <- xml2::xml_children(spreadsheet)[[i]]
         }
     }
     return(sheet)
