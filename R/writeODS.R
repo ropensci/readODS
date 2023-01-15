@@ -147,24 +147,24 @@ write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE,
             contentfile <- file.path(temp_ods_dir, "content.xml")
             content <- xml2::read_xml(contentfile)
             spreadsheet <- xml2::xml_children(xml2::xml_children(content)[[which(!is.na(xml2::xml_find_first(xml2::xml_children(content),"office:spreadsheet")))]])[[1]]
-            sn <- .find_named_sheet(spreadsheet, sheet)
-            if ((!is.null(sn) & append & !update) | (!is.null(sn) & !update)) {
+            sheet_node <- .find_named_sheet(spreadsheet, sheet)
+            if ((!is.null(sheet_node) & append & !update) | (!is.null(sheet_node) & !update)) {
                 ## Sheet exists so we cannot append
                 stop(paste0("Sheet ", sheet, " exists. Set update to TRUE is you want to update this sheet."), call. = FALSE)
             }
-            if (is.null(sn) & update) {
+            if (is.null(sheet_node) & update) {
                 stop(paste0("Sheet ", sheet, " does not exist. Cannot update."), call. = FALSE)
             }
-            if (!is.null(sn) & update) {
+            if (!is.null(sheet_node) & update) {
                 ## clean up the sheet
-                xml2::xml_remove(xml2::xml_children(sn)[2:length(xml2::xml_children(sn))])
+                xml2::xml_remove(xml2::xml_children(sheet_node)[2:length(xml2::xml_children(sheet_node))])
             }
-            if (is.null(sn) & append) {
+            if (is.null(sheet_node) & append) {
                 ## Add a new sheet
-                sn <- xml2::xml_add_child(spreadsheet, .silent_add_sheet_node(sheet))
+                sheet_node <- xml2::xml_add_child(spreadsheet, .silent_add_sheet_node(sheet))
             }
             throwaway_xml_file <- .convert_df_to_sheet(x = x, sheet = sheet, row_names = row_names, col_names = col_names)
-            xml2::xml_replace(sn, .silent_read_xml(throwaway_xml_file))
+            xml2::xml_replace(sheet_node, .silent_read_xml(throwaway_xml_file))
             ## write xml to contentfile
             xml2::write_xml(content, contentfile)
         }
