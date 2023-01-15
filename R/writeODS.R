@@ -12,15 +12,15 @@
     file.copy(file.path(temp_ods_dir, basename(path)), path, overwrite = overwrite)
 }
 
-.find_named_sheet <- function(spreadsheet_node, name) {
-    sheet <- NULL
+.find_sheet_node_by_sheet <- function(spreadsheet_node, sheet) {
+    sheet_node <- NULL
     for (i in seq(2, length(xml2::xml_children(spreadsheet_node)))) {
-        if (!is.na(xml2::xml_attr(xml2::xml_children(spreadsheet_node)[[i]], "name") == name) &&
-            xml2::xml_attr(xml2::xml_children(spreadsheet_node)[[i]], "name") == name) {
-            sheet <- xml2::xml_children(spreadsheet_node)[[i]]
+        if (!is.na(xml2::xml_attr(xml2::xml_children(spreadsheet_node)[[i]], "name") == sheet) &&
+            xml2::xml_attr(xml2::xml_children(spreadsheet_node)[[i]], "name") == sheet) {
+            sheet_node <- xml2::xml_children(spreadsheet_node)[[i]]
         }
     }
-    return(sheet)
+    return(sheet_node)
 }
 
 .silent_read_xml <- function(x) {
@@ -147,7 +147,7 @@ write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE,
             contentfile <- file.path(temp_ods_dir, "content.xml")
             content <- xml2::read_xml(contentfile)
             spreadsheet_node <- xml2::xml_children(xml2::xml_children(content)[[which(!is.na(xml2::xml_find_first(xml2::xml_children(content),"office:spreadsheet")))]])[[1]]
-            sheet_node <- .find_named_sheet(spreadsheet_node, sheet)
+            sheet_node <- .find_sheet_node_by_sheet(spreadsheet_node, sheet)
             if ((!is.null(sheet_node) & append & !update) | (!is.null(sheet_node) & !update)) {
                 ## Sheet exists so we cannot append
                 stop(paste0("Sheet ", sheet, " exists. Set update to TRUE is you want to update this sheet."), call. = FALSE)
