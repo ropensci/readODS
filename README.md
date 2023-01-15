@@ -203,7 +203,7 @@ The creator of this package is Gerrit-Jan Schutten. The current
 maintainer is Chung-hong Chan. This package benefits from contributions
 by Thomas J. Leeper, John Foster, Sergio Oller, Jim Hester, Stephen
 Watts, Arthur Katossky, Stas Malavin, Duncan Garmonsway, Mehrad
-Mahmoudian, Matt Kerlogue, and Detlef Steuer.
+Mahmoudian, Matt Kerlogue, Detlef Steuer, and Michal Lauer.
 
 This package emulates the behaviors of `readxl::read_xlsx`,
 `writexl::write_xlsx` and `xlsx::write.xlsx`.
