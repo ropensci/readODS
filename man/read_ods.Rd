@@ -16,6 +16,7 @@ read_ods(
   range = NULL,
   row_names = FALSE,
   strings_as_factors = FALSE,
+  check_names = FALSE,
   verbose = FALSE
 )
 
@@ -42,6 +43,8 @@ NULL, so that empty cells are treated as NA.}
 \item{row_names}{logical, indicating whether the file contains the names of the rows as its first column. Default is FALSE.}
 
 \item{strings_as_factors}{logical, if character columns to be converted to factors. Default is FALSE.}
+
+\item{check_names}{logical, passed down to base::data.frame(). Default is FALSE.}
 
 \item{verbose}{logical, if messages should be displayed. Default is FALSE.}
 

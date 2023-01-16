@@ -36,7 +36,14 @@ test_that("skip", {
     expect_silent(x <- read_ods("../testdata/starwars.ods", skip = 0))
     expect_equal(nrow(x), 10)
     expect_silent(x <- read_ods("../testdata/starwars.ods", skip = 1, col_names = FALSE))
-    expect_equal(nrow(x), 10)    
+    expect_equal(nrow(x), 10)
     expect_warning(x <- read_ods("../testdata/starwars.ods", skip = 11))
     expect_equal(nrow(x), 0)
+})
+
+test_that("Check names works properly", {
+  expect_silent(x <- read_ods("../testdata/test_naming.ods"))
+  expect_equal(colnames(x), c("a", "a", "Var.3"))
+  expect_silent(x <- read_ods("../testdata/test_naming.ods", check_names = TRUE))
+  expect_equal(colnames(x), c("a", "a.1", "Var.3"))
 })

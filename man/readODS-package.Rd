@@ -37,6 +37,7 @@ Other contributors:
   \item Duncan Garmonsway [contributor]
   \item Mehrad Mahmoudian [contributor]
   \item Matt Kerlogue [contributor]
+  \item Michal Lauer \email{michal.lauer.25@gmail.com} [contributor]
 }
 
 }
