@@ -3,7 +3,7 @@
 ## ' @keywords internal
 ## ' @description
 ## ' converts numbers to microplate row names and Excel & ODS column names
-## ' 
+## '
 ## ' @param list_of_letter the numbers you want to convert to chars
 ## ' @details
 ## ' 1=A
@@ -11,11 +11,11 @@
 ## ' 27=ZA
 ## ' 702=ZZ
 ## ' 703=AAA
-## ' 
+## '
 ## ' supports lists of numbers!
-## ' 
+## '
 ## ' .convert_numbers_to_letters(1:1000)
-## ' 
+## '
 .convert_numbers_to_letters <- function(list_of_numbers = NULL) {
   return_value <- NULL
   for(i in seq_len(length(list_of_numbers))) {
@@ -27,7 +27,7 @@
           }
           if(remainder %% 26 != 0) {
               return_letters <- paste(LETTERS[remainder %% 26],return_letters, sep = "")
-              remainder <- remainder %/% 26  
+              remainder <- remainder %/% 26
           } else {
               return_letters <- paste("Z", return_letters,sep = "")
               remainder <- (remainder %/% 26) - 1
@@ -81,7 +81,7 @@
 
 .parse_textp <- function(cell, ods_ns) {
     textp <- xml2::xml_find_all(cell, "./text:p", ods_ns)
-    purrr::map_chr(textp, .parse_p, ods_ns = ods_ns)    
+    purrr::map_chr(textp, .parse_p, ods_ns = ods_ns)
 }
 
 ### this function parses cell but with consideration of <text:s>
@@ -164,7 +164,7 @@
                 }
             }
         }
-        
+
     }
     return(cell_values)
 }
@@ -174,9 +174,9 @@
     if (!is.null(range)) {
         x <- .select_range(x, range)
     }
-    irow <- ifelse(col_header, 2, 1)  
+    irow <- ifelse(col_header, 2, 1)
     jcol <- ifelse(row_header, 2, 1)
-    
+
     g <- x[irow:nrow(x), jcol:ncol(x), drop=FALSE] # maintain as dataframe for single column
     rownames(g) <- if (row_header) x[seq(irow, nrow(x)), 1] else NULL # dont want character row headers given by 1:nrow(g)
     colnames(g) <- if (col_header) x[1, seq(jcol, ncol(x))] else .convert_numbers_to_letters(seq_len(ncol(g)))
@@ -192,7 +192,7 @@
     row_id <- purrr::map_dbl(strsplit(cv_keys, ","), ~as.numeric(.[1]))
     col_id <- purrr::map_dbl(strsplit(cv_keys, ","), ~as.numeric(.[2]))
     res <- data.frame(matrix(data = "", nrow = max(row_id) ,ncol= max(col_id)), stringsAsFactors = FALSE)
-    if (is.null(na)) { 
+    if (is.null(na)) {
         for(key in cv_keys){
             pos <- as.numeric(strsplit(key, ',')[[1]])
             res[pos[1], pos[2]] <- get(key, envir = cell_values)
@@ -202,7 +202,7 @@
             pos <- as.numeric(strsplit(key, ',')[[1]])
             value <- get(key, envir = cell_values)
             res[pos[1], pos[2]] <- ifelse(value %in% na, NA, value)
-        }   
+        }
     }
     res <- .change_df_with_col_row_header(res, header, row_header, range)
     return(res)
@@ -255,7 +255,7 @@
 }
 
 #' Read Data From ODS File
-#' 
+#'
 #' read_ods is a function to read a single sheet from an ods file and return a data frame.
 #' read.ods always returns a list of data frames with one data frame per sheet. This is a wrapper to read_ods for backward compatibility with previous version of readODS. Please use read_ods if possible.
 #'
@@ -273,6 +273,7 @@
 #' @param formulaAsFormula for read.ods only, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8"..
 #' @param row_names logical, indicating whether the file contains the names of the rows as its first column. Default is FALSE.
 #' @param strings_as_factors logical, if character columns to be converted to factors. Default is FALSE.
+#' @param check_names logical, passed down to base::data.frame(). Default is FALSE.
 #' @param verbose logical, if messages should be displayed. Default is FALSE.
 #' @return A data frame (\code{data.frame}) containing a representation of data in the ods file.
 #' @note Currently, ods files that linked to external data source cannot be read. Merged cells cannot be parsed correctly.
@@ -287,8 +288,7 @@
 #' read_ods("starwars.ods", sheet = 2, range = "A1:C11")
 #' }
 #' @export
-read_ods <- function(path, sheet = 1, col_names = TRUE, col_types = NULL, na = "", skip = 0, formula_as_formula = FALSE, range = NULL,
-                     row_names = FALSE, strings_as_factors = FALSE, verbose = FALSE) {
+read_ods <- function(path, sheet = 1, col_names = TRUE, col_types = NULL, na = "", skip = 0, formula_as_formula = FALSE, range = NULL, row_names = FALSE, strings_as_factors = FALSE, check_names = FALSE, verbose = FALSE) {
     if (missing(path)) {
         stop("No file path was provided for the 'path' argument. Please provide a path to a file to import.")
     }
@@ -298,6 +298,8 @@ read_ods <- function(path, sheet = 1, col_names = TRUE, col_types = NULL, na = "
     target_sheet <- .select_sheet(sheets, ods_ns = ods_ns, which_sheet = sheet)
     cell_values <- .parse_rows(target_sheet, ods_ns, formula_as_formula = formula_as_formula, skip = skip)
     parsed_df <- .convert_to_data_frame(cell_values = cell_values, header = col_names, na = na, row_header = row_names, range = range)
+    # Check names in parsed df
+    parsed_df <- data.frame(parsed_df, check.names = check_names)
     ## emulate readxl to first select range.
     ## Kill unknown col_types
     if (inherits(col_types, 'col_spec')) {
@@ -328,7 +330,7 @@ read.ods <- function(file = NULL, sheet = NULL, formulaAsFormula = FALSE) {
 
 
 #' Get the Number of Sheets in an ODS File
-#' 
+#'
 #' Get the number of sheets in an ods file
 #'
 #' @param path path to the ods file
