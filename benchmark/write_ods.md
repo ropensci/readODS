@@ -5,7 +5,7 @@ Testing the speed of write_ods
 date()
 ```
 
-    [1] "Fri Jan 13 13:17:23 2023"
+    [1] "Fri Jan 20 23:32:59 2023"
 
 ``` r
 devtools::load_all()
@@ -28,7 +28,7 @@ system.time(write_ods(df1, path = tempfile(fileext = ".ods")))
 ```
 
        user  system elapsed 
-      0.354   0.104   0.463 
+      0.476   0.084   0.566 
 
 ``` r
 sessionInfo()
@@ -54,19 +54,19 @@ sessionInfo()
     [1] stats     graphics  grDevices utils     datasets  methods   base     
 
     other attached packages:
-    [1] readODS_1.7.3  testthat_3.1.4
+    [1] readODS_1.8.0  testthat_3.1.4
 
     loaded via a namespace (and not attached):
      [1] pillar_1.8.1      cellranger_1.1.0  compiler_4.2.2    prettyunits_1.1.1
      [5] remotes_2.4.2     tools_4.2.2       digest_0.6.30     pkgbuild_1.3.1   
      [9] pkgload_1.3.0     tibble_3.1.8      jsonlite_1.8.4    evaluate_0.15    
     [13] memoise_2.0.1     lifecycle_1.0.3   pkgconfig_2.0.3   rlang_1.0.6      
-    [17] cli_3.5.0         rstudioapi_0.14   yaml_2.3.6        xfun_0.31        
-    [21] fastmap_1.1.0     withr_2.5.0       stringr_1.4.1     knitr_1.39       
-    [25] xml2_1.3.3        vctrs_0.5.1       hms_1.1.2         desc_1.4.2       
-    [29] fs_1.5.2          devtools_2.4.3    rprojroot_2.0.3   glue_1.6.2       
+    [17] cli_3.6.0         rstudioapi_0.14   yaml_2.3.6        xfun_0.31        
+    [21] fastmap_1.1.0     xml2_1.3.3        withr_2.5.0       stringr_1.4.1    
+    [25] knitr_1.39        hms_1.1.2         desc_1.4.2        fs_1.5.2         
+    [29] vctrs_0.5.1       devtools_2.4.3    rprojroot_2.0.3   glue_1.6.2       
     [33] R6_2.5.1          processx_3.7.0    fansi_1.0.3       rmarkdown_2.14   
     [37] sessioninfo_1.2.2 tzdb_0.3.0        readr_2.1.3       callr_3.7.1      
-    [41] purrr_0.3.5       magrittr_2.0.3    ps_1.7.1          ellipsis_0.3.2   
-    [45] htmltools_0.5.3   usethis_2.1.6     utf8_1.2.2        stringi_1.7.8    
+    [41] purrr_1.0.1       magrittr_2.0.3    ps_1.7.1          ellipsis_0.3.2   
+    [45] htmltools_0.5.3   usethis_2.1.6     utf8_1.2.2        stringi_1.7.12   
     [49] cachem_1.0.6      crayon_1.5.2      brio_1.1.3       
