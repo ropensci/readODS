@@ -33,10 +33,16 @@
     .silent_read_xml(sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="16384" table:default-cell-style-name="ce1"/></table:table>', sheet))
 }
 
+.escape_xml <- function(x) {
+    x_no_amp <- stringi::stri_replace_all_fixed(str = x, pattern = c("&"), replacement = c("&amp;"), vectorize_all = FALSE)
+    stringi::stri_replace_all_fixed(str = x_no_amp, pattern = c("\"", "<", ">", "'"), replacement = c("&quot;", "&lt;", "&gt;", "&apos;"), vectorize_all = FALSE)
+}
+
 .cell_out <- function(type, value, con) {
+    escaped_value <- .escape_xml(value)
     cat("<table:table-cell office:value-type=\"", type,
-        "\" office:value=\"", value,
-        "\" table:style-name=\"ce1\"><text:p>", value,
+        "\" office:value=\"", escaped_value, 
+        "\" table:style-name=\"ce1\"><text:p>", escaped_value,
         "</text:p></table:table-cell>",
         sep = "",
         file = con)
@@ -48,7 +54,7 @@
 ## usethis::use_data(.CONTENT, .FOOTER, internal = TRUE, overwrite = TRUE)
 
 .gen_sheet_tag <- function(sheet = "Sheet1") {
-    sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="16384" table:default-cell-style-name="ce1"/>', sheet)
+    sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="16384" table:default-cell-style-name="ce1"/>', .escape_xml(sheet))
 }
 
 .write_sheet_con <- function(x, con, sheet = "Sheet1", row_names = FALSE, col_names = FALSE) {
