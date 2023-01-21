@@ -5,7 +5,7 @@ Testing the speed of write_ods
 date()
 ```
 
-    [1] "Fri Jan 20 23:32:59 2023"
+    [1] "Sat Jan 21 20:49:38 2023"
 
 ``` r
 devtools::load_all()
@@ -28,7 +28,7 @@ system.time(write_ods(df1, path = tempfile(fileext = ".ods")))
 ```
 
        user  system elapsed 
-      0.476   0.084   0.566 
+      0.459   0.100   0.561 
 
 ``` r
 sessionInfo()
