@@ -39,9 +39,10 @@
 }
 
 .cell_out <- function(type, value, con) {
+    escaped_value <- .escape_xml(value)
     cat("<table:table-cell office:value-type=\"", type,
-        "\" office:value=\"", .escape_xml(value),
-        "\" table:style-name=\"ce1\"><text:p>", value,
+        "\" office:value=\"", escaped_value, 
+        "\" table:style-name=\"ce1\"><text:p>", escaped_value,
         "</text:p></table:table-cell>",
         sep = "",
         file = con)
