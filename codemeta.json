@@ -7,13 +7,13 @@
   "codeRepository": "https://github.com/ropensci/readODS",
   "issueTracker": "https://github.com/ropensci/readODS/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "1.7.3",
+  "version": "1.8.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.2.0 (2022-04-22)",
+  "runtimePlatform": "R version 4.2.2 Patched (2022-11-10 r83330)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -40,6 +40,13 @@
       "familyName": "Leeper",
       "email": "thosjleeper@gmail.com",
       "@id": "https://orcid.org/0000-0003-4097-6326"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Detlef",
+      "familyName": "Steuer",
+      "email": "steuer@hsu-hh.de",
+      "@id": "https://orcid.org/0000-0003-2676-5290"
     }
   ],
   "contributor": [
@@ -90,6 +97,12 @@
       "@type": "Person",
       "givenName": "Matt",
       "familyName": "Kerlogue"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Michal",
+      "familyName": "Lauer",
+      "email": "michal.lauer.25@gmail.com"
     }
   ],
   "maintainer": [
@@ -236,11 +249,17 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=purrr"
     },
+    "7": {
+      "@type": "SoftwareApplication",
+      "identifier": "R",
+      "name": "R",
+      "version": ">= 2.10"
+    },
     "SystemRequirements": null
   },
-  "fileSize": "71469.591KB",
-  "readme": "https://github.com/ropensci/readODS/blob/master/README.md",
-  "contIntegration": ["https://app.codecov.io/gh/ropensci/readODS?branch=master", "https://github.com/ropensci/readODS/actions"],
+  "fileSize": "71480.39KB",
+  "readme": "https://github.com/ropensci/readODS/blob/v1.8/README.md",
+  "contIntegration": ["https://app.codecov.io/gh/ropensci/readODS?branch=master", "https://github.com/ropensci/readODS/actions/workflows/R-CMD-check.yaml"],
   "developmentStatus": "https://lifecycle.r-lib.org/articles/stages.html#stable",
   "review": {
     "@type": "Review",
