@@ -220,7 +220,7 @@ are welcome.
   - Fork the source code, modify, and issue a [pull
     request](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork).
   - Issues, bug reports: [File a Github
-    issue](https://github.com/chainsawriot/readODS).
+    issue](https://github.com/ropensci/readODS).
 
 Please note that this package is released with a [Contributor Code of
 Conduct](https://ropensci.org/code-of-conduct/). By contributing to this
