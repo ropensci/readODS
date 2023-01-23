@@ -1,7 +1,3 @@
-teardown({
-    unlink(tempdir(), recursive = TRUE)
-})
-
 test_that("basic test case #1", {
     content <- c("\"", "\u010d", "\u0161", "\u00c4", "\u5b57", "\u30a2", "\u30a2\u30e0\u30ed")
     x <- data.frame(col = content)
