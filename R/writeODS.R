@@ -142,7 +142,7 @@ write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE,
     }
     ## setup temp directory
     ## one can't just use tempdir() because it is the same in the same session
-    temp_ods_dir <- file.path(tempdir(), sample(seq_len(1000000), 1))
+    temp_ods_dir <- file.path(tempdir(), stringi::stri_rand_strings(1, 20, pattern = "[A-Za-z0-9]"))
     dir.create(temp_ods_dir)
     tryCatch({
         if (!file.exists(path) | (!append & !update)) {
