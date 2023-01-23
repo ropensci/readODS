@@ -181,13 +181,10 @@ improved, please don’t expect the heavily optimized performance of
 [fread](https://cran.r-project.org/package=data.table).
 
 Also, this package can’t handle ODS files larger than “medium size”. See
-[issue \#71](https://github.com/ropensci/readODS/issues/71).
-
-If you need to read and write large ODS files efficiently, the [headless
-interface of
+[issue \#71](https://github.com/ropensci/readODS/issues/71). If you need
+to read large ODS files efficiently, the [headless interface of
 LibreOffice](https://help.libreoffice.org/Common/Starting_the_Software_With_Parameters)
-is recommended. See [issue
-\#49](https://github.com/ropensci/readODS/issues/49) for an example.
+is recommended to convert your ODS to CSV.
 
 ### Misc
 
