@@ -1,7 +1,7 @@
 Package: readODS
 Type: Package
 Title: Read and Write ODS Files
-Version: 1.8.0
+Version: 1.8.1
 Authors@R: c(person("Gerrit-Jan", "Schutten", role = c("aut"), email = "phonixor@gmail.com"), person("Chung-hong", "Chan", role = c("aut", "cre"), email = "chainsawtiney@gmail.com", comment = c(ORCID = "0000-0002-6232-7530")), person("Thomas J.", "Leeper", role = c("aut"), email = "thosjleeper@gmail.com", comment = c(ORCID = "0000-0003-4097-6326")), person("John", "Foster", role = c("ctb"), email = "john.x.foster@nab.com.au"), person("Sergio", "Oller", role = c("ctb")), person("Jim", "Hester", role = c("ctb"), email = "jim.hester@rstudio.com", comment = c(ORCID = "0000-0002-2739-7082")), person("Stephen", "Watts", role = c("ctb")), person("Arthur", "Katossky", role = c("ctb")), person("Stas", "Malavin", role = c("ctb")), person("Duncan", "Garmonsway", role = c("ctb")), person("Mehrad", "Mahmoudian", role = c("ctb")), person("Matt", "Kerlogue", role = c("ctb")), person("Detlef", "Steuer", role = c("aut"), email = "steuer@hsu-hh.de", comment = c(ORCID = "0000-0003-2676-5290")), person("Michal", "Lauer", role = c("ctb"), email = "michal.lauer.25@gmail.com"))
 Description: Read ODS (OpenDocument Spreadsheet) into R as data frame. Also support writing data frame into ODS file.
 URL: https://github.com/ropensci/readODS
@@ -21,7 +21,7 @@ Suggests:
     knitr,
     rmarkdown
 License: GPL-3
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Roxygen: list(markdown = TRUE)
 Encoding: UTF-8
 VignetteBuilder: knitr
