@@ -57,7 +57,7 @@
     sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="16384" table:default-cell-style-name="ce1"/>', .escape_xml(sheet))
 }
 
-.write_sheet_con <- function(x, con, sheet = "Sheet1", row_names = FALSE, col_names = FALSE) {
+.write_sheet_con <- function(x, con, sheet = "Sheet1", row_names = FALSE, col_names = FALSE, na_as_string = FALSE) {
     cat(.gen_sheet_tag(sheet), file = con)
     types <- unlist(lapply(x, class))
     types <- ifelse(types %in% c("integer", "numeric"), "float", "string")
@@ -80,7 +80,13 @@
             .cell_out(type = "string", value = rownames(x)[i], con = con)
         }
         for (j in colj) {
-            .cell_out(type = types[j], value = as.character(x[i, j, drop = TRUE]), con = con)
+            value <- as.character(x[i, j, drop = TRUE])
+            if (is.na(value) && na_as_string) {
+                type <- "string"
+            } else {
+                type <- types[j]
+            }
+            .cell_out(type = type, value = value, con = con)
         }
         cat("</table:table-row>", file = con)
     }
@@ -88,22 +94,22 @@
     return(invisible(con))
 }
 
-.convert_df_to_sheet <- function(x, sheet = "Sheet1", row_names = FALSE, col_names = FALSE) {
+.convert_df_to_sheet <- function(x, sheet = "Sheet1", row_names = FALSE, col_names = FALSE, na_as_string = FALSE) {
     throwaway_xml_file <- tempfile(fileext = ".xml")
     con <- file(file.path(throwaway_xml_file), open="w")
-    .write_sheet_con(x = x, con = con, sheet = sheet, row_names = row_names, col_names = col_names)
+    .write_sheet_con(x = x, con = con, sheet = sheet, row_names = row_names, col_names = col_names, na_as_string = na_as_string)
     close(con)
     return(file.path(throwaway_xml_file))
 }
 
 ## https://github.com/ropensci/readODS/issues/88
-.vfwrite_ods <- function(x, temp_ods_dir, sheet = "Sheet1", row_names = FALSE, col_names = FALSE) {
+.vfwrite_ods <- function(x, temp_ods_dir, sheet = "Sheet1", row_names = FALSE, col_names = FALSE, na_as_string = FALSE) {
     templatedir <- system.file("template", package = "readODS")
     file.copy(dir(templatedir, full.names = TRUE), temp_ods_dir, recursive = TRUE)
     con <- file(file.path(temp_ods_dir, "content.xml"), open="w")
     cat(.CONTENT[1], file = con)
     cat(.CONTENT[2], file = con)
-    .write_sheet_con(x = x, con = con, sheet = sheet, row_names = row_names, col_names = col_names)
+    .write_sheet_con(x = x, con = con, sheet = sheet, row_names = row_names, col_names = col_names, na_as_string = na_as_string)
     cat(.FOOTER, file = con)
     close(con)
 }
@@ -120,6 +126,7 @@
 #' @param row_names logical, TRUE indicates that row names of x are to be included in the sheet. Default is FALSE.
 #' @param col_names logical, TRUE indicates that column names of x are to be included in the sheet. Default is FALSE.
 #' @param verbose logical, if messages should be displayed. Default is FALSE.
+#' @param na_as_string logical, TRUE indicates that NAs are written as string. Default is `option("write_ods_na")` (will change to TRUE in the next version).
 #' @param overwrite logical, deprecated.
 #' @return An ODS file written to the file path location specified by the user. The value of \code{path} is also returned invisibly.
 #' @author Detlef Steuer <steuer@@hsu-hh.de>, Thomas J. Leeper <thosjleeper@@gmail.com>, John Foster <john.x.foster@@nab.com.au>, Chung-hong Chan <chainsawtiney@@gmail.com>
@@ -131,7 +138,7 @@
 #' write_ods(PlantGrowth, "mtcars.ods", append = TRUE, sheet = "plant")
 #' }
 #' @export
-write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, verbose = FALSE, overwrite = NULL) {
+write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, verbose = FALSE, na_as_string = getOption("write_ods_na", default = FALSE), overwrite = NULL) {
     if (!is.null(overwrite)) {
         warning("overwrite is deprecated. Future versions will always set it to TRUE.")
     } else {
@@ -146,7 +153,7 @@ write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE,
     dir.create(temp_ods_dir)
     tryCatch({
         if (!file.exists(path) | (!append & !update)) {
-            .vfwrite_ods(x = x, temp_ods_dir = temp_ods_dir, sheet = sheet, row_names = row_names, col_names = col_names)
+            .vfwrite_ods(x = x, temp_ods_dir = temp_ods_dir, sheet = sheet, row_names = row_names, col_names = col_names, na_as_string = na_as_string)
         } else {
             ## The file must be there.
             utils::unzip(path, exdir = temp_ods_dir)
@@ -169,7 +176,8 @@ write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE,
                 ## Add a new sheet
                 sheet_node <- xml2::xml_add_child(spreadsheet_node, .silent_add_sheet_node(sheet))
             }
-            throwaway_xml_file <- .convert_df_to_sheet(x = x, sheet = sheet, row_names = row_names, col_names = col_names)
+            throwaway_xml_file <- .convert_df_to_sheet(x = x, sheet = sheet, row_names = row_names, col_names = col_names,
+                                                       na_as_string = na_as_string)
             xml2::xml_replace(sheet_node, .silent_read_xml(throwaway_xml_file))
             ## write xml to contentfile
             xml2::write_xml(content, contentfile)

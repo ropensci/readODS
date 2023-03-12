@@ -13,6 +13,7 @@ write_ods(
   row_names = FALSE,
   col_names = TRUE,
   verbose = FALSE,
+  na_as_string = getOption("write_ods_na", default = FALSE),
   overwrite = NULL
 )
 }
@@ -32,6 +33,8 @@ write_ods(
 \item{col_names}{logical, TRUE indicates that column names of x are to be included in the sheet. Default is FALSE.}
 
 \item{verbose}{logical, if messages should be displayed. Default is FALSE.}
+
+\item{na_as_string}{logical, TRUE indicates that NAs are written as string. Default is \code{option("write_ods_na")} (will change to TRUE in the next version).}
 
 \item{overwrite}{logical, deprecated.}
 }
