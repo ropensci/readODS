@@ -139,6 +139,11 @@
 #' }
 #' @export
 write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, verbose = FALSE, na_as_string = getOption("write_ods_na", default = FALSE), overwrite = NULL) {
+    ## setup temp directory
+    ## one can't just use tempdir() because it is the same in the same session
+    temp_ods_dir <- file.path(tempdir(), stringi::stri_rand_strings(1, 20, pattern = "[A-Za-z0-9]"))
+    dir.create(temp_ods_dir)
+    on.exit(unlink(temp_ods_dir))
     if (!is.null(overwrite)) {
         warning("overwrite is deprecated. Future versions will always set it to TRUE.")
     } else {
@@ -147,46 +152,37 @@ write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE,
     if (!is.data.frame(x)) {
         stop("x must be a data.frame.", call. = FALSE)
     }
-    ## setup temp directory
-    ## one can't just use tempdir() because it is the same in the same session
-    temp_ods_dir <- file.path(tempdir(), stringi::stri_rand_strings(1, 20, pattern = "[A-Za-z0-9]"))
-    dir.create(temp_ods_dir)
-    tryCatch({
-        if (!file.exists(path) | (!append & !update)) {
-            .vfwrite_ods(x = x, temp_ods_dir = temp_ods_dir, sheet = sheet, row_names = row_names, col_names = col_names, na_as_string = na_as_string)
-        } else {
-            ## The file must be there.
-            utils::unzip(path, exdir = temp_ods_dir)
-            contentfile <- file.path(temp_ods_dir, "content.xml")
-            content <- xml2::read_xml(contentfile)
-            spreadsheet_node <- xml2::xml_children(xml2::xml_children(content)[[which(!is.na(xml2::xml_find_first(xml2::xml_children(content),"office:spreadsheet")))]])[[1]]
-            sheet_node <- .find_sheet_node_by_sheet(spreadsheet_node, sheet)
-            if ((!is.null(sheet_node) & append & !update) | (!is.null(sheet_node) & !update)) {
-                ## Sheet exists so we cannot append
-                stop(paste0("Sheet ", sheet, " exists. Set update to TRUE is you want to update this sheet."), call. = FALSE)
-            }
-            if (is.null(sheet_node) & update) {
-                stop(paste0("Sheet ", sheet, " does not exist. Cannot update."), call. = FALSE)
-            }
-            if (!is.null(sheet_node) & update) {
-                ## clean up the sheet
-                xml2::xml_remove(xml2::xml_children(sheet_node)[2:length(xml2::xml_children(sheet_node))])
-            }
-            if (is.null(sheet_node) & append) {
-                ## Add a new sheet
-                sheet_node <- xml2::xml_add_child(spreadsheet_node, .silent_add_sheet_node(sheet))
-            }
-            throwaway_xml_file <- .convert_df_to_sheet(x = x, sheet = sheet, row_names = row_names, col_names = col_names,
-                                                       na_as_string = na_as_string)
-            xml2::xml_replace(sheet_node, .silent_read_xml(throwaway_xml_file))
-            ## write xml to contentfile
-            xml2::write_xml(content, contentfile)
+    if (!file.exists(path) | (!append & !update)) {
+        .vfwrite_ods(x = x, temp_ods_dir = temp_ods_dir, sheet = sheet, row_names = row_names, col_names = col_names, na_as_string = na_as_string)
+    } else {
+        ## The file must be there.
+        utils::unzip(path, exdir = temp_ods_dir)
+        contentfile <- file.path(temp_ods_dir, "content.xml")
+        content <- xml2::read_xml(contentfile)
+        spreadsheet_node <- xml2::xml_children(xml2::xml_children(content)[[which(!is.na(xml2::xml_find_first(xml2::xml_children(content),"office:spreadsheet")))]])[[1]]
+        sheet_node <- .find_sheet_node_by_sheet(spreadsheet_node, sheet)
+        if ((!is.null(sheet_node) & append & !update) | (!is.null(sheet_node) & !update)) {
+            ## Sheet exists so we cannot append
+            stop(paste0("Sheet ", sheet, " exists. Set update to TRUE is you want to update this sheet."), call. = FALSE)
         }
-        ## zip up ODS archive
-        .zip_tmp_to_path(temp_ods_dir, path, overwrite, verbose)
-    },
-    finally =  {
-        unlink(temp_ods_dir)
-    })
+        if (is.null(sheet_node) & update) {
+            stop(paste0("Sheet ", sheet, " does not exist. Cannot update."), call. = FALSE)
+        }
+        if (!is.null(sheet_node) & update) {
+            ## clean up the sheet
+            xml2::xml_remove(xml2::xml_children(sheet_node)[2:length(xml2::xml_children(sheet_node))])
+        }
+        if (is.null(sheet_node) & append) {
+            ## Add a new sheet
+            sheet_node <- xml2::xml_add_child(spreadsheet_node, .silent_add_sheet_node(sheet))
+        }
+        throwaway_xml_file <- .convert_df_to_sheet(x = x, sheet = sheet, row_names = row_names, col_names = col_names,
+                                                       na_as_string = na_as_string)
+        xml2::xml_replace(sheet_node, .silent_read_xml(throwaway_xml_file))
+        ## write xml to contentfile
+        xml2::write_xml(content, contentfile)
+    }
+    ## zip up ODS archive
+    .zip_tmp_to_path(temp_ods_dir, path, overwrite, verbose)
     invisible(path)
 }
