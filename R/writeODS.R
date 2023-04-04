@@ -1,13 +1,8 @@
-.zip_tmp_to_path <- function(temp_ods_dir, path, overwrite, verbose) {
-    if (verbose) {
-        zip_flags <- "-r9X"
-    } else {
-        zip_flags <- "-r9Xq"
-    }
+.zip_tmp_to_path <- function(temp_ods_dir, path, overwrite) {
     wd <- getwd()
     on.exit(setwd(wd), add = TRUE)
     setwd(temp_ods_dir)
-    utils::zip(basename(path), dir(), flags = zip_flags)
+    zip::zip(basename(path), files = dir())
     setwd(wd)
     file.copy(file.path(temp_ods_dir, basename(path)), path, overwrite = overwrite)
 }
@@ -125,8 +120,8 @@
 #' @param update logical, TRUE indicates that the sheet with sheet_name in the existing file (path) should be updated with the content of x. If a sheet with sheet_name does not exist, an exception is thrown. Please also note that writing is slower if TRUE. Default is FALSE.
 #' @param row_names logical, TRUE indicates that row names of x are to be included in the sheet. Default is FALSE.
 #' @param col_names logical, TRUE indicates that column names of x are to be included in the sheet. Default is FALSE.
-#' @param verbose logical, if messages should be displayed. Default is FALSE.
 #' @param na_as_string logical, TRUE indicates that NAs are written as string. Default is `option("write_ods_na")` (will change to TRUE in the next version).
+#' @param verbose logical, deprecated
 #' @param overwrite logical, deprecated.
 #' @return An ODS file written to the file path location specified by the user. The value of \code{path} is also returned invisibly.
 #' @author Detlef Steuer <steuer@@hsu-hh.de>, Thomas J. Leeper <thosjleeper@@gmail.com>, John Foster <john.x.foster@@nab.com.au>, Chung-hong Chan <chainsawtiney@@gmail.com>
@@ -138,7 +133,7 @@
 #' write_ods(PlantGrowth, "mtcars.ods", append = TRUE, sheet = "plant")
 #' }
 #' @export
-write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, verbose = FALSE, na_as_string = getOption("write_ods_na", default = FALSE), overwrite = NULL) {
+write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, na_as_string = getOption("write_ods_na", default = FALSE), verbose = NULL, overwrite = NULL) {
     ## setup temp directory
     ## one can't just use tempdir() because it is the same in the same session
     temp_ods_dir <- file.path(tempdir(), stringi::stri_rand_strings(1, 20, pattern = "[A-Za-z0-9]"))
@@ -148,6 +143,11 @@ write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE,
         warning("overwrite is deprecated. Future versions will always set it to TRUE.")
     } else {
         overwrite <- TRUE
+    }
+    if (!is.null(verbose)) {
+        warning("verbose is deprecated. Future versions will always set it to FALSE.")
+    } else {
+        verbose <- FALSE
     }
     if (!is.data.frame(x)) {
         stop("x must be a data.frame.", call. = FALSE)
@@ -183,6 +183,6 @@ write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE,
         xml2::write_xml(content, contentfile)
     }
     ## zip up ODS archive
-    .zip_tmp_to_path(temp_ods_dir, path, overwrite, verbose)
+    .zip_tmp_to_path(temp_ods_dir, path, overwrite)
     invisible(path)
 }
