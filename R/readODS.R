@@ -1,5 +1,3 @@
-#' @importFrom utils unzip
-
 ## ' @keywords internal
 ## ' @description
 ## ' converts numbers to microplate row names and Excel & ODS column names
@@ -40,7 +38,7 @@
 
 .unzip_ods <- function(file) {
     exdir <- tempdir()
-    unzip(file, files = "content.xml", exdir = exdir)
+    zip::unzip(file, files = "content.xml", exdir = exdir)
     return(file.path(exdir, "content.xml"))
 }
 

@@ -12,7 +12,8 @@ Imports:
     readr (>= 1.2.1),
     stringi,
     utils,
-    purrr
+    purrr,
+    zip
 Suggests:
     dplyr,
     testthat,
