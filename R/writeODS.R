@@ -100,7 +100,7 @@
 ## https://github.com/ropensci/readODS/issues/88
 .vfwrite_ods <- function(x, temp_ods_dir, sheet = "Sheet1", row_names = FALSE, col_names = FALSE, na_as_string = FALSE) {
     templatedir <- system.file("template", package = "readODS")
-    file.copy(dir(templatedir, full.names = TRUE), temp_ods_dir, recursive = TRUE)
+    file.copy(dir(templatedir, full.names = TRUE), temp_ods_dir, recursive = TRUE, copy.mode = FALSE)
     con <- file(file.path(temp_ods_dir, "content.xml"), open="w")
     cat(.CONTENT[1], file = con)
     cat(.CONTENT[2], file = con)
