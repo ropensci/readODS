@@ -38,6 +38,7 @@ Other contributors:
   \item Mehrad Mahmoudian [contributor]
   \item Matt Kerlogue [contributor]
   \item Michal Lauer \email{michal.lauer.25@gmail.com} [contributor]
+  \item Till Straube \email{straube@geo.uni-frankfurt.de} [contributor]
 }
 
 }
