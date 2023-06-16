@@ -71,3 +71,10 @@ test_that("Write Excel sheets", {
     df <- read_ods(tmp, "SW10", row_names = TRUE, col_names = TRUE, strings_as_factors = TRUE)
     expect_true(all.equal(starwars10[seq_len(nrow(starwars10)), 1, drop=FALSE], df))
 })
+
+test_that("issue 107", {
+    legend <- readRDS("../testdata/legend.rds")
+    expect_error(write_ods(legend, tmp, sheet = "Legend"), NA)
+    expect_error(write_ods(legend, tmp, sheet = "Legend", update = TRUE), NA)
+    expect_error(write_ods(legend, tmp, sheet = "Legend2", append = TRUE), NA)
+})
