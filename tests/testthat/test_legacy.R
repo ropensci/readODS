@@ -1,62 +1,42 @@
-## tests for readODS.R
+## Updated to remove read.ods and getNrOfSheetsInODS
 
-s_getNrOfSheetsInODS <- function(...) {
-    suppressWarnings({
-        return(getNrOfSheetsInODS(...))
-    })
-}                                        
-
-s_read.ods <- function(...) {
-    suppressWarnings({
-        return(read.ods(...))
-    })
-}
-
-test_that("ods_sheets", {
+test_that("get_num_sheets_in_ods", {
     file <- "../testdata/test.ods"
-    expect_warning(ods_sheets(file))
-})
-
-test_that("getNrOfSheetsInODS", {
-    file <- "../testdata/test.ods"
-    expect_warning(getNrOfSheetsInODS(file))
-    expect_equal(s_getNrOfSheetsInODS(file),1)
+    expect_equal(get_num_sheets_in_ods(file),1)
     file <- "../testdata/multisheet.ods"
-    expect_equal(s_getNrOfSheetsInODS(file),4)
+    expect_equal(get_num_sheets_in_ods(file),4)
     file <- "../testdata/sum.ods"
-    expect_equal(s_getNrOfSheetsInODS(file),1)
+    expect_equal(get_num_sheets_in_ods(file),1)
     file <- "../testdata/readODStestfilegoogledocscreated.ods"
-    expect_equal(s_getNrOfSheetsInODS(file),4)
+    expect_equal(get_num_sheets_in_ods(file),4)
 })
-
 
 test_that("read_ods", {
     file <- "../testdata/sum.ods"
-    expect_warning(read.ods(file))
-    expect_equal(s_read.ods(file, sheet=1, formulaAsFormula=TRUE)[3,1],"of:=SUM([.A1:.A2])")
-    expect_equal(s_read.ods(file, sheet=1, formulaAsFormula=FALSE)[3,1],"3")
+    expect_equal(read_ods(file, sheet=1, col_names = FALSE, formula_as_formula=TRUE)[3,1],"of:=SUM([.A1:.A2])")
+    expect_equal(read_ods(file, sheet=1, col_names = FALSE, col_types = NA, formula_as_formula=FALSE)[3,1],"3")
   
-    df <- data.frame(A=as.character(1:3),stringsAsFactors = F)
-    rODS <- s_read.ods(file, sheet=1, formulaAsFormula=FALSE)
+    df <- data.frame(A = as.character(1:3),stringsAsFactors = F)
+    rODS <- read_ods(file, sheet = 1, col_names = FALSE, col_types=NA, formula_as_formula = FALSE)
     expect_equal(rODS, df)
   
     file <- "../testdata/lotsofnothing_test.ods"
-    expect_equal(dim(s_read.ods(file, sheet=1)),c(21,13)) # test if empty rows at the end are ignored
-    expect_equal(class(s_read.ods(file, sheet=1)),"data.frame")
-    ## small file 
+    expect_equal(dim(read_ods(file, sheet = 1, col_names = FALSE)),c(21,13)) # test if empty rows at the end are ignored
+    expect_equal(class(read_ods(file, sheet=1)), "data.frame")
+    ## small file
     file <- "../testdata/table.ods"
-    df <- data.frame(A=c("gender","m","f","m"), 
-        B=c("visit1","4","8","8"),
-        C=c("visit2","6","9","2"),
-        D=c("visit3","8","4","1"),
+    df <- data.frame(A = c("gender", "m", "f", "m"),
+        B = c("visit1", "4", "8", "8"),
+        C = c("visit2", "6", "9", "2"),
+        D = c("visit3", "8", "4", "1"),
         stringsAsFactors = F)
-    expect_equal(s_read.ods(file, sheet=1),df)
+    expect_equal(read_ods(file, sheet = 1, col_names = FALSE, col_types = NA), df)
     
     file <- "../testdata/layout_test.ods"
-    sheet1 <- s_read.ods(file, sheet=1)
-    expect_equal(sheet1[8,"F"],"empty") # this is a repeated element
+    sheet1 <- read_ods(file, sheet = 1, col_names = FALSE)
+    expect_equal(sheet1[8, "F"], "empty") # this is a repeated element
     
-    sheet2 <- s_read.ods(file, sheet=2)
+    sheet2 <- read_ods(file, sheet=2, col_names = FALSE)
     expect_equal(dim(sheet2),c(22,13))
     expect_true(all(sheet1[21,]==sheet2[22,]))
     
@@ -70,9 +50,9 @@ test_that("read_ods", {
     df[7,5] <- "3"
     df[9,5] <- "1"
     df[10,7] <- "1"
-    sheet2 <- s_read.ods(file, sheet=2)
+    sheet2 <- read_ods(file, sheet=2, col_names = FALSE)
     expect_true(all(sheet2==df, na.rm = TRUE))
  
     file <- "../testdata/1996-2000.ods"
-    expect_true(all(dim(s_read.ods(file)[[2]])==c(36,21)))
+    expect_true(all(dim(read_ods(file, sheet = 2, col_names = FALSE)) == c(36, 21)))
 })
