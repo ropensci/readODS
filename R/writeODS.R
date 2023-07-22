@@ -29,16 +29,18 @@
 }
 
 .escape_xml <- function(x) {
-    x_no_amp <- stringi::stri_replace_all_fixed(str = x, pattern = c("&"), replacement = c("&amp;"), vectorize_all = FALSE)
+    x_utf8 <- stringi::stri_enc_toutf8(x)
+    x_no_amp <- stringi::stri_replace_all_fixed(str = x_utf8, pattern = c("&"), replacement = c("&amp;"), vectorize_all = FALSE)
     stringi::stri_replace_all_fixed(str = x_no_amp, pattern = c("\"", "<", ">", "'"), replacement = c("&quot;", "&lt;", "&gt;", "&apos;"), vectorize_all = FALSE)
+
 }
 
 .cell_out <- function(type, value, con) {
     escaped_value <- .escape_xml(value)
     cat("<table:table-cell office:value-type=\"", type,
-        "\" office:value=\"", escaped_value, 
+        "\" office:value=\"", escaped_value,
         "\" table:style-name=\"ce1\"><text:p>", escaped_value,
-        "</text:p></table:table-cell>",
+        "</text:p></table:table-cell>", 
         sep = "",
         file = con)
 }
@@ -91,7 +93,7 @@
 
 .convert_df_to_sheet <- function(x, sheet = "Sheet1", row_names = FALSE, col_names = FALSE, na_as_string = FALSE) {
     throwaway_xml_file <- tempfile(fileext = ".xml")
-    con <- file(file.path(throwaway_xml_file), open="w")
+    con <- file(file.path(throwaway_xml_file), open="w", encoding = "UTF-8")
     .write_sheet_con(x = x, con = con, sheet = sheet, row_names = row_names, col_names = col_names, na_as_string = na_as_string)
     close(con)
     return(file.path(throwaway_xml_file))
@@ -101,7 +103,7 @@
 .vfwrite_ods <- function(x, temp_ods_dir, sheet = "Sheet1", row_names = FALSE, col_names = FALSE, na_as_string = FALSE) {
     templatedir <- system.file("template", package = "readODS")
     file.copy(dir(templatedir, full.names = TRUE), temp_ods_dir, recursive = TRUE, copy.mode = FALSE)
-    con <- file(file.path(temp_ods_dir, "content.xml"), open="w")
+    con <- file(file.path(temp_ods_dir, "content.xml"), open="w", encoding = "UTF-8")
     cat(.CONTENT[1], file = con)
     cat(.CONTENT[2], file = con)
     .write_sheet_con(x = x, con = con, sheet = sheet, row_names = row_names, col_names = col_names, na_as_string = na_as_string)

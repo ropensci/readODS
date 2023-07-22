@@ -122,8 +122,7 @@ write_ods(PlantGrowth, "mtcars.ods", append = TRUE, sheet = "plant")
 ``` r
 ## Default: First sheet
 read_ods("mtcars.ods")
-#> Warning: Missing column names filled in: 'X1' [1]
-#>                     NA  mpg cyl  disp  hp drat    wt  qsec vs am gear carb
+#>                  Var.1  mpg cyl  disp  hp drat    wt  qsec vs am gear carb
 #> 1            Mazda RX4 21.0   6 160.0 110 3.90 2.620 16.46  0  1    4    4
 #> 2        Mazda RX4 Wag 21.0   6 160.0 110 3.90 2.875 17.02  0  1    4    4
 #> 3           Datsun 710 22.8   4 108.0  93 3.85 2.320 18.61  1  1    4    1
@@ -172,19 +171,20 @@ read_ods("mtcars.ods", sheet = "plant", range = "A1:B10")
 #> 9   5.33  ctrl
 ```
 
-### About the speed and file size
+### Text Encoding
 
-This package is written entirely in R. Although the efficiency has been
-improved, please don’t expect the heavily optimized performance of
-[readxl](https://readxl.tidyverse.org/),
-[readr](https://readr.tidyverse.org/) and data.table’s
-[fread](https://cran.r-project.org/package=data.table).
+In older versions of R (\<4.2) on Windows, the default encoding for text
+is not UTF-8, and instead dependes on your locale. This can cause
+problems processing characters that are not part of the character set R
+is using (ususally
+[Windows-1252](https://en.wikipedia.org/wiki/Windows-1252)). Sheets
+written using these characters generally contains errors. The problem
+can be fixed by upgrading to a version of R \>= 4.2.
 
-Also, this package can’t handle ODS files larger than “medium size”. See
-[issue \#71](https://github.com/ropensci/readODS/issues/71). If you need
-to read large ODS files efficiently, the [headless interface of
-LibreOffice](https://help.libreoffice.org/Common/Starting_the_Software_With_Parameters)
-is recommended to convert your ODS to CSV.
+**Radian:** Even for up-to-date versions of R, these issues with
+character encoding are still a known issue with Radian. Their suggested
+workaround is
+[here](https://github.com/randy3k/radian/issues/269#issuecomment-1169663251).
 
 ### Misc
 
@@ -198,9 +198,9 @@ Unported License](https://creativecommons.org/licenses/by-sa/3.0/).
 
 The creator of this package is Gerrit-Jan Schutten. The current
 maintainer is Chung-hong Chan. This package benefits from contributions
-by Thomas J. Leeper, John Foster, Sergio Oller, Jim Hester, Stephen
-Watts, Arthur Katossky, Stas Malavin, Duncan Garmonsway, Mehrad
-Mahmoudian, Matt Kerlogue, Detlef Steuer, Michal Lauer, and Till
+by Peter Brohan, Thomas J. Leeper, John Foster, Sergio Oller, Jim
+Hester, Stephen Watts, Arthur Katossky, Stas Malavin, Duncan Garmonsway,
+Mehrad Mahmoudian, Matt Kerlogue, Detlef Steuer, Michal Lauer, and Till
 Straube.
 
 This package emulates the behaviors of `readxl::read_xlsx`,
@@ -218,10 +218,10 @@ GPL3
 Contributions in the form of feedback, comments, code, and bug report
 are welcome.
 
-  - Fork the source code, modify, and issue a [pull
-    request](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork).
-  - Issues, bug reports: [File a Github
-    issue](https://github.com/ropensci/readODS).
+- Fork the source code, modify, and issue a [pull
+  request](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork).
+- Issues, bug reports: [File a Github
+  issue](https://github.com/ropensci/readODS).
 
 Please note that this package is released with a [Contributor Code of
 Conduct](https://ropensci.org/code-of-conduct/). By contributing to this

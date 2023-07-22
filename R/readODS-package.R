@@ -1,3 +1,6 @@
+#' @useDynLib readODS, .registration = TRUE
+NULL
+
 #' @keywords internal
 "_PACKAGE"
 
