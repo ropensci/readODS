@@ -58,9 +58,9 @@
 }
 
 .convert_strings_to_factors <- function(df) {
-    i <- purrr::map_lgl(df, is.character)
+    i <- vapply(df, is.character, logical(1))
     df[i] <- lapply(df[i], as.factor)
-    return (df)
+    return(df)
 }
 
 .check_read_args <- function(path,
@@ -74,29 +74,29 @@
                         row_names = FALSE,
                         strings_as_factors = FALSE,
                         check_names = FALSE,
-                        verbose = FALSE){
-    if (missing(path) || !is.character(path)){
+                        verbose = FALSE) {
+    if (missing(path) || !is.character(path)) {
         stop("No file path was provided for the 'path' argument. Please provide a path to a file to import.", call. = FALSE)
     }
-    if (!file.exists(path)){
+    if (!file.exists(path)) {
         stop("file does not exist", call. = FALSE)
     }
-    if (!is.logical(col_names)){
+    if (!is.logical(col_names)) {
         stop("col_names must be of type `boolean`", call. = FALSE)
     }
-    if (!is.logical(formula_as_formula)){
+    if (!is.logical(formula_as_formula)) {
         stop("formula_as_formula must be of type `boolean`", call. = FALSE)
     }
-    if (!is.logical(row_names)){
+    if (!is.logical(row_names)) {
         stop("row_names must be of type `boolean`", call. = FALSE)
     }
-    if (!is.logical(strings_as_factors)){
+    if (!is.logical(strings_as_factors)) {
         stop("strings_as_factors must be of type `boolean`", call. = FALSE)
     }
-    if (!is.logical(check_names)){
+    if (!is.logical(check_names)) {
         stop("check_names must be of type `boolean`", call. = FALSE)
     }
-    if (!is.logical(verbose)){
+    if (!is.logical(verbose)) {
         stop("verbose must be of type `boolean`", call. = FALSE)
     }
 }
@@ -145,7 +145,7 @@ read_ods <- function(path,
                         check_names = FALSE,
                         verbose = FALSE
 
-){
+) {
     ## Should use match.call but there's a weird bug if one of the variable names is 'file'
     .read_ods(path,
         sheet,
@@ -176,7 +176,7 @@ read_ods <- function(path,
                         strings_as_factors = FALSE,
                         check_names = FALSE,
                         verbose = FALSE,
-                        flat = FALSE){
+                        flat = FALSE) {
     .check_read_args(path,
         sheet,
         col_names,
@@ -192,19 +192,19 @@ read_ods <- function(path,
     # Get cell range info
     limits <- .standardise_limits(range, skip)
     # Get sheet number.
-    if (flat){
+    if (flat) {
         sheets <- get_flat_sheet_names_(path, TRUE)
     } else {
         sheets <- get_sheet_names_(path, TRUE)
     }
     sheet_name <- cellranger::as.cell_limits(range)[["sheet"]]
-    if(!is.null(range) && !is.na(sheet_name)){
-        if(sheet != 1){
+    if(!is.null(range) && !is.na(sheet_name)) {
+        if(sheet != 1) {
             warning("Sheet suggested in range and using sheet argument. Defaulting to range",
                 call. = FALSE)
         }
         is_in_sheet_names <- stringi::stri_cmp(sheet_name, sheets) == 0
-        if(any(is_in_sheet_names)){
+        if(any(is_in_sheet_names)) {
             sheet <- which(is_in_sheet_names)
         } else {
             stop(paste0("No sheet found with name '", sheet_name, "'", sep = ""),
@@ -212,19 +212,19 @@ read_ods <- function(path,
         }
     } else {
         is_in_sheet_names <- stringi::stri_cmp(sheet, sheets) == 0
-        if (!is.numeric(sheet) && any(is_in_sheet_names)){
+        if (!is.numeric(sheet) && any(is_in_sheet_names)) {
             sheet <- which(is_in_sheet_names)
         } else if (!is.numeric(sheet)) {
             stop(paste0("No sheet found with name '", sheet, "'", sep = ""), 
                 call. = FALSE)
         }
-        if (sheet > length(sheets)){
+        if (sheet > length(sheets)) {
             stop(paste0("File contains only ", length(sheets), " sheets. Sheet index out of range.",
                 call. = FALSE))
         }
     }
 
-    if(flat){
+    if(flat) {
     strings <- read_flat_ods_(path,
         limits["min_row"],
         limits["max_row"],
@@ -241,7 +241,7 @@ read_ods <- function(path,
         sheet,
         formula_as_formula)
     }
-    if(strings[1] == 0 || strings[2] == 0){
+    if(strings[1] == 0 || strings[2] == 0) {
         warning("empty sheet, return empty data frame.", call. = FALSE)
         return(data.frame())
     }
@@ -253,9 +253,9 @@ read_ods <- function(path,
         stringsAsFactors = FALSE)
     res <- .change_df_with_col_row_header(res, col_names, row_names)
     res <- data.frame(res, check.names = check_names)
-    if (inherits(col_types, 'col_spec')){
+    if (inherits(col_types, 'col_spec')) {
         res <- readr::type_convert(df = res, col_types = col_types, na = na)
-    } else if (length(col_types) == 0 && is.null(col_types)){
+    } else if (length(col_types) == 0 && is.null(col_types)) {
         res <- .silent_type_convert(x = res, verbose = verbose, na = na)
     } else if (length(col_types) == 1 && is.na(col_types[1])) {
         {} #Pass

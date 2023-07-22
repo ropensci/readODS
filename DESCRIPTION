@@ -28,7 +28,6 @@ Imports:
     readr (>= 1.2.1),
     stringi,
     utils,
-    purrr,
     zip
 LinkingTo: 
     cpp11
