@@ -23,8 +23,8 @@ Authors:
 \itemize{
   \item Gerrit-Jan Schutten \email{phonixor@gmail.com}
   \item Peter Brohan \email{peter.brohan@gmail.com}
-  \item Thomas J. Leeper \email{thosjleeper@gmail.com} (\href{https://orcid.org/0000-0003-4097-6326}{ORCID})
   \item Detlef Steuer \email{steuer@hsu-hh.de} (\href{https://orcid.org/0000-0003-2676-5290}{ORCID})
+  \item Thomas J. Leeper \email{thosjleeper@gmail.com} (\href{https://orcid.org/0000-0003-4097-6326}{ORCID})
 }
 
 Other contributors:
