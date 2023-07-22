@@ -3,6 +3,10 @@
 * Added a `NEWS.md` file to track changes to the package.
 * Rewrote all reading functions in C++ for significant speed increase
 
+## Removed read.ods and ods_sheets
+
+These have been deprecated for several years. 
+
 ## list_ods_sheets
 
 * Added `include_external_data` as an argument (`FALSE` by default). This hides stored data from external sources not normally accessible to the user.
