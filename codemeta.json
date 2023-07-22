@@ -7,13 +7,13 @@
   "codeRepository": "https://github.com/ropensci/readODS",
   "issueTracker": "https://github.com/ropensci/readODS/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.2.2 Patched (2022-11-10 r83330)",
+  "runtimePlatform": "R version 4.3.1 (2023-06-16 ucrt)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -33,6 +33,12 @@
       "familyName": "Chan",
       "email": "chainsawtiney@gmail.com",
       "@id": "https://orcid.org/0000-0002-6232-7530"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Peter",
+      "familyName": "Brohan",
+      "email": "peter.brohan@gmail.com"
     },
     {
       "@type": "Person",
@@ -103,6 +109,12 @@
       "givenName": "Michal",
       "familyName": "Lauer",
       "email": "michal.lauer.25@gmail.com"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Till",
+      "familyName": "Straube",
+      "email": "straube@geo.uni-frankfurt.de"
     }
   ],
   "maintainer": [
@@ -251,13 +263,26 @@
     },
     "7": {
       "@type": "SoftwareApplication",
+      "identifier": "zip",
+      "name": "zip",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=zip"
+    },
+    "8": {
+      "@type": "SoftwareApplication",
       "identifier": "R",
       "name": "R",
       "version": ">= 2.10"
     },
     "SystemRequirements": null
   },
-  "fileSize": "71480.39KB",
+  "fileSize": "52009.582KB",
+  "releaseNotes": "https://github.com/ropensci/readODS/blob/master/NEWS.md",
   "readme": "https://github.com/ropensci/readODS/blob/v1.8/README.md",
   "contIntegration": ["https://app.codecov.io/gh/ropensci/readODS?branch=master", "https://github.com/ropensci/readODS/actions/workflows/R-CMD-check.yaml"],
   "developmentStatus": "https://lifecycle.r-lib.org/articles/stages.html#stable",

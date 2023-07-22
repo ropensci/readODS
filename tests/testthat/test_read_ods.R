@@ -67,3 +67,24 @@ test_that("Check names works properly", {
     expect_silent(x <- read_ods("../testdata/test_naming.ods", check_names = TRUE))
     expect_equal(colnames(x), c("a", "a.1", "Var.3"))
 })
+
+test_that("Parses range inputs correctly", {
+    expect_warning(x <- read_ods("../testdata/multisheet.ods", sheet = 3, range = "Sheet2!B4:D9"), "Sheet suggested in range and using sheet")
+    expect_equal(x[2,2], 2)
+    expect_silent(x <- read_ods("../testdata/multisheet.ods", range = "Sheet3!D2:E4"))
+    expect_equal(x[1,1], 3)
+})
+
+test_that("Deals with repeated spaces correctly when fetching only part of sheet",{
+    df <- data.frame(A = c(1, NA, NA, NA),
+                    B = c(NA, NA, 2, NA),
+                    C = c(NA, NA, NA, NA),
+                    D = c(NA, NA, NA, 3))
+    expect_equal(read_ods("../testdata/multisheet.ods", range = "Sheet2!B4:E7", col_names = FALSE), df)
+    expect_equal(read_ods("../testdata/excel_repeat.ods", range = "A9:B18", col_names = FALSE)[5,1], "C")
+})
+
+test_that("Warns of empty sheet", {
+    expect_warning(read_ods("../testdata/empty.ods"))
+    expect_warning(read_fods("../testdata/empty.fods"))
+})

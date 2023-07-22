@@ -7,17 +7,19 @@
 
 #include <vector>
 #include <string>
+#include <fstream>
+
 
 [[cpp11::register]]
-cpp11::strings read_ods_(const std::string file,
+cpp11::strings read_flat_ods_(const std::string file,
     int start_row,
     int stop_row,
     int start_col,
     int stop_col,
  const int sheet,
     const bool formula_as_formula) {
-    if(!is_ods(file)){
-        throw std::invalid_argument(file + " is not a correct ODS file");
+    if(!is_flat_ods(file)){
+        throw std::invalid_argument(file + " is not a correct FODS file");
     } 
     if(sheet < 1){
         throw std::invalid_argument("Cannot have sheet index less than 1");
@@ -25,12 +27,25 @@ cpp11::strings read_ods_(const std::string file,
 
     unsigned int out_width = 0;
     unsigned int out_length;
+    std::string xmlFile;
 
-    std::string xmlFile = zip_buffer(file, "content.xml");
+    std::ifstream in(file, std::ios::in | std::ios::binary);
+    if (in) {
+        in.seekg(0, std::ios::end);
+        xmlFile.resize(in.tellg());
+        in.seekg(0, std::ios::beg);
+        in.read(&xmlFile[0], xmlFile.size());
+        in.close();
+    } else{
+        throw std::invalid_argument("No such file");
+    }
     rapidxml::xml_document<> spreadsheet;
+
+    xmlFile.push_back('\0');
     spreadsheet.parse<0>(&xmlFile[0]);
+
     rapidxml::xml_node<>* rootNode;
-    rootNode = spreadsheet.first_node()->first_node("office:body")->
+    rootNode = spreadsheet.first_node("office:document")->first_node("office:body")->
         first_node("office:spreadsheet")->first_node("table:table");
 
     for (int i = 1; i < sheet; i++){

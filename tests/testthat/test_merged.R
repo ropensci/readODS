@@ -1,0 +1,11 @@
+test_that("merged cells work", {
+    merged <- read_ods("../testdata/merged.ods")
+    expect_equal(merged[4, 1], 4)
+    expect_true(is.na(merged[4, 2]))
+    expect_equal(merged[4, 3], "d")
+    expect_equal(merged[5, 1], 5)
+    expect_true(is.na(merged[6, 1]))
+    expect_equal(merged[7, 1], 7)
+    expect_true(is.na(merged[8, 2]))
+    expect_equal(merged[9,2], "hidden_text")
+})
