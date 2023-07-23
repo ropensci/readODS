@@ -2,7 +2,8 @@
 % Please edit documentation in R/read_ods.R
 \name{read_ods}
 \alias{read_ods}
-\title{Read Data From ODS File}
+\alias{read_fods}
+\title{Read Data From (F)ODS File}
 \usage{
 read_ods(
   path,
@@ -18,9 +19,24 @@ read_ods(
   check_names = FALSE,
   verbose = FALSE
 )
+
+read_fods(
+  path,
+  sheet = 1,
+  col_names = TRUE,
+  col_types = NULL,
+  na = "",
+  skip = 0,
+  formula_as_formula = FALSE,
+  range = NULL,
+  row_names = FALSE,
+  strings_as_factors = FALSE,
+  check_names = FALSE,
+  verbose = FALSE
+)
 }
 \arguments{
-\item{path}{path to the ods file.}
+\item{path}{path to the (f)ods file.}
 
 \item{sheet}{sheet to read. Either a string (the sheet name), or an integer sheet number. The default is 1.}
 
@@ -46,22 +62,26 @@ NULL, so that empty cells are treated as NA.}
 \item{verbose}{logical, if messages should be displayed. Default is FALSE.}
 }
 \value{
-A data frame (\code{data.frame}) containing a representation of data in the ods file.
+A data frame (\code{data.frame}) containing a representation of data in the (f)ods file.
 }
 \description{
-read_ods is a function to read a single sheet from an ods file and return a data frame.
-}
-\note{
-For flat ods files (.fods or .xml), use (\code{read_fods}).
+read_ods is a function to read a single sheet from an (f)ods file and return a data frame. For flat ods files (.fods or .xml),
+use (\code{read_fods}).
 }
 \examples{
 \dontrun{
-# Read a file
+# Read an ODS file
 read_ods("starwars.ods")
 # Read a specific sheet, e.g. the 2nd sheet
 read_ods("starwars.ods", sheet = 2)
 # Read a specific range, e.g. A1:C11
 read_ods("starwars.ods", sheet = 2, range = "A1:C11")
+# Read an FODS file
+read_fods("starwars.fods")
+# Read a specific sheet, e.g. the 2nd sheet
+read_fods("starwars.fods", sheet = 2)
+# Read a specific range, e.g. A1:C11
+read_fods("starwars.fods", sheet = 2, range = "A1:C11")
 }
 }
 \author{

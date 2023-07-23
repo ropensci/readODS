@@ -1,5 +1,5 @@
-.change_df_with_col_row_header <- function(x, col_header, row_header){
-    if((nrow(x) < 2 && col_header )|| (ncol(x) < 2 && row_header)){
+.change_df_with_col_row_header <- function(x, col_header, row_header) {
+    if((nrow(x) < 2 && col_header )|| (ncol(x) < 2 && row_header)) {
         warning("Cannot make column/row names if this would cause the dataframe to be empty.", call. = FALSE)
         return(x)
     }
@@ -12,14 +12,11 @@
     return(g)
 }
 
-
-
-
 ## Based on readxl, although the implementation is different.
 ## If max row is -1, read to end of row. 
 ## Row and column-numbers are 1-based
 .standardise_limits <- function(range, skip) {
-    if(is.null(range)){
+    if(is.null(range)) {
         skip <- check_nonnegative_integer(skip, "skip")
         limits <- c(
             min_row = skip + 1,
@@ -28,12 +25,12 @@
             max_col = -1
         )
     } else {
-        if(skip != 0){
+        if(skip != 0) {
             warning("Range and non-zero value for skip given. Defaulting to range.", call. = FALSE)
         }
         tryCatch({
         limits <- cellranger::as.cell_limits(range)
-        }, error = function(e){
+        }, error = function(e) {
             stop("Invalid `range`")
         })
         limits <- c(
@@ -100,69 +97,6 @@
         stop("verbose must be of type `boolean`", call. = FALSE)
     }
 }
-
-
-#' Read Data From ODS File
-#'
-#' read_ods is a function to read a single sheet from an ods file and return a data frame.
-#'
-#' @param path path to the ods file.
-#' @param sheet sheet to read. Either a string (the sheet name), or an integer sheet number. The default is 1.
-#' @param col_names logical, indicating whether the file contains the names of the variables as its first line. Default is TRUE.
-#' @param col_types Either NULL to guess from the spreadsheet or refer to [readr::type_convert()] to specify cols specification. NA will return a data frame with all columns being "characters".
-#' @param na Character vector of strings to use for missing values. By default read_ods converts blank cells to missing data. It can also be set to
-#' NULL, so that empty cells are treated as NA.
-#' @param skip the number of lines of the data file to skip before beginning to read data. If this parameter is larger than the total number of lines in the ods file, an empty data frame is returned.
-#' @param formula_as_formula logical, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8".. . Default is FALSE.
-#' @param range selection of rectangle using Excel-like cell range, such as \code{range = "D12:F15"} or \code{range = "R1C12:R6C15"}. Cell range processing is handled by the \code{\link[=cellranger]{cellranger}} package.
-#' @param row_names logical, indicating whether the file contains the names of the rows as its first column. Default is FALSE.
-#' @param strings_as_factors logical, if character columns to be converted to factors. Default is FALSE.
-#' @param check_names logical, passed down to base::data.frame(). Default is FALSE.
-#' @param verbose logical, if messages should be displayed. Default is FALSE.
-#' @return A data frame (\code{data.frame}) containing a representation of data in the ods file.
-#' @note For flat ods files (.fods or .xml), use (\code{read_fods}).
-#' @author Peter Brohan <peter.brohan+cran@@gmail.com>, Chung-hong Chan <chainsawtiney@@gmail.com>, Gerrit-Jan Schutten <phonixor@@gmail.com>
-#' @examples
-#' \dontrun{
-#' # Read a file
-#' read_ods("starwars.ods")
-#' # Read a specific sheet, e.g. the 2nd sheet
-#' read_ods("starwars.ods", sheet = 2)
-#' # Read a specific range, e.g. A1:C11
-#' read_ods("starwars.ods", sheet = 2, range = "A1:C11")
-#' }
-#' @export
-read_ods <- function(path,
-                        sheet = 1,
-                        col_names = TRUE,
-                        col_types = NULL,
-                        na = "",
-                        skip = 0,
-                        formula_as_formula = FALSE,
-                        range = NULL,
-                        row_names = FALSE,
-                        strings_as_factors = FALSE,
-                        check_names = FALSE,
-                        verbose = FALSE
-
-) {
-    ## Should use match.call but there's a weird bug if one of the variable names is 'file'
-    .read_ods(path,
-        sheet,
-        col_names,
-        col_types,
-        na,
-        skip,
-        formula_as_formula,
-        range,
-        row_names,
-        strings_as_factors,
-        check_names,
-        verbose,
-        flat = FALSE)
-}
-
-
 
 .read_ods <- function(path,
                         sheet = 1,
@@ -270,4 +204,101 @@ read_ods <- function(path,
 
     return(res)
 
+}
+
+#' Read Data From (F)ODS File
+#'
+#' read_ods is a function to read a single sheet from an (f)ods file and return a data frame. For flat ods files (.fods or .xml),
+#' use (\code{read_fods}).
+#'
+#' @param path path to the (f)ods file.
+#' @param sheet sheet to read. Either a string (the sheet name), or an integer sheet number. The default is 1.
+#' @param col_names logical, indicating whether the file contains the names of the variables as its first line. Default is TRUE.
+#' @param col_types Either NULL to guess from the spreadsheet or refer to [readr::type_convert()] to specify cols specification. NA will return a data frame with all columns being "characters".
+#' @param na Character vector of strings to use for missing values. By default read_ods converts blank cells to missing data. It can also be set to
+#' NULL, so that empty cells are treated as NA.
+#' @param skip the number of lines of the data file to skip before beginning to read data. If this parameter is larger than the total number of lines in the ods file, an empty data frame is returned.
+#' @param formula_as_formula logical, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8".. . Default is FALSE.
+#' @param range selection of rectangle using Excel-like cell range, such as \code{range = "D12:F15"} or \code{range = "R1C12:R6C15"}. Cell range processing is handled by the \code{\link[=cellranger]{cellranger}} package.
+#' @param row_names logical, indicating whether the file contains the names of the rows as its first column. Default is FALSE.
+#' @param strings_as_factors logical, if character columns to be converted to factors. Default is FALSE.
+#' @param check_names logical, passed down to base::data.frame(). Default is FALSE.
+#' @param verbose logical, if messages should be displayed. Default is FALSE.
+#' @return A data frame (\code{data.frame}) containing a representation of data in the (f)ods file.
+#' @author Peter Brohan <peter.brohan+cran@@gmail.com>, Chung-hong Chan <chainsawtiney@@gmail.com>, Gerrit-Jan Schutten <phonixor@@gmail.com>
+#' @examples
+#' \dontrun{
+#' # Read an ODS file
+#' read_ods("starwars.ods")
+#' # Read a specific sheet, e.g. the 2nd sheet
+#' read_ods("starwars.ods", sheet = 2)
+#' # Read a specific range, e.g. A1:C11
+#' read_ods("starwars.ods", sheet = 2, range = "A1:C11")
+#' # Read an FODS file
+#' read_fods("starwars.fods")
+#' # Read a specific sheet, e.g. the 2nd sheet
+#' read_fods("starwars.fods", sheet = 2)
+#' # Read a specific range, e.g. A1:C11
+#' read_fods("starwars.fods", sheet = 2, range = "A1:C11")
+#' }
+#' @export
+read_ods <- function(path,
+                        sheet = 1,
+                        col_names = TRUE,
+                        col_types = NULL,
+                        na = "",
+                        skip = 0,
+                        formula_as_formula = FALSE,
+                        range = NULL,
+                        row_names = FALSE,
+                        strings_as_factors = FALSE,
+                        check_names = FALSE,
+                        verbose = FALSE
+
+) {
+    ## Should use match.call but there's a weird bug if one of the variable names is 'file'
+    .read_ods(path,
+        sheet,
+        col_names,
+        col_types,
+        na,
+        skip,
+        formula_as_formula,
+        range,
+        row_names,
+        strings_as_factors,
+        check_names,
+        verbose,
+        flat = FALSE)
+}
+
+#' @rdname read_ods
+#' @export
+read_fods <- function(path,
+                        sheet = 1,
+                        col_names = TRUE,
+                        col_types = NULL,
+                        na = "",
+                        skip = 0,
+                        formula_as_formula = FALSE,
+                        range = NULL,
+                        row_names = FALSE,
+                        strings_as_factors = FALSE,
+                        check_names = FALSE,
+                        verbose = FALSE
+) {
+    ## Should use match.call but there's a weird bug if one of the variable names is 'file'
+    .read_ods(path,
+        sheet,
+        col_names,
+        col_types,
+        na,
+        skip,
+        formula_as_formula,
+        range,
+        row_names,
+        strings_as_factors,
+        check_names,
+        verbose,
+        flat = TRUE)
 }
