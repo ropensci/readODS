@@ -106,6 +106,24 @@ read_ods("starwars.ods", sheet = 2, range = "A1:C11")
 #> 10     Obi-Wan Kenobi    180   80
 ```
 
+Reading as a tibble
+
+``` r
+read_ods("starwars.ods", range="Sheet1!A2:C11", as_tibble = TRUE)
+#> # A tibble: 9 × 3
+#>   `Luke Skywalker`   Tatooine Human  
+#>   <chr>              <chr>    <chr>  
+#> 1 C-3PO              Tatooine Human  
+#> 2 R2-D2              Alderaan Human  
+#> 3 Darth Vader        Tatooine Human  
+#> 4 Leia Organa        Tatooine Human  
+#> 5 Owen Lars          Tatooine Human  
+#> 6 Beru Whitesun lars Stewjon  Human  
+#> 7 R5-D4              Tatooine Human  
+#> 8 Biggs Darklighter  Kashyyyk Wookiee
+#> 9 Obi-Wan Kenobi     Corellia Human
+```
+
 #### Writing
 
 ``` r

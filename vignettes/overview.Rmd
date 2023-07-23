@@ -4,7 +4,7 @@ output: rmarkdown::html_vignette
 author:
   - Chung-hong Chan ^[GESIS Leibniz-Institut für Sozialwissenschaften]
 vignette: >
-  %\VignetteIndexEntry{An overview of readODS}
+  %\VignetteIndexEntry{An Overview of readODS}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -32,6 +32,11 @@ You can then read it back from `plant.ods`
 
 ```{r read_ods1}
 read_ods("plant.ods")
+```
+
+Reading as a tibble
+```{r read_ods_tibble}
+read_ods("plant.ods", as_tibble = TRUE)
 ```
 
 ## Update and Append
