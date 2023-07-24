@@ -29,7 +29,8 @@ Imports:
     stringi,
     utils,
     zip,
-    tibble
+    tibble,
+    vctrs (>= 0.4.2)
 LinkingTo: 
     cpp11
 Suggests: 
