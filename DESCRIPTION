@@ -28,7 +28,8 @@ Imports:
     readr (>= 1.2.1),
     stringi,
     utils,
-    zip
+    zip,
+    tibble
 LinkingTo: 
     cpp11
 Suggests: 

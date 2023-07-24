@@ -71,7 +71,9 @@
                         row_names = FALSE,
                         strings_as_factors = FALSE,
                         check_names = FALSE,
-                        verbose = FALSE) {
+                        verbose = FALSE,
+                        as_tibble = FALSE,
+                        .name_repair = "check_unique") {
     if (missing(path) || !is.character(path)) {
         stop("No file path was provided for the 'path' argument. Please provide a path to a file to import.", call. = FALSE)
     }
@@ -96,6 +98,17 @@
     if (!is.logical(verbose)) {
         stop("verbose must be of type `boolean`", call. = FALSE)
     }
+    if (!is.logical(as_tibble)) {
+        stop("as_tibble must be of type `boolean", call. = FALSE)
+    }
+    if (as_tibble &&
+        (!(.name_repair %in% c("minimal",
+            "unique",
+            "check_unique",
+            "universal")) ||
+        is.function(.name_repair))) {
+        stop(".name_repair must either be one of \"minimal\", \"unique\", \"check_unique\", \"univseral\" or a function", call. = FALSE)
+    }
 }
 
 .read_ods <- function(path,
@@ -110,6 +123,8 @@
                         strings_as_factors = FALSE,
                         check_names = FALSE,
                         verbose = FALSE,
+                        as_tibble = FALSE,
+                        .name_repair = "check_unique",
                         flat = FALSE) {
     .check_read_args(path,
         sheet,
@@ -122,7 +137,9 @@
         row_names,
         strings_as_factors,
         check_names,
-        verbose)
+        verbose,
+        as_tibble,
+        .name_repair)
     # Get cell range info
     limits <- .standardise_limits(range, skip)
     # Get sheet number.
@@ -202,6 +219,10 @@
         res <- .convert_strings_to_factors(res)
     }
 
+    if (as_tibble){
+        res <- tibble::as_tibble(res, .name_repair = .name_repair)
+    }
+
     return(res)
 
 }
@@ -224,6 +245,16 @@
 #' @param strings_as_factors logical, if character columns to be converted to factors. Default is FALSE.
 #' @param check_names logical, passed down to base::data.frame(). Default is FALSE.
 #' @param verbose logical, if messages should be displayed. Default is FALSE.
+#' @param as_tibble logical, if the output should be a tibble (as opposed to a data.frame). Default is FALSE.
+#' @param .name_repair A string or function passed on as `.name_repair` to [tibble::as_tibble()]
+#'  - `"minimal"`: No name repair
+#'  - `"unique"` : Make sure names are unique and not empty
+#'  - `"check_unique"`: Check names are unique, but do not repair
+#'  - `"universal"` : Checks names are unique and valid R variables names in scope
+#'  - A function to apply custom name repair.
+#'  
+#'  Default is `"check_unique"`.
+#'  
 #' @return A data frame (\code{data.frame}) containing a representation of data in the (f)ods file.
 #' @author Peter Brohan <peter.brohan+cran@@gmail.com>, Chung-hong Chan <chainsawtiney@@gmail.com>, Gerrit-Jan Schutten <phonixor@@gmail.com>
 #' @examples
@@ -253,7 +284,9 @@ read_ods <- function(path,
                         row_names = FALSE,
                         strings_as_factors = FALSE,
                         check_names = FALSE,
-                        verbose = FALSE
+                        verbose = FALSE,
+                        as_tibble = FALSE,
+                        .name_repair = "check_unique"
 
 ) {
     ## Should use match.call but there's a weird bug if one of the variable names is 'file'
@@ -269,6 +302,8 @@ read_ods <- function(path,
         strings_as_factors,
         check_names,
         verbose,
+        as_tibble,
+        .name_repair,
         flat = FALSE)
 }
 
@@ -285,7 +320,10 @@ read_fods <- function(path,
                         row_names = FALSE,
                         strings_as_factors = FALSE,
                         check_names = FALSE,
-                        verbose = FALSE
+                        verbose = FALSE,
+                        as_tibble = FALSE,
+                        .name_repair = "check_unique"
+
 ) {
     ## Should use match.call but there's a weird bug if one of the variable names is 'file'
     .read_ods(path,
@@ -300,5 +338,7 @@ read_fods <- function(path,
         strings_as_factors,
         check_names,
         verbose,
+        as_tibble,
+        .name_repair,
         flat = TRUE)
 }
