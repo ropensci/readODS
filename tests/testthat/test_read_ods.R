@@ -7,21 +7,20 @@ test_that("Incorrect Argument", {
     expect_error(read_ods(path = "../testdata/sum.ods", formula_as_formula = "a"), "formula_as_formula must be of type `boolean`")
     expect_error(read_ods(path = "../testdata/sum.ods", row_names = "a"), "row_names must be of type `boolean`")
     expect_error(read_ods(path = "../testdata/sum.ods", strings_as_factors = "a"), "strings_as_factors must be of type `boolean`")
-    expect_error(read_ods(path = "../testdata/sum.ods", check_names = "a"), "check_names must be of type `boolean`")
     expect_error(read_ods(path = "../testdata/sum.ods", verbose = "a"), "verbose must be of type `boolean`")
 })
 
 test_that("Single column ODS", {
     single_col <- read_ods('../testdata/sum.ods', sheet = 1)
     expect_equal(ncol(single_col),1)
-    expect_equal(colnames(single_col), c("1"))
+    expect_equal(colnames(single_col), c("X1"))
     expect_warning(read_ods('../testdata/sum.ods', sheet = 1, row_names = TRUE), "Cannot make")
 })
 
 test_that("Single row ODS", {
     expect_warning(single_row <- read_ods('../testdata/onerow.ods', sheet = 1), "Cannot make")
     expect_equal(nrow(single_row), 1)
-    expect_equal(single_row[1,1], 1)
+    expect_equal(single_row[[1,1]], 1)
 })
 
 test_that("Single column range", {
@@ -34,7 +33,7 @@ test_that("read_ods works with all kind of character encodings", {
 })
 
 test_that("read_ods reads decimals properly with comma", {
-    df <- read_ods('../testdata/decimal_comma.ods')
+    df <- read_ods('../testdata/decimal_comma.ods', as_tibble = FALSE)
     df_expected <- structure(list(A = 3.4, B = 2.3, C = 0.03),
                            .Names = c("A", "B", "C"),
                            row.names = 1L, class = "data.frame")
@@ -43,45 +42,46 @@ test_that("read_ods reads decimals properly with comma", {
 
 test_that("eating space issue #74", {
     df <- read_ods("../testdata/eating_spaces.ods", sheet = 2, col_names = FALSE)
-    expect_equal(df[1,1], "A   B")
+    expect_equal(df[[1,1]], "A   B")
     df <- read_ods("../testdata/eating_spaces.ods", sheet = 3, col_names = FALSE)
-    expect_equal(df[1,1], "A    B C")
+    expect_equal(df[[1,1]], "A    B C")
     df <- read_ods("../testdata/eating_spaces.ods", sheet = 4, col_names = FALSE)
-    expect_equal(df[1,1], "A     B   C")
+    expect_equal(df[[1,1]], "A     B   C")
     df <- read_ods("../testdata/eating_spaces.ods", sheet = 5, col_names = FALSE)
-    expect_equal(df[1,1], "A     B\nC")
+    expect_equal(df[[1,1]], "A     B\nC")
 })
 
 test_that("skip", {
     expect_silent(x <- read_ods("../testdata/starwars.ods", skip = 0))
     expect_equal(nrow(x), 10)
-    expect_silent(x <- read_ods("../testdata/starwars.ods", skip = 1, col_names = FALSE))
+    expect_message(x <- read_ods("../testdata/starwars.ods", skip = 1, col_names = FALSE))
     expect_equal(nrow(x), 10)
     expect_warning(x <- read_ods("../testdata/starwars.ods", skip = 11), "empty sheet")
     expect_equal(nrow(x), 0)
 })
 
-test_that("Check names works properly", {
-    expect_silent(x <- read_ods("../testdata/test_naming.ods"))
-    expect_equal(colnames(x), c("a", "a", "Var.3"))
-    expect_silent(x <- read_ods("../testdata/test_naming.ods", check_names = TRUE))
+test_that("Check .name_repair works properly", {
+    expect_silent(x <- read_ods("../testdata/test_naming.ods", .name_repair = "minimal"))
     expect_equal(colnames(x), c("a", "a.1", "Var.3"))
+    expect_error(x <- read_ods("../testdata/test_naming.ods", .name_repair = "check_unique"))
+    expect_message(x <- read_ods("../testdata/test_naming.ods", .name_repair = "unique"))
+    expect_equal(colnames(x), c("a...1", "a...2", "...3"))
 })
 
 test_that("Parses range inputs correctly", {
     expect_warning(x <- read_ods("../testdata/multisheet.ods", sheet = 3, range = "Sheet2!B4:D9"), "Sheet suggested in range and using sheet")
-    expect_equal(x[2,2], 2)
-    expect_silent(x <- read_ods("../testdata/multisheet.ods", range = "Sheet3!D2:E4"))
-    expect_equal(x[1,1], 3)
+    expect_equal(x[[2,2]], 2)
+    expect_message(x <- read_ods("../testdata/multisheet.ods", range = "Sheet3!D2:E4"))
+    expect_equal(x[[1,1]], 3)
 })
 
 test_that("Deals with repeated spaces correctly when fetching only part of sheet",{
-    df <- data.frame(A = c(1, NA, NA, NA),
-                    B = c(NA, NA, 2, NA),
-                    C = c(NA, NA, NA, NA),
-                    D = c(NA, NA, NA, 3))
-    expect_equal(read_ods("../testdata/multisheet.ods", range = "Sheet2!B4:E7", col_names = FALSE), df)
-    expect_equal(read_ods("../testdata/excel_repeat.ods", range = "A9:B18", col_names = FALSE)[5,1], "C")
+    df <- data.frame("...1" = c(1, NA, NA, NA),
+                    "...2" = c(NA, NA, 2, NA),
+                    "...3" = c(NA, NA, NA, NA),
+                    "...4" = c(NA, NA, NA, 3))
+    expect_equal(read_ods("../testdata/multisheet.ods", range = "Sheet2!B4:E7", col_names = FALSE, as_tibble = FALSE), df)
+    expect_equal(read_ods("../testdata/excel_repeat.ods", range = "A9:B18", col_names = FALSE)[[5,1]], "C")
 })
 
 test_that("Warns of empty sheet", {

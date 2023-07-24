@@ -233,7 +233,7 @@
 #' @param row_names logical, indicating whether the file contains the names of the rows as its first column. Default is FALSE.
 #' @param strings_as_factors logical, if character columns to be converted to factors. Default is FALSE.
 #' @param verbose logical, if messages should be displayed. Default is FALSE.
-#' @param as_tibble logical, if the output should be a tibble (as opposed to a data.frame). Default is FALSE.
+#' @param as_tibble logical, if the output should be a tibble (as opposed to a data.frame). Default is TRUE.
 #' @param .name_repair A string or function passed on as `.name_repair` to [tibble::as_tibble()]
 #'  - `"minimal"`: No name repair
 #'  - `"unique"` : Make sure names are unique and not empty
