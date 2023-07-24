@@ -248,7 +248,7 @@
 #'  
 #'  Default is `"unique"`.
 #'  
-#' @return A data frame (\code{data.frame}) containing a representation of data in the (f)ods file.
+#' @return A tibble (\code{tibble}) or data frame (\code{data.frame}) containing a representation of data in the (f)ods file.
 #' @author Peter Brohan <peter.brohan+cran@@gmail.com>, Chung-hong Chan <chainsawtiney@@gmail.com>, Gerrit-Jan Schutten <phonixor@@gmail.com>
 #' @examples
 #' \dontrun{
