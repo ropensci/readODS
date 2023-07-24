@@ -1,3 +1,13 @@
+# readODS 2.0.0
+
+## Removed `get_num_sheets_in_{f}ods()`
+
+The descendant of `getNrOfSheetsInODS()` is not very useful. If you really need to have the similar function:
+
+```r
+length(list_ods_sheets("starwars.ods"))
+```
+
 # readODS 1.9.0
 
 * Added a `NEWS.md` file to track changes to the package.

@@ -11,9 +11,6 @@
 #' # Get the list of names of sheets
 #' list_ods_sheets("starwars.ods")
 #' list_fods_sheets("starwars.fods")
-#' # Get the number of sheets
-#' get_num_sheets_in_ods("starwars.ods")
-#' get_num_sheets_in_fods("starwars.fods")
 #' }
 #' @seealso
 #' use \code{\link{read_ods}} to read the data
@@ -22,22 +19,9 @@ list_ods_sheets <- function(path, include_external_data = FALSE) {
     return(get_sheet_names_(path, include_external_data))
 }
 
-#' @rdname list_ods_sheets
-#' @export
-get_num_sheets_in_ods <- function(path, include_external_data = FALSE) {
-    sheets <- get_sheet_names_(path, include_external_data)
-    return(length(sheets))
-}
 
 #' @rdname list_ods_sheets
 #' @export
 list_fods_sheets <- function(path, include_external_data = FALSE) {
     return(get_flat_sheet_names_(path, include_external_data))
-}
-
-#' @rdname list_ods_sheets
-#' @export
-get_num_sheets_in_fods <- function(path, include_external_data = FALSE) {
-    sheets <- get_flat_sheet_names_(path, include_external_data)
-    return(length(sheets))
 }
