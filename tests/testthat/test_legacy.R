@@ -1,16 +1,3 @@
-## Updated to remove read.ods and getNrOfSheetsInODS
-
-test_that("get_num_sheets_in_ods", {
-    file <- "../testdata/test.ods"
-    expect_equal(get_num_sheets_in_ods(file),1)
-    file <- "../testdata/multisheet.ods"
-    expect_equal(get_num_sheets_in_ods(file),4)
-    file <- "../testdata/sum.ods"
-    expect_equal(get_num_sheets_in_ods(file),1)
-    file <- "../testdata/readODStestfilegoogledocscreated.ods"
-    expect_equal(get_num_sheets_in_ods(file),4)
-})
-
 test_that("read_ods", {
     file <- "../testdata/sum.ods"
     expect_equal(read_ods(file, sheet=1, col_names = FALSE, formula_as_formula=TRUE)[[3,1]],"of:=SUM([.A1:.A2])")

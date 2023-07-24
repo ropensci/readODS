@@ -1,9 +1,25 @@
+# readODS 2.0.0
+
+## BREAKING CHANGES: Removed `get_num_sheets_in_{f}ods()`
+
+The descendant of `getNrOfSheetsInODS()` is not very useful. If you really need to have the similar function:
+
+```r
+length(list_ods_sheets("starwars.ods"))
+```
+
+## BREAKING CHANGES: Removed several obsolete parameters of `write_ods()`
+
+* `overwrite`: always TRUE
+* `verbose`: always FALSE
+* `na_as_string`: default to FALSE
+
 # readODS 1.9.0
 
 * Added a `NEWS.md` file to track changes to the package.
 * Rewrote all reading functions in C++ for significant speed increase
 
-## Removed read.ods and ods_sheets
+## BREAKING CHANGES: Removed read.ods and ods_sheets
 
 These have been deprecated for several years. 
 

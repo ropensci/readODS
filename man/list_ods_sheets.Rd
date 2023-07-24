@@ -2,18 +2,12 @@
 % Please edit documentation in R/list_ods_sheets.R
 \name{list_ods_sheets}
 \alias{list_ods_sheets}
-\alias{get_num_sheets_in_ods}
 \alias{list_fods_sheets}
-\alias{get_num_sheets_in_fods}
 \title{Get information in an (F)ODS File}
 \usage{
 list_ods_sheets(path, include_external_data = FALSE)
 
-get_num_sheets_in_ods(path, include_external_data = FALSE)
-
 list_fods_sheets(path, include_external_data = FALSE)
-
-get_num_sheets_in_fods(path, include_external_data = FALSE)
 }
 \arguments{
 \item{path}{Path to the (f)ods file}
@@ -31,9 +25,6 @@ For \verb{list_(f)ods_sheets}, a character vector of sheet names; for \verb{get_
 # Get the list of names of sheets
 list_ods_sheets("starwars.ods")
 list_fods_sheets("starwars.fods")
-# Get the number of sheets
-get_num_sheets_in_ods("starwars.ods")
-get_num_sheets_in_fods("starwars.fods")
 }
 }
 \seealso{

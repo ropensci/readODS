@@ -12,9 +12,7 @@ write_ods(
   update = FALSE,
   row_names = FALSE,
   col_names = TRUE,
-  na_as_string = getOption("write_ods_na", default = FALSE),
-  verbose = NULL,
-  overwrite = NULL
+  na_as_string = TRUE
 )
 }
 \arguments{
@@ -32,11 +30,7 @@ write_ods(
 
 \item{col_names}{logical, TRUE indicates that column names of x are to be included in the sheet. Default is FALSE.}
 
-\item{na_as_string}{logical, TRUE indicates that NAs are written as string. Default is \code{option("write_ods_na")} (will change to TRUE in the next version).}
-
-\item{verbose}{logical, deprecated}
-
-\item{overwrite}{logical, deprecated.}
+\item{na_as_string}{logical, TRUE indicates that NAs are written as string.}
 }
 \value{
 An ODS file written to the file path location specified by the user. The value of \code{path} is also returned invisibly.
