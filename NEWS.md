@@ -27,14 +27,17 @@ These have been deprecated for several years.
 
 * Added `include_external_data` as an argument (`FALSE` by default). This hides stored data from external sources not normally accessible to the user.
 
+## BREAKING CHANGES: read_ods now outputs as tibble by default
+* Added `as_tibble` and `.name_repair` as arguments. If `as_tibble` is true, outputs as a tibble using `tibble::as_tibble()` passing on `.name_repair` (default being `"unique"`). **By default** `as_tibble` is set to TRUE.
+* Removed `check_names` argument. All name repairs are now dealt with using `vctrs::vec_as_names()`. This will **significantly change** the default names given to outputs. (Names in the style of `check_names = TRUE` can be obtained by setting `.name_repair = minimal`, although this is not advised)
+
 ## read_ods
 
 * Changed behaviour when only one row is read. The row now correctly appears as the top row in the dataframe, and a warning is given if column headers are requested that this would cause the output to be empty (**Note:** in this case column names are not assigned)
 * Changed behaviour when only one column is read. Previously gave an error. If row names are requested, gives a warning that this would cause the output to be empty, and does not assign names.
 * Sheets are now accepted as part of the `range` argument, e.g. `Range = "Sheet2!A2:B7"`. If this and the `sheets` argument are given, this is preferred.
 * Merged cells now have their value places in the top-left cell. All other cells that would be covered by the merge are filled with `NA`.
-* Added `as_tibble` and `.name_repair` as arguments. If `as_tibble` is true, outputs as a tibble using `tibble::as_tibble()` passing on `.name_repair` (default being `"unique"`). **By default `as_tibble` is set to TRUE, and all 
-* Removed `check_names` argument. All name repairs are now dealt with using `vctrs::vec_as_names()`. This will **significantly change** the default names given to outputs
+
 
 ## read_fods
 

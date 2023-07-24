@@ -100,7 +100,7 @@
 }
 
 ## https://github.com/ropensci/readODS/issues/88
-.vfwrite_ods <- function(x, temp_ods_dir, sheet = "Sheet1", row_names = FALSE, col_names = FALSE, na_as_string = FALSE) {
+.vfwrite_ods <- function(x, temp_ods_dir, sheet = "Sheet1", row_names = FALSE, col_names = TRUE, na_as_string = FALSE) {
     templatedir <- system.file("template", package = "readODS")
     file.copy(dir(templatedir, full.names = TRUE), temp_ods_dir, recursive = TRUE, copy.mode = FALSE)
     con <- file(file.path(temp_ods_dir, "content.xml"), open="w", encoding = "UTF-8")
@@ -121,7 +121,7 @@
 #' @param append logical, TRUE indicates that x should be appended to the existing file (path) as a new sheet. If a sheet with the same sheet_name exists, an exception is thrown. See update. Please also note that writing is slower if TRUE. Default is FALSE.
 #' @param update logical, TRUE indicates that the sheet with sheet_name in the existing file (path) should be updated with the content of x. If a sheet with sheet_name does not exist, an exception is thrown. Please also note that writing is slower if TRUE. Default is FALSE.
 #' @param row_names logical, TRUE indicates that row names of x are to be included in the sheet. Default is FALSE.
-#' @param col_names logical, TRUE indicates that column names of x are to be included in the sheet. Default is FALSE.
+#' @param col_names logical, TRUE indicates that column names of x are to be included in the sheet. Default is TRUE.
 #' @param na_as_string logical, TRUE indicates that NAs are written as string.
 #' @return An ODS file written to the file path location specified by the user. The value of \code{path} is also returned invisibly.
 #' @author Detlef Steuer <steuer@@hsu-hh.de>, Thomas J. Leeper <thosjleeper@@gmail.com>, John Foster <john.x.foster@@nab.com.au>, Chung-hong Chan <chainsawtiney@@gmail.com>
@@ -139,6 +139,9 @@ write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE,
     temp_ods_dir <- file.path(tempdir(), stringi::stri_rand_strings(1, 20, pattern = "[A-Za-z0-9]"))
     dir.create(temp_ods_dir)
     on.exit(unlink(temp_ods_dir))
+    if (inherits(x, "tbl_df")){ #Convert to a df if currently a tibble
+        x <- as.data.frame(x)
+    }
     if (!is.data.frame(x)) {
         stop("x must be a data.frame.", call. = FALSE)
     }

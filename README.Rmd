@@ -68,9 +68,9 @@ Reading from a specific range
 read_ods("starwars.ods", sheet = 2, range = "A1:C11")
 ```
 
-Reading as a tibble
+Reading as a dataframe
 ```{r}
-read_ods("starwars.ods", range="Sheet1!A2:C11", as_tibble = TRUE)
+read_ods("starwars.ods", range="Sheet1!A2:C11", as_tibble = FALSE)
 ```
 
 #### Writing

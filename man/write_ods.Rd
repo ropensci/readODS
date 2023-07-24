@@ -28,7 +28,7 @@ write_ods(
 
 \item{row_names}{logical, TRUE indicates that row names of x are to be included in the sheet. Default is FALSE.}
 
-\item{col_names}{logical, TRUE indicates that column names of x are to be included in the sheet. Default is FALSE.}
+\item{col_names}{logical, TRUE indicates that column names of x are to be included in the sheet. Default is TRUE.}
 
 \item{na_as_string}{logical, TRUE indicates that NAs are written as string.}
 }

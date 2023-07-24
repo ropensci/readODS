@@ -8,13 +8,14 @@ test_that("Incorrect Argument", {
     expect_error(read_ods(path = "../testdata/sum.ods", row_names = "a"), "row_names must be of type `boolean`")
     expect_error(read_ods(path = "../testdata/sum.ods", strings_as_factors = "a"), "strings_as_factors must be of type `boolean`")
     expect_error(read_ods(path = "../testdata/sum.ods", verbose = "a"), "verbose must be of type `boolean`")
+    expect_error(read_ods(path = "../testdata/sum.ods", row_names = TRUE), "Tibbles do not support")
 })
 
 test_that("Single column ODS", {
     single_col <- read_ods('../testdata/sum.ods', sheet = 1)
     expect_equal(ncol(single_col),1)
     expect_equal(colnames(single_col), c("X1"))
-    expect_warning(read_ods('../testdata/sum.ods', sheet = 1, row_names = TRUE), "Cannot make")
+    expect_warning(read_ods('../testdata/sum.ods', sheet = 1, row_names = TRUE, as_tibble = FALSE), "Cannot make")
 })
 
 test_that("Single row ODS", {
@@ -87,4 +88,13 @@ test_that("Deals with repeated spaces correctly when fetching only part of sheet
 test_that("Warns of empty sheet", {
     expect_warning(read_ods("../testdata/empty.ods"))
     expect_warning(read_fods("../testdata/empty.fods"))
+})
+
+test_that("read with column headers", {
+    expect_silent(x <- read_ods("../testdata/starwars.ods", col_names = TRUE))
+    expect_equal(ncol(x), 3)
+    expect_equal(nrow(x), 10)
+    expect_silent(x <- read_ods("../testdata/starwars.ods", row_names = TRUE, as_tibble = FALSE))
+    expect_equal(ncol(x), 2)
+    expect_equal(colnames(x), c("homeworld", "species"))
 })

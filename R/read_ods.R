@@ -10,7 +10,11 @@
 
 
     rownames(g) <- if(row_header) x[seq(irow, nrow(x)), 1] else NULL # don't want character row headers given by 1:nrow(g)
-    col_n <- if(col_header) x[1, seq(jcol, ncol(x))] else c(rep("", ncol(x)))
+    cols <- ncol(x)
+    if (row_header) {
+        cols <- cols - 1
+    }
+    col_n <- if(col_header) x[1, seq(jcol, ncol(x))] else c(rep("", cols))
     colnames(g) <- vctrs::vec_as_names(unlist(col_n), repair = .name_repair)
     return(g)
 }
@@ -99,8 +103,9 @@
     if (!is.logical(as_tibble)) {
         stop("as_tibble must be of type `boolean", call. = FALSE)
     }
-    else
-    {}
+    if (row_names && as_tibble){
+        stop("Tibbles do not support row names. To use row names, set as_tibble to false", call. = FALSE)
+    }
 }
 
 .read_ods <- function(path,
