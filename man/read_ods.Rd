@@ -75,7 +75,7 @@ NULL, so that empty cells are treated as NA.}
 Default is \code{"unique"}.}
 }
 \value{
-A data frame (\code{data.frame}) containing a representation of data in the (f)ods file.
+A tibble (\code{tibble}) or data frame (\code{data.frame}) containing a representation of data in the (f)ods file.
 }
 \description{
 read_ods is a function to read a single sheet from an (f)ods file and return a data frame. For flat ods files (.fods or .xml),
