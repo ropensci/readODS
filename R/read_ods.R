@@ -188,7 +188,11 @@
     }
     if(strings[1] == 0 || strings[2] == 0) {
         warning("empty sheet, return empty data frame.", call. = FALSE)
-        return(data.frame())
+        if(as_tibble){
+            return(tibble::tibble())
+        } else {
+            return(data.frame())
+        }
     }
     res <- as.data.frame(
             matrix(
