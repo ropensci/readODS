@@ -16,10 +16,9 @@ read_ods(
   range = NULL,
   row_names = FALSE,
   strings_as_factors = FALSE,
-  check_names = FALSE,
   verbose = FALSE,
-  as_tibble = FALSE,
-  .name_repair = "check_unique"
+  as_tibble = TRUE,
+  .name_repair = "unique"
 )
 
 read_fods(
@@ -33,10 +32,9 @@ read_fods(
   range = NULL,
   row_names = FALSE,
   strings_as_factors = FALSE,
-  check_names = FALSE,
   verbose = FALSE,
-  as_tibble = FALSE,
-  .name_repair = "check_unique"
+  as_tibble = TRUE,
+  .name_repair = "unique"
 )
 }
 \arguments{
@@ -61,11 +59,9 @@ NULL, so that empty cells are treated as NA.}
 
 \item{strings_as_factors}{logical, if character columns to be converted to factors. Default is FALSE.}
 
-\item{check_names}{logical, passed down to base::data.frame(). Default is FALSE.}
-
 \item{verbose}{logical, if messages should be displayed. Default is FALSE.}
 
-\item{as_tibble}{logical, if the output should be a tibble (as opposed to a data.frame). Default is FALSE.}
+\item{as_tibble}{logical, if the output should be a tibble (as opposed to a data.frame). Default is TRUE.}
 
 \item{.name_repair}{A string or function passed on as \code{.name_repair} to \code{\link[tibble:as_tibble]{tibble::as_tibble()}}
 \itemize{
@@ -76,7 +72,7 @@ NULL, so that empty cells are treated as NA.}
 \item A function to apply custom name repair.
 }
 
-Default is \code{"check_unique"}.}
+Default is \code{"unique"}.}
 }
 \value{
 A data frame (\code{data.frame}) containing a representation of data in the (f)ods file.

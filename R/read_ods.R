@@ -1,4 +1,4 @@
-.change_df_with_col_row_header <- function(x, col_header, row_header) {
+.change_df_with_col_row_header <- function(x, col_header, row_header, .name_repair) {
     if((nrow(x) < 2 && col_header )|| (ncol(x) < 2 && row_header)) {
         warning("Cannot make column/row names if this would cause the dataframe to be empty.", call. = FALSE)
         return(x)
@@ -7,8 +7,15 @@
     jcol <- ifelse(row_header, 2, 1)
 
     g <- x[irow:nrow(x), jcol:ncol(x), drop=FALSE] # maintain as dataframe for single column
+
+
     rownames(g) <- if(row_header) x[seq(irow, nrow(x)), 1] else NULL # don't want character row headers given by 1:nrow(g)
-    colnames(g) <- if(col_header) x[1, seq(jcol, ncol(x))] else cellranger::num_to_letter(seq_len(ncol(g)))
+    cols <- ncol(x)
+    if (row_header) {
+        cols <- cols - 1
+    }
+    col_n <- if(col_header) x[1, seq(jcol, ncol(x))] else c(rep("", cols))
+    colnames(g) <- vctrs::vec_as_names(unlist(col_n), repair = .name_repair)
     return(g)
 }
 
@@ -70,10 +77,8 @@
                         range = NULL,
                         row_names = FALSE,
                         strings_as_factors = FALSE,
-                        check_names = FALSE,
                         verbose = FALSE,
-                        as_tibble = FALSE,
-                        .name_repair = "check_unique") {
+                        as_tibble = TRUE) {
     if (missing(path) || !is.character(path)) {
         stop("No file path was provided for the 'path' argument. Please provide a path to a file to import.", call. = FALSE)
     }
@@ -92,22 +97,14 @@
     if (!is.logical(strings_as_factors)) {
         stop("strings_as_factors must be of type `boolean`", call. = FALSE)
     }
-    if (!is.logical(check_names)) {
-        stop("check_names must be of type `boolean`", call. = FALSE)
-    }
     if (!is.logical(verbose)) {
         stop("verbose must be of type `boolean`", call. = FALSE)
     }
     if (!is.logical(as_tibble)) {
         stop("as_tibble must be of type `boolean", call. = FALSE)
     }
-    if (as_tibble &&
-        (!(.name_repair %in% c("minimal",
-            "unique",
-            "check_unique",
-            "universal")) ||
-        is.function(.name_repair))) {
-        stop(".name_repair must either be one of \"minimal\", \"unique\", \"check_unique\", \"univseral\" or a function", call. = FALSE)
+    if (row_names && as_tibble){
+        stop("Tibbles do not support row names. To use row names, set as_tibble to false", call. = FALSE)
     }
 }
 
@@ -121,25 +118,22 @@
                         range = NULL,
                         row_names = FALSE,
                         strings_as_factors = FALSE,
-                        check_names = FALSE,
                         verbose = FALSE,
-                        as_tibble = FALSE,
-                        .name_repair = "check_unique",
+                        as_tibble = TRUE,
+                        .name_repair = "unique",
                         flat = FALSE) {
     .check_read_args(path,
         sheet,
         col_names,
         col_types,
         na,
-        skip, 
+        skip,
         formula_as_formula,
         range,
         row_names,
         strings_as_factors,
-        check_names,
         verbose,
-        as_tibble,
-        .name_repair)
+        as_tibble)
     # Get cell range info
     limits <- .standardise_limits(range, skip)
     # Get sheet number.
@@ -194,7 +188,11 @@
     }
     if(strings[1] == 0 || strings[2] == 0) {
         warning("empty sheet, return empty data frame.", call. = FALSE)
-        return(data.frame())
+        if(as_tibble){
+            return(tibble::tibble())
+        } else {
+            return(data.frame())
+        }
     }
     res <- as.data.frame(
             matrix(
@@ -202,8 +200,8 @@
                 ncol = strtoi(strings[1]),
         byrow = TRUE),
         stringsAsFactors = FALSE)
-    res <- .change_df_with_col_row_header(res, col_names, row_names)
-    res <- data.frame(res, check.names = check_names)
+    res <- .change_df_with_col_row_header(res, col_names, row_names, .name_repair)
+    res <- data.frame(res)
     if (inherits(col_types, 'col_spec')) {
         res <- readr::type_convert(df = res, col_types = col_types, na = na)
     } else if (length(col_types) == 0 && is.null(col_types)) {
@@ -243,9 +241,8 @@
 #' @param range selection of rectangle using Excel-like cell range, such as \code{range = "D12:F15"} or \code{range = "R1C12:R6C15"}. Cell range processing is handled by the \code{\link[=cellranger]{cellranger}} package.
 #' @param row_names logical, indicating whether the file contains the names of the rows as its first column. Default is FALSE.
 #' @param strings_as_factors logical, if character columns to be converted to factors. Default is FALSE.
-#' @param check_names logical, passed down to base::data.frame(). Default is FALSE.
 #' @param verbose logical, if messages should be displayed. Default is FALSE.
-#' @param as_tibble logical, if the output should be a tibble (as opposed to a data.frame). Default is FALSE.
+#' @param as_tibble logical, if the output should be a tibble (as opposed to a data.frame). Default is TRUE.
 #' @param .name_repair A string or function passed on as `.name_repair` to [tibble::as_tibble()]
 #'  - `"minimal"`: No name repair
 #'  - `"unique"` : Make sure names are unique and not empty
@@ -253,9 +250,9 @@
 #'  - `"universal"` : Checks names are unique and valid R variables names in scope
 #'  - A function to apply custom name repair.
 #'  
-#'  Default is `"check_unique"`.
+#'  Default is `"unique"`.
 #'  
-#' @return A data frame (\code{data.frame}) containing a representation of data in the (f)ods file.
+#' @return A tibble (\code{tibble}) or data frame (\code{data.frame}) containing a representation of data in the (f)ods file.
 #' @author Peter Brohan <peter.brohan+cran@@gmail.com>, Chung-hong Chan <chainsawtiney@@gmail.com>, Gerrit-Jan Schutten <phonixor@@gmail.com>
 #' @examples
 #' \dontrun{
@@ -283,10 +280,9 @@ read_ods <- function(path,
                         range = NULL,
                         row_names = FALSE,
                         strings_as_factors = FALSE,
-                        check_names = FALSE,
                         verbose = FALSE,
-                        as_tibble = FALSE,
-                        .name_repair = "check_unique"
+                        as_tibble = TRUE,
+                        .name_repair = "unique"
 
 ) {
     ## Should use match.call but there's a weird bug if one of the variable names is 'file'
@@ -300,7 +296,6 @@ read_ods <- function(path,
         range,
         row_names,
         strings_as_factors,
-        check_names,
         verbose,
         as_tibble,
         .name_repair,
@@ -319,10 +314,9 @@ read_fods <- function(path,
                         range = NULL,
                         row_names = FALSE,
                         strings_as_factors = FALSE,
-                        check_names = FALSE,
                         verbose = FALSE,
-                        as_tibble = FALSE,
-                        .name_repair = "check_unique"
+                        as_tibble = TRUE,
+                        .name_repair = "unique"
 
 ) {
     ## Should use match.call but there's a weird bug if one of the variable names is 'file'
@@ -336,7 +330,6 @@ read_fods <- function(path,
         range,
         row_names,
         strings_as_factors,
-        check_names,
         verbose,
         as_tibble,
         .name_repair,

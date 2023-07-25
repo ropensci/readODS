@@ -13,7 +13,11 @@ length(list_ods_sheets("starwars.ods"))
 * `overwrite`: always TRUE
 * `verbose`: always FALSE
 * `na_as_string`: default to FALSE
-
+* 
+## BREAKING CHANGES: read_ods now outputs as tibble by default
+* Added `as_tibble` and `.name_repair` as arguments. If `as_tibble` is true, outputs as a tibble using `tibble::as_tibble()` passing on `.name_repair` (default being `"unique"`). **By default** `as_tibble` is set to TRUE.
+* Removed `check_names` argument. All name repairs are now dealt with using `vctrs::vec_as_names()`. This will **significantly change** the default names given to outputs. (Names in the style of `check_names = TRUE` can be obtained by setting `.name_repair = minimal`, although this is not advised)
+  
 # readODS 1.9.0
 
 * Added a `NEWS.md` file to track changes to the package.

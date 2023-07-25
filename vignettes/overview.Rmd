@@ -34,11 +34,6 @@ You can then read it back from `plant.ods`
 read_ods("plant.ods")
 ```
 
-Reading as a tibble
-```{r read_ods_tibble}
-read_ods("plant.ods", as_tibble = TRUE)
-```
-
 ## Update and Append
 
 You can append another sheet into an existing ods file with the sheet name being "mtcars_ods".
