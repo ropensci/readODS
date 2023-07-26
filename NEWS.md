@@ -37,7 +37,7 @@ These have been deprecated for several years.
 * Changed behaviour when only one column is read. Previously gave an error. If row names are requested, gives a warning that this would cause the output to be empty, and does not assign names.
 * Sheets are now accepted as part of the `range` argument, e.g. `Range = "Sheet2!A2:B7"`. If this and the `sheets` argument are given, this is preferred.
 * Merged cells now have their value places in the top-left cell. All other cells that would be covered by the merge are filled with `NA`.
-* Added `as_tibble` and `.name_repair` as arugments. If `as_tibble` is true, outputs as a tibble using `tibble::as_tibble()` passing on `.name_repair` (default being `"check_unique"`).
+* Added `as_tibble` and `.name_repair` as arguments. If `as_tibble` is true, outputs as a tibble using `tibble::as_tibble()` passing on `.name_repair` (default being `"check_unique"`).
 
 ## read_fods
 

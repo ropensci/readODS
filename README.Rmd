@@ -97,7 +97,7 @@ read_ods("mtcars.ods", sheet = "plant", range = "A1:B10")
 
 ### Text Encoding
 
-In older versions of R (<4.2) on Windows, the default encoding for text is not UTF-8, and instead dependes on your locale. This can cause problems processing characters that are not part of the character set R is using (ususally [Windows-1252](https://en.wikipedia.org/wiki/Windows-1252)). Sheets written using these characters generally contains errors. The problem can be fixed by upgrading to a version of R >= 4.2.
+In older versions of R (<4.2) on Windows, the default encoding for text is not UTF-8, and instead depends on your locale. This can cause problems processing characters that are not part of the character set R is using (usually [Windows-1252](https://en.wikipedia.org/wiki/Windows-1252)). Sheets written using these characters generally contains errors. The problem can be fixed by upgrading to a version of R >= 4.2.
 
 **Radian:** Even for up-to-date versions of R, these issues with character encoding are still a known issue with Radian. Their suggested workaround is [here](https://github.com/randy3k/radian/issues/269#issuecomment-1169663251).
 
@@ -108,9 +108,9 @@ The logo of readODS is a remix of LibreOffice Calc v6.1 icon created by the Docu
 
 The creator of this package is Gerrit-Jan Schutten. The current maintainer is Chung-hong Chan. This package benefits from contributions by Peter Brohan, Thomas J. Leeper, John Foster, Sergio Oller, Jim Hester, Stephen Watts, Arthur Katossky, Stas Malavin, Duncan Garmonsway, Mehrad Mahmoudian, Matt Kerlogue, Detlef Steuer, Michal Lauer, and Till Straube.
 
-This package emulates the behaviors of `readxl::read_xlsx`, `writexl::write_xlsx` and `xlsx::write.xlsx`.
+This package emulates the behaviours of `readxl::read_xlsx`, `writexl::write_xlsx` and `xlsx::write.xlsx`.
 
-This package should be a silent member of `rio`, so that you don't need to care about file format anymore.
+This package should be a silent member of `rio`, so that you don't need to care about file format any more.
 
 ### License
 

@@ -125,7 +125,7 @@ length(list_ods_sheets("plant.ods"))
 
 ### `read.ods`
 
-Please use `read_ods`. In order to emulate the behaviors of `read.ods`, the followings are recommended
+Please use `read_ods`. In order to emulate the behaviours of `read.ods`, the followings are recommended
 
 ```{r, readdotods17}
 ## read.ods from 1.6 to 1.8

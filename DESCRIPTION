@@ -34,7 +34,8 @@ Imports:
     vctrs (>= 0.4.2)
 LinkingTo: 
     cpp11
-Suggests: 
+Suggests:
+    spelling, 
     dplyr,
     testthat,
     datasets,
@@ -48,3 +49,4 @@ Encoding: UTF-8
 VignetteBuilder: knitr
 Depends: 
     R (>= 3.5)
+Language: en-GB

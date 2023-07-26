@@ -170,9 +170,9 @@ read_ods("mtcars.ods", sheet = "plant", range = "A1:B10")
 ### Text Encoding
 
 In older versions of R (\<4.2) on Windows, the default encoding for text
-is not UTF-8, and instead dependes on your locale. This can cause
+is not UTF-8, and instead depends on your locale. This can cause
 problems processing characters that are not part of the character set R
-is using (ususally
+is using (usually
 [Windows-1252](https://en.wikipedia.org/wiki/Windows-1252)). Sheets
 written using these characters generally contains errors. The problem
 can be fixed by upgrading to a version of R \>= 4.2.
@@ -199,11 +199,11 @@ Hester, Stephen Watts, Arthur Katossky, Stas Malavin, Duncan Garmonsway,
 Mehrad Mahmoudian, Matt Kerlogue, Detlef Steuer, Michal Lauer, and Till
 Straube.
 
-This package emulates the behaviors of `readxl::read_xlsx`,
+This package emulates the behaviours of `readxl::read_xlsx`,
 `writexl::write_xlsx` and `xlsx::write.xlsx`.
 
 This package should be a silent member of `rio`, so that you don’t need
-to care about file format anymore.
+to care about file format any more.
 
 ### License
 
@@ -214,10 +214,10 @@ GPL3
 Contributions in the form of feedback, comments, code, and bug report
 are welcome.
 
-- Fork the source code, modify, and issue a [pull
-  request](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork).
-- Issues, bug reports: [File a Github
-  issue](https://github.com/ropensci/readODS).
+  - Fork the source code, modify, and issue a [pull
+    request](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork).
+  - Issues, bug reports: [File a Github
+    issue](https://github.com/ropensci/readODS).
 
 Please note that this package is released with a [Contributor Code of
 Conduct](https://ropensci.org/code-of-conduct/). By contributing to this
