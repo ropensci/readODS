@@ -24,7 +24,7 @@
 ## Row and column-numbers are 1-based
 .standardise_limits <- function(range, skip) {
     if(is.null(range)) {
-        skip <- check_nonnegative_integer(skip, "skip")
+        skip <- check_nonnegative_integer(x = skip, argument = "skip")
         limits <- c(
             min_row = skip + 1,
             max_row = -1,
@@ -103,7 +103,7 @@
     if (!is.logical(as_tibble)) {
         stop("as_tibble must be of type `boolean", call. = FALSE)
     }
-    if (row_names && as_tibble){
+    if (row_names && as_tibble) {
         stop("Tibbles do not support row names. To use row names, set as_tibble to false", call. = FALSE)
     }
 }
@@ -138,9 +138,9 @@
     limits <- .standardise_limits(range, skip)
     # Get sheet number.
     if (flat) {
-        sheets <- get_flat_sheet_names_(path, TRUE)
+        sheets <- get_flat_sheet_names_(file = path, include_external_data = TRUE)
     } else {
-        sheets <- get_sheet_names_(path, TRUE)
+        sheets <- get_sheet_names_(file = path, include_external_data = TRUE)
     }
     sheet_name <- cellranger::as.cell_limits(range)[["sheet"]]
     if(!is.null(range) && !is.na(sheet_name)) {
@@ -148,7 +148,7 @@
             warning("Sheet suggested in range and using sheet argument. Defaulting to range",
                 call. = FALSE)
         }
-        is_in_sheet_names <- stringi::stri_cmp(sheet_name, sheets) == 0
+        is_in_sheet_names <- stringi::stri_cmp(e1 = sheet_name, e2 = sheets) == 0
         if(any(is_in_sheet_names)) {
             sheet <- which(is_in_sheet_names)
         } else {
@@ -156,7 +156,7 @@
                 call. = FALSE)
         }
     } else {
-        is_in_sheet_names <- stringi::stri_cmp(sheet, sheets) == 0
+        is_in_sheet_names <- stringi::stri_cmp(e1 = sheet, e2 = sheets) == 0
         if (!is.numeric(sheet) && any(is_in_sheet_names)) {
             sheet <- which(is_in_sheet_names)
         } else if (!is.numeric(sheet)) {
@@ -170,37 +170,37 @@
     }
 
     if(flat) {
-    strings <- read_flat_ods_(path,
-        limits["min_row"],
-        limits["max_row"],
-        limits["min_col"],
-        limits["max_col"],
-        sheet,
-        formula_as_formula)
+        strings <- read_flat_ods_(file = path,
+                                  start_row = limits["min_row"],
+                                  stop_row = limits["max_row"],
+                                  start_col = limits["min_col"],
+                                  stop_col = limits["max_col"],
+                                  sheet = sheet,
+                                  formula_as_formula = formula_as_formula)
     } else {
-    strings <- read_ods_(path,
-        limits["min_row"],
-        limits["max_row"],
-        limits["min_col"],
-        limits["max_col"],
-        sheet,
-        formula_as_formula)
+        strings <- read_ods_(file = path,
+                             start_row = limits["min_row"],
+                             stop_row = limits["max_row"],
+                             start_col = limits["min_col"],
+                             stop_col = limits["max_col"],
+                             sheet = sheet,
+                             formula_as_formula = formula_as_formula)
     }
     if(strings[1] == 0 || strings[2] == 0) {
         warning("empty sheet, return empty data frame.", call. = FALSE)
-        if(as_tibble){
+        if(as_tibble) {
             return(tibble::tibble())
         } else {
             return(data.frame())
         }
     }
     res <- as.data.frame(
-            matrix(
-                strings[-1:-2],
-                ncol = strtoi(strings[1]),
-        byrow = TRUE),
+        matrix(
+            strings[-1:-2],
+            ncol = strtoi(strings[1]),
+            byrow = TRUE),
         stringsAsFactors = FALSE)
-    res <- .change_df_with_col_row_header(res, col_names, row_names, .name_repair)
+    res <- .change_df_with_col_row_header(x = res, col_header = col_names, row_header = row_names, .name_repair = .name_repair)
     res <- data.frame(res)
     if (inherits(col_types, 'col_spec')) {
         res <- readr::type_convert(df = res, col_types = col_types, na = na)
@@ -214,13 +214,12 @@
     }
 
     if (strings_as_factors) {
-        res <- .convert_strings_to_factors(res)
+        res <- .convert_strings_to_factors(df = res)
     }
 
-    if (as_tibble){
-        res <- tibble::as_tibble(res, .name_repair = .name_repair)
+    if (as_tibble) {
+        res <- tibble::as_tibble(x = res, .name_repair = .name_repair)
     }
-
     return(res)
 
 }
@@ -271,34 +270,32 @@
 #' }
 #' @export
 read_ods <- function(path,
-                        sheet = 1,
-                        col_names = TRUE,
-                        col_types = NULL,
-                        na = "",
-                        skip = 0,
-                        formula_as_formula = FALSE,
-                        range = NULL,
-                        row_names = FALSE,
-                        strings_as_factors = FALSE,
-                        verbose = FALSE,
-                        as_tibble = TRUE,
-                        .name_repair = "unique"
-
-) {
+                     sheet = 1,
+                     col_names = TRUE,
+                     col_types = NULL,
+                     na = "",
+                     skip = 0,
+                     formula_as_formula = FALSE,
+                     range = NULL,
+                     row_names = FALSE,
+                     strings_as_factors = FALSE,
+                     verbose = FALSE,
+                     as_tibble = TRUE,
+                     .name_repair = "unique") {
     ## Should use match.call but there's a weird bug if one of the variable names is 'file'
-    .read_ods(path,
-        sheet,
-        col_names,
-        col_types,
-        na,
-        skip,
-        formula_as_formula,
-        range,
-        row_names,
-        strings_as_factors,
-        verbose,
-        as_tibble,
-        .name_repair,
+    .read_ods(path = path,
+        sheet = sheet,
+        col_names = col_names,
+        col_types = col_types,
+        na = na,
+        skip = skip,
+        formula_as_formula = formula_as_formula,
+        range = range,
+        row_names = row_names,
+        strings_as_factors = strings_as_factors,
+        verbose = verbose,
+        as_tibble = as_tibble,
+        .name_repair = .name_repair,
         flat = FALSE)
 }
 
@@ -316,22 +313,20 @@ read_fods <- function(path,
                         strings_as_factors = FALSE,
                         verbose = FALSE,
                         as_tibble = TRUE,
-                        .name_repair = "unique"
-
-) {
+                        .name_repair = "unique") {
     ## Should use match.call but there's a weird bug if one of the variable names is 'file'
-    .read_ods(path,
-        sheet,
-        col_names,
-        col_types,
-        na,
-        skip,
-        formula_as_formula,
-        range,
-        row_names,
-        strings_as_factors,
-        verbose,
-        as_tibble,
-        .name_repair,
-        flat = TRUE)
+    .read_ods(path = path,
+              sheet = sheet,
+              col_names = col_names,
+              col_types = col_types,
+              na = na,
+              skip = skip,
+              formula_as_formula = formula_as_formula,
+              range = range,
+              row_names = row_names,
+              strings_as_factors = strings_as_factors,
+              verbose = verbose,
+              as_tibble = as_tibble,
+              .name_repair = .name_repair,
+              flat = TRUE)
 }

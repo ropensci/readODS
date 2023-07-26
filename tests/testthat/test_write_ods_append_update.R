@@ -7,7 +7,7 @@ cols_to_letters <- function(n) {
     stopifnot(n <= 26)
     
     seq <- seq_len(n)
-    sapply(seq, function(n) LETTERS[n])
+    vapply(seq, function(n) LETTERS[n], character(1))
 }
 
 setup({

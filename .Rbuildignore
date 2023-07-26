@@ -20,5 +20,6 @@ notes.R
 ^tests/testdata/jts0501.ods$
 ^.vscode
 ^cran-comments\.md$
-
 ^.covrignore$
+^revdep$
+^LICENSE.note$

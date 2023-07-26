@@ -139,7 +139,7 @@ write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE,
     temp_ods_dir <- file.path(tempdir(), stringi::stri_rand_strings(1, 20, pattern = "[A-Za-z0-9]"))
     dir.create(temp_ods_dir)
     on.exit(unlink(temp_ods_dir))
-    if (inherits(x, "tbl_df")){ #Convert to a df if currently a tibble
+    if (inherits(x, "tbl_df")) { #Convert to a df if currently a tibble
         x <- as.data.frame(x)
     }
     if (!is.data.frame(x)) {
