@@ -7,13 +7,13 @@
   "codeRepository": "https://github.com/ropensci/readODS",
   "issueTracker": "https://github.com/ropensci/readODS/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "1.9.0",
+  "version": "2.0.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.3.1 (2023-06-16 ucrt)",
+  "runtimePlatform": "R version 4.3.1 (2023-06-16)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -42,17 +42,17 @@
     },
     {
       "@type": "Person",
-      "givenName": "Thomas J.",
-      "familyName": "Leeper",
-      "email": "thosjleeper@gmail.com",
-      "@id": "https://orcid.org/0000-0003-4097-6326"
-    },
-    {
-      "@type": "Person",
       "givenName": "Detlef",
       "familyName": "Steuer",
       "email": "steuer@hsu-hh.de",
       "@id": "https://orcid.org/0000-0003-2676-5290"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Thomas J.",
+      "familyName": "Leeper",
+      "email": "thosjleeper@gmail.com",
+      "@id": "https://orcid.org/0000-0003-4097-6326"
     }
   ],
   "contributor": [
@@ -115,6 +115,18 @@
       "givenName": "Till",
       "familyName": "Straube",
       "email": "straube@geo.uni-frankfurt.de"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Marcin",
+      "familyName": "Kalicinski"
+    }
+  ],
+  "copyrightHolder": [
+    {
+      "@type": "Person",
+      "givenName": "Marcin",
+      "familyName": "Kalicinski"
     }
   ],
   "maintainer": [
@@ -251,18 +263,6 @@
     },
     "6": {
       "@type": "SoftwareApplication",
-      "identifier": "purrr",
-      "name": "purrr",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=purrr"
-    },
-    "7": {
-      "@type": "SoftwareApplication",
       "identifier": "zip",
       "name": "zip",
       "provider": {
@@ -273,17 +273,42 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=zip"
     },
+    "7": {
+      "@type": "SoftwareApplication",
+      "identifier": "tibble",
+      "name": "tibble",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=tibble"
+    },
     "8": {
+      "@type": "SoftwareApplication",
+      "identifier": "vctrs",
+      "name": "vctrs",
+      "version": ">= 0.4.2",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=vctrs"
+    },
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "R",
       "name": "R",
-      "version": ">= 2.10"
+      "version": ">= 3.5"
     },
     "SystemRequirements": null
   },
-  "fileSize": "52009.582KB",
+  "fileSize": "5106.868KB",
   "releaseNotes": "https://github.com/ropensci/readODS/blob/master/NEWS.md",
-  "readme": "https://github.com/ropensci/readODS/blob/v1.8/README.md",
+  "readme": "https://github.com/ropensci/readODS/blob/v2.0/README.md",
   "contIntegration": ["https://app.codecov.io/gh/ropensci/readODS?branch=master", "https://github.com/ropensci/readODS/actions/workflows/R-CMD-check.yaml"],
   "developmentStatus": "https://lifecycle.r-lib.org/articles/stages.html#stable",
   "review": {
