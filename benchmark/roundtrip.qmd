@@ -1,0 +1,38 @@
+---
+title: Testing the speed of nycflights roundtrip
+format: gfm
+---
+
+nycflights round trip is an example in the `writexl` documentation. The original code looks like so:
+
+```r
+library(nycflights13)
+out <- readxl::read_xlsx(writexl::write_xlsx(flights))
+all.equal(out, flights)
+```
+
+Let's break it down
+
+```{r}
+#| label: writexl
+date()
+library(nycflights13)
+system.time(path <- writexl::write_xlsx(flights))
+system.time(out <- readxl::read_xlsx(path))
+all.equal(out, flights)
+```
+
+The ODS version
+
+```{r}
+#| label: readODS
+devtools::load_all()
+system.time(path <- readODS::write_ods(flights))
+system.time(out <- readODS::read_ods(path))
+all.equal(out, flights)
+```
+
+
+```{r}
+sessionInfo()
+```
