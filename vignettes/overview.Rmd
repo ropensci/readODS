@@ -101,6 +101,43 @@ Use the function `list_ods_sheets()` or `list_fods_sheets()` to list out all she
 list_ods_sheets("plant.ods")
 ```
 
+## readODS 2.0.0
+
+Several functions were removed in readODS 2.0.0. Please consider the API of `readODS` mature and there should not be any breaking change until readODS 3.0.0.
+
+### `ods_sheets`
+
+Please use `list_ods_sheets(path = "plant.ods")` instead.
+
+```{r, list_ods_sheets20}
+## ods_sheets("plant.ods")
+list_ods_sheets("plant.ods")
+```
+
+### `get_num_sheets_in_ods` and `getNrOfSheetsInODS`
+
+Please use `list_ods_sheets`
+
+```{r, getnum20}
+##get_num_sheets_in_ods("plant.ods")
+length(list_ods_sheets("plant.ods"))
+```
+
+### `read.ods`
+
+Please use `read_ods`. In order to emulate the behaviors of `read.ods`, the followings are recommended
+
+```{r, readdotods17}
+## read.ods from 1.6 to 1.8
+read_ods("plant.ods", col_names = FALSE, skip = 0, na = NULL, col_types = NA, as_tibble = FALSE)
+```
+
+```{r, readotods16}
+## read.ods older than 1.6
+lapply(list_ods_sheets("plant.ods"),
+       function(x) read_ods(path = "plant.ods", sheet = x, col_names = FALSE, skip = 0, na = NULL, col_types = NA, as_tibble = FALSE))
+```
+
 ```{r, echo = FALSE, message = FALSE}
 unlink("plant.ods")
 ```
