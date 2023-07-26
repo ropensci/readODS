@@ -6,13 +6,13 @@
 \usage{
 write_ods(
   x,
-  path,
+  path = tempfile(fileext = ".ods"),
   sheet = "Sheet1",
   append = FALSE,
   update = FALSE,
   row_names = FALSE,
   col_names = TRUE,
-  na_as_string = TRUE
+  na_as_string = FALSE
 )
 }
 \arguments{
@@ -30,7 +30,7 @@ write_ods(
 
 \item{col_names}{logical, TRUE indicates that column names of x are to be included in the sheet. Default is TRUE.}
 
-\item{na_as_string}{logical, TRUE indicates that NAs are written as string.}
+\item{na_as_string}{logical, TRUE indicates that NAs are written as string; FALSE indicates that NAs are written as empty cells}
 }
 \value{
 An ODS file written to the file path location specified by the user. The value of \code{path} is also returned invisibly.

@@ -31,3 +31,20 @@ test_that("na_as_string, #79", {
     contentfile <- file.path(temp_odsdir, "content.xml")
     expect_false(grepl("office:value-type=\"string\" office:value=\"NA\"", suppressWarnings(readLines(contentfile))))
 })
+
+test_that("na_as_string, round trip", {
+    iris_na <- tibble::as_tibble(iris)
+    iris_na[1,1] <- NA
+    iris_na[2,1] <- NA
+    iris_na[5,2] <- NA
+    iris_na$Species <- as.character(iris_na$Species)
+    expect_true(all.equal(iris_na, readODS::read_ods(readODS::write_ods(iris_na, na_as_string = FALSE))))
+    ## default
+    expect_true(all.equal(iris_na, readODS::read_ods(readODS::write_ods(iris_na))))
+    expect_false(is.logical(all.equal(iris_na, readODS::read_ods(readODS::write_ods(iris_na, na_as_string = TRUE)))))
+    ## sanity check
+    iris2 <- tibble::as_tibble(iris)
+    iris2$Species <- as.character(iris2$Species)    
+    expect_true(all.equal(iris2, readODS::read_ods(readODS::write_ods(iris2, na_as_string = FALSE))))
+    expect_true(all.equal(iris2, readODS::read_ods(readODS::write_ods(iris2, na_as_string = TRUE))))
+})

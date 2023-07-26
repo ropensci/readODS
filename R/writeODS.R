@@ -35,14 +35,18 @@
 
 }
 
-.cell_out <- function(type, value, con) {
-    escaped_value <- .escape_xml(value)
-    cat("<table:table-cell office:value-type=\"", type,
-        "\" office:value=\"", escaped_value,
-        "\" table:style-name=\"ce1\"><text:p>", escaped_value,
-        "</text:p></table:table-cell>", 
-        sep = "",
-        file = con)
+.cell_out <- function(type, value, con, write_empty_cell = FALSE) {
+    if (isTRUE(write_empty_cell)) {
+        cat("<table:table-cell/>", file = con)
+    } else {
+        escaped_value <- .escape_xml(value)
+        cat("<table:table-cell office:value-type=\"", type,
+            "\" office:value=\"", escaped_value,
+            "\" table:style-name=\"ce1\"><text:p>", escaped_value,
+            "</text:p></table:table-cell>", 
+            sep = "",
+            file = con)
+    }
 }
 
 ## CREATION OF sysdata
@@ -78,12 +82,16 @@
         }
         for (j in colj) {
             value <- as.character(x[i, j, drop = TRUE])
+            write_empty_cell <- FALSE
+            if (is.na(value) && !na_as_string) {
+                write_empty_cell <- TRUE
+            }
             if (is.na(value) && na_as_string) {
                 type <- "string"
             } else {
                 type <- types[j]
             }
-            .cell_out(type = type, value = value, con = con)
+            .cell_out(type = type, value = value, con = con, write_empty_cell = write_empty_cell)
         }
         cat("</table:table-row>", file = con)
     }
@@ -122,7 +130,7 @@
 #' @param update logical, TRUE indicates that the sheet with sheet_name in the existing file (path) should be updated with the content of x. If a sheet with sheet_name does not exist, an exception is thrown. Please also note that writing is slower if TRUE. Default is FALSE.
 #' @param row_names logical, TRUE indicates that row names of x are to be included in the sheet. Default is FALSE.
 #' @param col_names logical, TRUE indicates that column names of x are to be included in the sheet. Default is TRUE.
-#' @param na_as_string logical, TRUE indicates that NAs are written as string.
+#' @param na_as_string logical, TRUE indicates that NAs are written as string; FALSE indicates that NAs are written as empty cells
 #' @return An ODS file written to the file path location specified by the user. The value of \code{path} is also returned invisibly.
 #' @author Detlef Steuer <steuer@@hsu-hh.de>, Thomas J. Leeper <thosjleeper@@gmail.com>, John Foster <john.x.foster@@nab.com.au>, Chung-hong Chan <chainsawtiney@@gmail.com>
 #' @examples
@@ -133,7 +141,7 @@
 #' write_ods(PlantGrowth, "mtcars.ods", append = TRUE, sheet = "plant")
 #' }
 #' @export
-write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, na_as_string = TRUE) {
+write_ods <- function(x, path = tempfile(fileext = ".ods"), sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, na_as_string = FALSE) {
     ## setup temp directory
     ## one can't just use tempdir() because it is the same in the same session
     temp_ods_dir <- file.path(tempdir(), stringi::stri_rand_strings(1, 20, pattern = "[A-Za-z0-9]"))

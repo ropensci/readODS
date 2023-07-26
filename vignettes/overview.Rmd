@@ -103,6 +103,34 @@ list_ods_sheets("plant.ods")
 
 ## readODS 2.0.0
 
+Starting from 2.0.0, `write_ods` writes `NA` as empty by default.
+
+```{r, empty1}
+PlantGrowth2 <- tibble::as_tibble(PlantGrowth)
+PlantGrowth2[1,1] <- NA
+PlantGrowth2$group <- as.character(PlantGrowth2$group)
+
+## NA is preseved; weight is still <dbl>
+read_ods(write_ods(PlantGrowth2))
+```
+
+If you want `NA` to be written literally as the string "NA", use `na_as_string`. You should literally see the string "NA" when the file is opened with LibreOffice, for example.
+
+But the string "NA" messes up the automatic type inference of `read_ods`.
+
+```{r, empty2}
+## NA is preseved; but weight is now <chr>
+read_ods(write_ods(PlantGrowth2, na_as_string = TRUE))
+```
+
+Of course you can fix this by specifying `col_types`.
+
+```{r, empty3}
+## NA is preseved; but weight is now <chr>
+read_ods(write_ods(PlantGrowth2, na_as_string = TRUE),
+         col_types = readr::cols(weight = readr::col_double()))
+```
+
 Several functions were removed in readODS 2.0.0. Please consider the API of `readODS` mature and there should not be any breaking change until readODS 3.0.0.
 
 ### `ods_sheets`
