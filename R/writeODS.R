@@ -133,7 +133,7 @@
 #' write_ods(PlantGrowth, "mtcars.ods", append = TRUE, sheet = "plant")
 #' }
 #' @export
-write_ods <- function(x, path, sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, na_as_string = TRUE) {
+write_ods <- function(x, path = tempfile(fileext = ".ods"), sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, na_as_string = TRUE) {
     ## setup temp directory
     ## one can't just use tempdir() because it is the same in the same session
     temp_ods_dir <- file.path(tempdir(), stringi::stri_rand_strings(1, 20, pattern = "[A-Za-z0-9]"))

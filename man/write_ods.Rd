@@ -6,7 +6,7 @@
 \usage{
 write_ods(
   x,
-  path,
+  path = tempfile(fileext = ".ods"),
   sheet = "Sheet1",
   append = FALSE,
   update = FALSE,
