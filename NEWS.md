@@ -1,5 +1,11 @@
 # readODS 2.0.0
 
+## BREAKING CHANGES: Changed `write_ods(na_as_string)` behaviour
+
+The default for `na_as_string` was `getOption("write_ods_na", default = FALSE)` in v1.8. The default now is `FALSE`, but it writes NA as blank cell (instead of the buggy behaviour of writing NA in the original type, which is rendered as 0 by LibreOffice for numeric types. see #79). This behaviour is compatible with the default of `writexl::write_xlsx`.
+
+The behaviour of `na_as_string = TRUE` is the same as in v1.8: writes NA as string.
+
 ## BREAKING CHANGES: Removed `get_num_sheets_in_{f}ods()`
 
 The descendant of `getNrOfSheetsInODS()` is not very useful. If you really need to have the similar function:
@@ -12,8 +18,7 @@ length(list_ods_sheets("starwars.ods"))
 
 * `overwrite`: always TRUE
 * `verbose`: always FALSE
-* `na_as_string`: default to FALSE
-* 
+
 ## BREAKING CHANGES: read_ods now outputs as tibble by default
 * Added `as_tibble` and `.name_repair` as arguments. If `as_tibble` is true, outputs as a tibble using `tibble::as_tibble()` passing on `.name_repair` (default being `"unique"`). **By default** `as_tibble` is set to TRUE.
 * Removed `check_names` argument. All name repairs are now dealt with using `vctrs::vec_as_names()`. This will **significantly change** the default names given to outputs. (Names in the style of `check_names = TRUE` can be obtained by setting `.name_repair = minimal`, although this is not advised)
