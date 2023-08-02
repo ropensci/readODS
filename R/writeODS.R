@@ -2,9 +2,14 @@
     wd <- getwd()
     on.exit(setwd(wd), add = TRUE)
     setwd(temp_ods_dir)
-    zip::zip(basename(path), files = dir())
+    utils::zip(basename(path), files = dir())
     setwd(wd)
     file.copy(file.path(temp_ods_dir, basename(path)), path, overwrite = overwrite)
+}
+
+.write_as_utf8 <- function(text, con){
+    utf8 <- enc2utf8(text)
+    writeLines(utf8, con = con, sep = "", useBytes = TRUE)
 }
 
 .find_sheet_node_by_sheet <- function(spreadsheet_node, sheet) {
@@ -37,17 +42,17 @@
 
 .cell_out <- function(type, value, con, write_empty_cell = FALSE) {
     if (isTRUE(write_empty_cell)) {
-        cat("<table:table-cell/>", file = con)
+        .write_as_utf8("<table:table-cell/>", con)
     } else {
         escaped_value <- .escape_xml(value)
-            cat("<table:table-cell office:value-type=\"", type, sep = "", file = con)
+            .write_as_utf8(stringi::stri_join("<table:table-cell office:value-type=\"", type, sep = ""), con)
         if (type != "string"){
-            cat("\" office:value=\"", escaped_value, sep = "", file = con)
+            .write_as_utf8(stringi::stri_join("\" office:value=\"", escaped_value, sep = ""), con)
         }
-            cat("\" table:style-name=\"ce1\"><text:p>", escaped_value,
+            .write_as_utf8(stringi::stri_join("\" table:style-name=\"ce1\"><text:p>", escaped_value,
             "</text:p></table:table-cell>",
-            sep = "",
-            file = con)
+            sep = ""),
+            con)
     }
 }
 
@@ -75,7 +80,7 @@
     }
     # add data
     if (col_names) {
-        cat("<table:table-row table:style-name=\"ro1\">", file = con)
+        .write_as_utf8("<table:table-row table:style-name=\"ro1\">", con)
         if (row_names) {
             .cell_out("string", value = "", con = con)
         }
@@ -83,13 +88,13 @@
             .cell_out(type = "string", value = colnames(x)[j], con = con)
         }
         if(cols < 16384){
-            cat("<table:table-cell table:number-columns-repeated=\"", as.character(16384-cols), "\"/>", sep = "", file = con)
+            .write_as_utf8(stringi::stri_join("<table:table-cell table:number-columns-repeated=\"", as.character(16384-cols), "\"/>", sep = ""), con)
         }
-        cat("</table:table-row>", file = con)
+        .write_as_utf8("</table:table-row>", con)
     }
     for (i in seq_len(NROW(x))) {
         ## create a row
-        cat("<table:table-row table:style-name=\"ro1\">", file = con)
+        .write_as_utf8("<table:table-row table:style-name=\"ro1\">", con)
         if (row_names) {
             .cell_out(type = "string", value = rownames(x)[i], con = con)
         }
@@ -107,20 +112,20 @@
             .cell_out(type = type, value = value, con = con, write_empty_cell = write_empty_cell)
         }
         if(cols < 16384){
-            cat("<table:table-cell table:number-columns-repeated=\"", as.character(16384-cols), "\"/>", sep = "", file = con)
+            .write_as_utf8(stringi::stri_join("<table:table-cell table:number-columns-repeated=\"", as.character(16384-cols), "\"/>", sep = ""), con)
         }
-        cat("</table:table-row>", file = con)
+        .write_as_utf8("</table:table-row>", con)
     }
     if(rows < 2^20){
-        cat("<table:table-row table:style-name=\"ro1\" table:number-rows-repeated=\"", 2^20 - rows, "\"><table:table-cell table:number-columns-repeated=\"16384\"/></table:table-row>", sep = "", file = con)
+        .write_as_utf8(stringi::stri_join("<table:table-row table:style-name=\"ro1\" table:number-rows-repeated=\"", 2^20 - rows, "\"><table:table-cell table:number-columns-repeated=\"16384\"/></table:table-row>", sep = ""), con)
     }
-    cat("</table:table>", file = con)
+    .write_as_utf8("</table:table>", con)
     return(invisible(con))
 }
 
 .convert_df_to_sheet <- function(x, sheet = "Sheet1", row_names = FALSE, col_names = FALSE, na_as_string = FALSE) {
     throwaway_xml_file <- tempfile(fileext = ".xml")
-    con <- file(file.path(throwaway_xml_file), open="w")
+    con <- file(file.path(throwaway_xml_file), open="w+", encoding = "native.enc")
     .write_sheet_con(x = x, con = con, sheet = sheet, row_names = row_names, col_names = col_names, na_as_string = na_as_string)
     close(con)
     return(file.path(throwaway_xml_file))
@@ -130,11 +135,11 @@
 .vfwrite_ods <- function(x, temp_ods_dir, sheet = "Sheet1", row_names = FALSE, col_names = TRUE, na_as_string = FALSE) {
     templatedir <- system.file("template", package = "readODS")
     file.copy(dir(templatedir, full.names = TRUE), temp_ods_dir, recursive = TRUE, copy.mode = FALSE)
-    con <- file(file.path(temp_ods_dir, "content.xml"), open="w")
-    cat(.CONTENT[1], file = con)
-    cat(.CONTENT[2], file = con)
+    con <- file(file.path(temp_ods_dir, "content.xml"), open="w+", encoding = "native.enc")
+    .write_as_utf8(.CONTENT[1], con)
+    .write_as_utf8(.CONTENT[2], con)
     .write_sheet_con(x = x, con = con, sheet = sheet, row_names = row_names, col_names = col_names, na_as_string = na_as_string)
-    cat(.FOOTER, file = con)
+    .write_as_utf8(.FOOTER, con)
     close(con)
 }
 

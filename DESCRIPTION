@@ -29,7 +29,6 @@ Imports:
     readr (>= 1.2.1),
     stringi,
     utils,
-    zip,
     tibble,
     vctrs (>= 0.4.2)
 LinkingTo: 
