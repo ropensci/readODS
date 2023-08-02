@@ -2,7 +2,7 @@
     wd <- getwd()
     on.exit(setwd(wd), add = TRUE)
     setwd(temp_ods_dir)
-    utils::zip(basename(path), files = dir())
+    utils::zip(basename(path), files = dir(), flags = "-r9X -q")
     setwd(wd)
     file.copy(file.path(temp_ods_dir, basename(path)), path, overwrite = overwrite)
 }
@@ -106,6 +106,7 @@
             }
             if (is.na(value) && na_as_string) {
                 type <- "string"
+                value <- "NA"
             } else {
                 type <- types[j]
             }
@@ -166,10 +167,6 @@
 #' }
 #' @export
 write_ods <- function(x, path = tempfile(fileext = ".ods"), sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, na_as_string = FALSE) {
-    ## Limit writing to only files that Libreoffice and Excel can read
-    if (ncol(x) > 16383 || nrow(x) > 2^20){
-        stop("Data exceeds max sheet size of 16383 x 1048576")
-    }
     ## setup temp directory
     ## one can't just use tempdir() because it is the same in the same session
     temp_ods_dir <- file.path(tempdir(), stringi::stri_rand_strings(1, 20, pattern = "[A-Za-z0-9]"))
@@ -180,6 +177,10 @@ write_ods <- function(x, path = tempfile(fileext = ".ods"), sheet = "Sheet1", ap
     }
     if (!is.data.frame(x)) {
         stop("x must be a data.frame.", call. = FALSE)
+    }
+    ## Limit writing to only files that Libreoffice and Excel can read
+    if (ncol(x) > 16383 || nrow(x) > 2^20){
+        stop("Data exceeds max sheet size of 16383 x 1048576")
     }
     if (!file.exists(path) || (!append && !update)) {
         .vfwrite_ods(x = x, temp_ods_dir = temp_ods_dir, sheet = sheet, row_names = row_names, col_names = col_names, na_as_string = na_as_string)

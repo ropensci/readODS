@@ -40,7 +40,7 @@ test_that("Write Excel sheets", {
     expect_error(write_ods(starwars10, tmp, "whatevernotexists", row_names=TRUE, col_names = TRUE, update = TRUE))
 
     df <- read_ods(tmp, "SW", row_names = FALSE, col_names = FALSE, strings_as_factors = TRUE, as_tibble = FALSE)
-    expect_true(all.equal({
+     expect_true(all.equal({
         cars <- starwars10
         rownames(cars) <- NULL
         colnames(cars) <- vctrs::vec_as_names(rep("", 9), repair = "unique")
@@ -82,6 +82,6 @@ test_that("issue 107", {
 test_that("reading and writing and reading gets the same result as the start", {
     a <- read_ods("../testdata/starwars.ods")
     b <- write_ods(a, tmp)
-    c <- read_ods(tmp)
-    expect_equal(a,c)
+    d <- read_ods(tmp)
+    expect_equal(a,d)
 })
