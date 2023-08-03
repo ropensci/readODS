@@ -37,21 +37,22 @@ std::string parse_p(rapidxml::xml_node<>* node){
 }
 
 std::string parse_textp(rapidxml::xml_node<>* cell){
-    std::string out;
+    std::string out = "";
     int i = 0;
     for (rapidxml::xml_node<>* n = cell->first_node("text:p"); n ; n=n->next_sibling("text:p")){
         if (i > 0){
             out = out.append("\n");
         }
-        out = out.append(parse_p(n));
-        i++;
+        if(n->first_node()){
+            out = out.append(parse_p(n));
+            i++;
+        }
     }
     return out;
 }
 
 std::string parse_single_cell(rapidxml::xml_node<>* cell, bool formula_as_formula, bool use_office_value){
     std::string cell_value;
-
     char* value_type = (cell->first_attribute("office:value-type") != 0) ? 
         cell->first_attribute("office:value-type")->value() : NULL;
     if(formula_as_formula && cell->first_attribute("table:formula")){
@@ -59,14 +60,12 @@ std::string parse_single_cell(rapidxml::xml_node<>* cell, bool formula_as_formul
     } else {
         cell_value = (cell->first_node("text:p") != 0) ? parse_textp(cell) : "";
         if((value_type) && 
-            
-            ((cell_value.length() == 0 && use_office_value) ||
-            (strcmp(value_type, "float") == 0 ||
+            ((cell_value.length() == 0 && use_office_value && cell->first_attribute("office:value") != 0) ||
+            ((strcmp(value_type, "float") == 0 ||
              strcmp(value_type, "currency") == 0||
-             strcmp(value_type, "percentage") == 0))){
-
+             strcmp(value_type, "percentage") == 0)))){
             cell_value = cell->first_attribute("office:value")->value();
-        } 
+        }
     }
     return cell_value;
 }

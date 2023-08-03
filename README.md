@@ -48,7 +48,7 @@ In almost all use cases, you only need two functions: `read_ods` and
 ``` r
 library(readODS)
 read_ods("starwars.ods")
-#> # A tibble: 10 × 3
+#> # A tibble: 10 x 3
 #>    Name               homeworld species
 #>    <chr>              <chr>     <chr>  
 #>  1 Luke Skywalker     Tatooine  Human  
@@ -67,18 +67,18 @@ Reading from the 2nd sheet
 
 ``` r
 read_ods("starwars.ods", sheet = 2)
-#> # A tibble: 10 × 8
+#> # A tibble: 10 x 8
 #>    Name           height  mass hair_color skin_color eye_color birth_year gender
 #>    <chr>           <dbl> <dbl> <chr>      <chr>      <chr>          <dbl> <chr> 
 #>  1 Luke Skywalker    172    77 blond      fair       blue            19   male  
 #>  2 C-3PO             202   136 none       white      yellow          41.9 male  
 #>  3 R2-D2             150    49 brown      light      brown           19   female
-#>  4 Darth Vader       178   120 brown, gr… light      blue            52   male  
+#>  4 Darth Vader       178   120 brown, gr~ light      blue            52   male  
 #>  5 Leia Organa       165    75 brown      light      blue            47   female
 #>  6 Owen Lars         183    84 black      light      brown           24   male  
-#>  7 Beru Whitesun…    182    77 auburn, w… fair       blue-gray       57   male  
+#>  7 Beru Whitesun~    182    77 auburn, w~ fair       blue-gray       57   male  
 #>  8 R5-D4             188    84 blond      fair       blue            41.9 male  
-#>  9 Biggs Darklig…    228   112 brown      unknown    blue           200   male  
+#>  9 Biggs Darklig~    228   112 brown      unknown    blue           200   male  
 #> 10 Obi-Wan Kenobi    180    80 brown      fair       brown           29   male
 ```
 
@@ -86,7 +86,7 @@ Reading from a specific range
 
 ``` r
 read_ods("starwars.ods", sheet = 2, range = "A1:C11")
-#> # A tibble: 10 × 3
+#> # A tibble: 10 x 3
 #>    Name               height  mass
 #>    <chr>               <dbl> <dbl>
 #>  1 Luke Skywalker        172    77
@@ -134,26 +134,26 @@ write_ods(PlantGrowth, "mtcars.ods", append = TRUE, sheet = "plant")
 ## Default: First sheet
 read_ods("mtcars.ods")
 #> New names:
-#> • `` -> `...1`
-#> # A tibble: 32 × 12
+#> * `` -> `...1`
+#> # A tibble: 32 x 12
 #>    ...1          mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
 #>    <chr>       <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
 #>  1 Mazda RX4    21       6  160    110  3.9   2.62  16.5     0     1     4     4
-#>  2 Mazda RX4 …  21       6  160    110  3.9   2.88  17.0     0     1     4     4
+#>  2 Mazda RX4 ~  21       6  160    110  3.9   2.88  17.0     0     1     4     4
 #>  3 Datsun 710   22.8     4  108     93  3.85  2.32  18.6     1     1     4     1
-#>  4 Hornet 4 D…  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1
-#>  5 Hornet Spo…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2
+#>  4 Hornet 4 D~  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1
+#>  5 Hornet Spo~  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2
 #>  6 Valiant      18.1     6  225    105  2.76  3.46  20.2     1     0     3     1
 #>  7 Duster 360   14.3     8  360    245  3.21  3.57  15.8     0     0     3     4
 #>  8 Merc 240D    24.4     4  147.    62  3.69  3.19  20       1     0     4     2
 #>  9 Merc 230     22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2
 #> 10 Merc 280     19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4
-#> # ℹ 22 more rows
+#> # i 22 more rows
 ```
 
 ``` r
 read_ods("mtcars.ods", sheet = "plant", range = "A1:B10")
-#> # A tibble: 9 × 2
+#> # A tibble: 9 x 2
 #>   weight group
 #>    <dbl> <chr>
 #> 1   4.17 ctrl 
@@ -181,6 +181,20 @@ can be fixed by upgrading to a version of R \>= 4.2.
 character encoding are still a known issue with Radian. Their suggested
 workaround is
 [here](https://github.com/randy3k/radian/issues/269#issuecomment-1169663251).
+
+### Maximum Sheet Size
+
+**Reading** The maximum size of sheet you can read is determined by your
+machine’s RAM.
+
+**Writing** You can theoretically write sheets up to 16 384 columns by 1
+048 576 rows (the current maximum sheet size in Excel and LibreOffice
+Calc). While larger ODS files than this are valid, they are not well
+supported. However older version of LibreOffice
+[(\<=7.3)](https://wiki.documentfoundation.org/Faq/Calc/022) and Excel
+[(\<=2003)](https://support.microsoft.com/en-gb/office/use-excel-with-earlier-versions-of-excel-2fd9ffcb-6fce-485b-85af-fecfd651a5ac#:~:text=What%20it%20means%20Beginning%20with,lost%20in%20Excel%2097%2D2003.)
+have significantly smaller maximum sheet sizes, and so this should be
+considered when writing files for distribution.
 
 ### Misc
 
@@ -214,9 +228,9 @@ GPL3
 Contributions in the form of feedback, comments, code, and bug report
 are welcome.
 
-  - Fork the source code, modify, and issue a [pull
+-   Fork the source code, modify, and issue a [pull
     request](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork).
-  - Issues, bug reports: [File a Github
+-   Issues, bug reports: [File a Github
     issue](https://github.com/ropensci/readODS).
 
 Please note that this package is released with a [Contributor Code of
