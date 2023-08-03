@@ -2,7 +2,7 @@
     wd <- getwd()
     on.exit(setwd(wd), add = TRUE)
     setwd(temp_ods_dir)
-    utils::zip(basename(path), files = dir(), flags = "-r9X -q")
+    zip::zip(basename(path), include_directories = FALSE, recurse = TRUE, files = dir(), mode = "cherry-pick")
     setwd(wd)
     file.copy(file.path(temp_ods_dir, basename(path)), path, overwrite = overwrite)
 }
