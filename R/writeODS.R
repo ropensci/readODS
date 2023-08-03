@@ -61,16 +61,18 @@
 ## .FOOTER <- readLines("benchmark/footer.xml")
 ## usethis::use_data(.CONTENT, .FOOTER, internal = TRUE, overwrite = TRUE)
 
-.gen_sheet_tag <- function(sheet = "Sheet1") {
-    sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="16384" table:default-cell-style-name="ce1"/>', .escape_xml(sheet))
+.gen_sheet_tag <- function(sheet = "Sheet1", cmax = 1024) {
+    sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="%d" table:default-cell-style-name="ce1"/>', .escape_xml(sheet), cmax)
 }
 
 .write_sheet_con <- function(x, con, sheet = "Sheet1", row_names = FALSE, col_names = FALSE, na_as_string = FALSE) {
-    cat(.gen_sheet_tag(sheet), file = con)
+    cmax <- force(if(nrow(x) > 1024) { 16384 } else { 1024 })
+    .write_as_utf8(.gen_sheet_tag(sheet, cmax), con)
     types <- unlist(lapply(x, class))
     types <- ifelse(types %in% c("integer", "numeric"), "float", "string")
     colj <- seq_len(NCOL(x))
     cols <- ncol(x)
+
     if (row_names){
         cols <- cols + 1
     }
@@ -87,8 +89,8 @@
         for (j in colj) {
             .cell_out(type = "string", value = colnames(x)[j], con = con)
         }
-        if(cols < 16384){
-            .write_as_utf8(stringi::stri_join("<table:table-cell table:number-columns-repeated=\"", as.character(16384-cols), "\"/>", sep = ""), con)
+        if(cols < cmax){
+            .write_as_utf8(stringi::stri_join("<table:table-cell table:number-columns-repeated=\"", as.character(cmax-cols), "\"/>", sep = ""), con)
         }
         .write_as_utf8("</table:table-row>", con)
     }
@@ -112,13 +114,13 @@
             }
             .cell_out(type = type, value = value, con = con, write_empty_cell = write_empty_cell)
         }
-        if(cols < 16384){
-            .write_as_utf8(stringi::stri_join("<table:table-cell table:number-columns-repeated=\"", as.character(16384-cols), "\"/>", sep = ""), con)
+        if(cols < cmax){
+            .write_as_utf8(stringi::stri_join("<table:table-cell table:number-columns-repeated=\"", as.character(cmax-cols), "\"/>", sep = ""), con)
         }
         .write_as_utf8("</table:table-row>", con)
     }
     if(rows < 2^20){
-        .write_as_utf8(stringi::stri_join("<table:table-row table:style-name=\"ro1\" table:number-rows-repeated=\"", 2^20 - rows, "\"><table:table-cell table:number-columns-repeated=\"16384\"/></table:table-row>", sep = ""), con)
+        .write_as_utf8(stringi::stri_join("<table:table-row table:style-name=\"ro1\" table:number-rows-repeated=\"", 2^20 - rows, "\"><table:table-cell table:number-columns-repeated=\"", cmax, "\"/></table:table-row>", sep = ""), con)
     }
     .write_as_utf8("</table:table>", con)
     return(invisible(con))
