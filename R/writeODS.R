@@ -180,7 +180,7 @@ write_ods <- function(x, path = tempfile(fileext = ".ods"), sheet = "Sheet1", ap
     }
     ## Limit writing to only files that Libreoffice and Excel can read
     if (ncol(x) > 16383 || nrow(x) > 2^20){
-        stop("Data exceeds max sheet size of 16383 x 1048576")
+        stop("Data exceeds max sheet size of 16383 x 1048576", call. = FALSE)
     }
     if (!file.exists(path) || (!append && !update)) {
         .vfwrite_ods(x = x, temp_ods_dir = temp_ods_dir, sheet = sheet, row_names = row_names, col_names = col_names, na_as_string = na_as_string)
