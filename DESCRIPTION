@@ -28,7 +28,6 @@ Imports:
     cellranger,
     readr (>= 1.2.1),
     stringi,
-    utils,
     tibble,
     vctrs (>= 0.4.2),
     zip
