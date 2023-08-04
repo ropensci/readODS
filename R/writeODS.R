@@ -188,7 +188,7 @@ write_ods <- function(x, path = tempfile(fileext = ".ods"), sheet = "Sheet1", ap
         .vfwrite_ods(x = x, temp_ods_dir = temp_ods_dir, sheet = sheet, row_names = row_names, col_names = col_names, na_as_string = na_as_string)
     } else {
         ## The file must be there.
-        utils::unzip(path, exdir = temp_ods_dir)
+        zip::unzip(path, exdir = temp_ods_dir)
         contentfile <- file.path(temp_ods_dir, "content.xml")
         content <- xml2::read_xml(contentfile)
         spreadsheet_node <- xml2::xml_children(xml2::xml_children(content)[[which(!is.na(xml2::xml_find_first(xml2::xml_children(content),"office:spreadsheet")))]])[[1]]
