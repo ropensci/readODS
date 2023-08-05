@@ -61,8 +61,8 @@
 ## .FOOTER <- readLines("benchmark/footer.xml")
 ## usethis::use_data(.CONTENT, .FOOTER, internal = TRUE, overwrite = TRUE)
 
-.gen_sheet_tag <- function(sheet = "Sheet1", cmax = 1024) {
-    sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="%d" table:default-cell-style-name="ce1"/>', .escape_xml(sheet), cmax)
+.gen_sheet_tag <- function(sheet = "Sheet1", cols = 1024) {
+    sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="%d" table:default-cell-style-name="ce1"/>', .escape_xml(sheet), cols)
 }
 
 .write_sheet_con <- function(x, con, sheet = "Sheet1", row_names = FALSE, col_names = FALSE, na_as_string = FALSE, padding = FALSE) {
@@ -79,9 +79,9 @@
         rows <- rows + 1
     }
     if (padding) {
-        .write_as_utf8(.gen_sheet_tag(sheet, cmax), con)
+        .write_as_utf8(.gen_sheet_tag(sheet = sheet, cols = cmax), con)
     } else {
-        .write_as_utf8(.gen_sheet_tag(sheet, cols), con)        
+        .write_as_utf8(.gen_sheet_tag(sheet = sheet, cols = cols), con)
     }
     # add data
     if (col_names) {
