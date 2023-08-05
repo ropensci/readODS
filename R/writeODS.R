@@ -66,7 +66,7 @@
 }
 
 .write_sheet_con <- function(x, con, sheet = "Sheet1", row_names = FALSE, col_names = FALSE, na_as_string = FALSE) {
-    cmax <- force(if(nrow(x) > 1024) { 16384 } else { 1024 })
+    cmax <- force(if(ncol(x) > 1024) { 16384 } else { 1024 })
     .write_as_utf8(.gen_sheet_tag(sheet, cmax), con)
     types <- unlist(lapply(x, class))
     types <- ifelse(types %in% c("integer", "numeric"), "float", "string")
