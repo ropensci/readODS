@@ -12,7 +12,8 @@ write_ods(
   update = FALSE,
   row_names = FALSE,
   col_names = TRUE,
-  na_as_string = FALSE
+  na_as_string = FALSE,
+  padding = FALSE
 )
 }
 \arguments{
@@ -30,7 +31,9 @@ write_ods(
 
 \item{col_names}{logical, TRUE indicates that column names of x are to be included in the sheet. Default is TRUE.}
 
-\item{na_as_string}{logical, TRUE indicates that NAs are written as string; FALSE indicates that NAs are written as empty cells}
+\item{na_as_string}{logical, TRUE indicates that NAs are written as string; FALSE indicates that NAs are written as empty cells.}
+
+\item{padding}{logical, TRUE indicates that the sheet is padded with repeated empty cells to the maximum size, either 2^20 x 1024 (if the number of columns of \code{x} is less than or equal 1024) or 2^20 x 16,384 (otherwise). This is the default behaviour of Microsoft Excel. Default is FALSE}
 }
 \value{
 An ODS file written to the file path location specified by the user. The value of \code{path} is also returned invisibly.
