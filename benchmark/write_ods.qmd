@@ -19,6 +19,12 @@ df1 <- data.frame(a1 = sample(c(1:100), size = 3000, replace = TRUE),
 system.time(write_ods(df1, path = tempfile(fileext = ".ods")))
 ```
 
+Large df
+
+```{r}
+system.time(write_ods(nycflights13::flights))
+```
+
 ```{r}
 sessionInfo()
 ```
