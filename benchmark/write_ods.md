@@ -4,7 +4,7 @@
 date()
 ```
 
-    [1] "Tue Aug  8 22:32:10 2023"
+    [1] "Tue Aug  8 22:37:53 2023"
 
 ``` r
 devtools::load_all()
@@ -27,7 +27,7 @@ system.time(write_ods(df1, path = tempfile(fileext = ".ods")))
 ```
 
        user  system elapsed 
-      0.591   0.004   0.599 
+      0.539   0.012   0.555 
 
 Large df
 
@@ -36,7 +36,7 @@ system.time(write_ods(nycflights13::flights))
 ```
 
        user  system elapsed 
-    183.112   3.848 187.140 
+    164.476   3.516 168.112 
 
 ``` r
 sessionInfo()
