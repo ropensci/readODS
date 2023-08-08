@@ -34,10 +34,7 @@
 }
 
 .escape_xml <- function(x) {
-    x_utf8 <- stringi::stri_enc_toutf8(x)
-    x_no_amp <- stringi::stri_replace_all_fixed(str = x_utf8, pattern = c("&"), replacement = c("&amp;"), vectorize_all = FALSE)
-    stringi::stri_replace_all_fixed(str = x_no_amp, pattern = c("\"", "<", ">", "'"), replacement = c("&quot;", "&lt;", "&gt;", "&apos;"), vectorize_all = FALSE)
-
+    stringi::stri_replace_all_fixed(str = stringi::stri_enc_toutf8(x), pattern = c("&", "\"", "<", ">", "'"), replacement = c("&amp;", "&quot;", "&lt;", "&gt;", "&apos;"), vectorize_all = FALSE)
 }
 
 .cell_out <- function(type, value, con, write_empty_cell = FALSE) {
