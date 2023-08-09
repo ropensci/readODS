@@ -63,10 +63,12 @@
     colj <- seq_len(NCOL(x))
     cols <- ncol(x)
     if (row_names) {
+        rownames_x <- rownames(x)
         cols <- cols + 1
     }
     rows <- nrow(x)
     if (col_names) {
+        colnames_x <- colnames(x)
         rows <- rows + 1
     }
     if (padding) {
@@ -81,21 +83,22 @@
             .cell_out("string", value = "", con = con)
         }
         for (j in colj) {
-            .cell_out(type = "string", value = colnames(x)[j], con = con)
+            .cell_out(type = "string", value = colnames_x[j], con = con)
         }
         if (cols < cmax && padding) {
             .write_as_utf8(stringi::stri_join("<table:table-cell table:number-columns-repeated=\"", as.character(cmax - cols), "\"/>", sep = ""), con)
         }
         .write_as_utf8("</table:table-row>", con)
     }
+    x2 <- lapply(x, as.character)
     for (i in seq_len(NROW(x))) {
         ## create a row
         .write_as_utf8("<table:table-row table:style-name=\"ro1\">", con)
         if (row_names) {
-            .cell_out(type = "string", value = rownames(x)[i], con = con)
+            .cell_out(type = "string", value = rownames_x[i], con = con)
         }
         for (j in colj) {
-            value <- as.character(x[i, j, drop = TRUE])
+            value <- x2[[j, drop = TRUE]][i, drop = TRUE]
             type <- types[j]
             if (!is.na(value)) {
                 .cell_out(type = type, value = value, con = con)
