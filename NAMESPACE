@@ -2,6 +2,7 @@
 
 export(list_fods_sheets)
 export(list_ods_sheets)
+export(ods_sheets)
 export(read_fods)
 export(read_ods)
 export(write_ods)
