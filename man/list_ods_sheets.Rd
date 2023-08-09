@@ -3,11 +3,14 @@
 \name{list_ods_sheets}
 \alias{list_ods_sheets}
 \alias{list_fods_sheets}
+\alias{ods_sheets}
 \title{Get information in an (F)ODS File}
 \usage{
 list_ods_sheets(path, include_external_data = FALSE)
 
 list_fods_sheets(path, include_external_data = FALSE)
+
+ods_sheets(path)
 }
 \arguments{
 \item{path}{Path to the (f)ods file}
@@ -19,6 +22,10 @@ For \verb{list_(f)ods_sheets}, a character vector of sheet names; for \verb{get_
 }
 \description{
 \verb{list_(f)ods_sheets} lists all sheets in an (f)ods file.
+}
+\details{
+\code{ods_sheets} will be removed in the next major version. It was kept for backward compatibility. Please use \code{list_ods_sheet}
+instead. The default "include_external_data" for \code{ods_sheets} is TRUE to maintain compatibility with version 1 of readODS.
 }
 \examples{
 \dontrun{

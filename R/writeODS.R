@@ -7,9 +7,8 @@
     file.copy(file.path(temp_ods_dir, basename(path)), path, overwrite = overwrite)
 }
 
-.write_as_utf8 <- function(text, con){
-    utf8 <- enc2utf8(text)
-    writeLines(utf8, con = con, sep = "", useBytes = TRUE)
+.write_as_utf8 <- function(text, con) {
+    writeLines(enc2utf8(text), con = con, sep = "", useBytes = TRUE)
 }
 
 .find_sheet_node_by_sheet <- function(spreadsheet_node, sheet) {
