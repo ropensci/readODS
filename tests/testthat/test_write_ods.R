@@ -18,14 +18,14 @@ test_that("overwrite, #54", {
 test_that("na_as_string, #79", {
     temp_odsfile <- tempfile(fileext = ".ods")
     temp_odsdir <- tempdir()
-    na_data <- data.frame(x = c(1.0, NA))
+    na_data <- data.frame(x = c(1.0, NA, 2.0))
     write_ods(na_data, path = temp_odsfile, na_as_string = TRUE, col_names = FALSE)
     zip::unzip(temp_odsfile, exdir = temp_odsdir)
     contentfile <- file.path(temp_odsdir, "content.xml")
     expect_true(grepl("office:value-type=\"string\"", suppressWarnings(readLines(contentfile))))
     temp_odsfile <- tempfile(fileext = ".ods")
     temp_odsdir <- tempdir()
-    na_data <- data.frame(x = c(1.0, NA))
+    na_data <- data.frame(x = c(1.0, NA, 2.0))
     write_ods(na_data, path = temp_odsfile, na_as_string = FALSE, col_names = FALSE)
     zip::unzip(temp_odsfile, exdir = temp_odsdir)
     contentfile <- file.path(temp_odsdir, "content.xml")
@@ -35,6 +35,7 @@ test_that("na_as_string, #79", {
 test_that("na_as_string, round trip", {
     iris_na <- tibble::as_tibble(iris)
     iris_na[1,1] <- NA
+    iris_na[1,2] <- NA
     iris_na[2,1] <- NA
     iris_na[5,2] <- NA
     iris_na$Species <- as.character(iris_na$Species)

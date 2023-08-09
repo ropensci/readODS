@@ -38,20 +38,14 @@
 }
 
 .cell_out <- function(type, value, con) {
-## .cell_out <- function(type, value, con, write_empty_cell = FALSE) {
-    ## if (isTRUE(write_empty_cell)) {
-    ##     .write_as_utf8("<table:table-cell/>", con)
-    ## } else {
-        escaped_value <- .escape_xml(value)
-            .write_as_utf8(stringi::stri_join("<table:table-cell office:value-type=\"", type, sep = ""), con)
-        if (type != "string"){
-            .write_as_utf8(stringi::stri_join("\" office:value=\"", escaped_value, sep = ""), con)
-        }
-            .write_as_utf8(stringi::stri_join("\" table:style-name=\"ce1\"><text:p>", escaped_value,
-            "</text:p></table:table-cell>",
-            sep = ""),
-            con)
-    ## }
+    escaped_value <- .escape_xml(value)
+    .write_as_utf8(stringi::stri_join("<table:table-cell office:value-type=\"", type, sep = ""), con)
+    if (type != "string") {
+        .write_as_utf8(stringi::stri_join("\" office:value=\"", escaped_value, sep = ""), con)
+    }
+    .write_as_utf8(stringi::stri_join("\" table:style-name=\"ce1\"><text:p>", escaped_value,
+                                      "</text:p></table:table-cell>",
+                                      sep = ""), con)
 }
 
 ## CREATION OF sysdata
@@ -108,22 +102,13 @@
                 .cell_out(type = type, value = value, con = con)
                 next
             }
+            ## NA processing from now
             if (!na_as_string) {
                 .write_as_utf8("<table:table-cell/>", con)
                 next
             }
             .cell_out(type = "string", value = "NA", con = con)
-            ##write_empty_cell <- FALSE
-            ## if (is.na(value) && !na_as_string) {
-            ##     write_empty_cell <- TRUE
-            ## }
-            ## if (is.na(value) && na_as_string) {
-            ##     type <- "string"
-            ##     value <- "NA"
-            ## } else {
-            ##     type <- types[j]
-            ## }
-            ## .cell_out(type = type, value = value, con = con, write_empty_cell = write_empty_cell)
+            ## end
         }
         if (cols < cmax && padding) {
             .write_as_utf8(stringi::stri_join("<table:table-cell table:number-columns-repeated=\"", as.character(cmax - cols), "\"/>", sep = ""), con)
