@@ -141,6 +141,18 @@
   "softwareSuggestions": [
     {
       "@type": "SoftwareApplication",
+      "identifier": "spelling",
+      "name": "spelling",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=spelling"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "dplyr",
       "name": "dplyr",
       "provider": {
@@ -258,23 +270,6 @@
     },
     "5": {
       "@type": "SoftwareApplication",
-      "identifier": "utils",
-      "name": "utils"
-    },
-    "6": {
-      "@type": "SoftwareApplication",
-      "identifier": "zip",
-      "name": "zip",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=zip"
-    },
-    "7": {
-      "@type": "SoftwareApplication",
       "identifier": "tibble",
       "name": "tibble",
       "provider": {
@@ -285,7 +280,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=tibble"
     },
-    "8": {
+    "6": {
       "@type": "SoftwareApplication",
       "identifier": "vctrs",
       "name": "vctrs",
@@ -298,7 +293,19 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=vctrs"
     },
-    "9": {
+    "7": {
+      "@type": "SoftwareApplication",
+      "identifier": "zip",
+      "name": "zip",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=zip"
+    },
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "R",
       "name": "R",
@@ -306,7 +313,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "5106.868KB",
+  "fileSize": "5117.153KB",
   "releaseNotes": "https://github.com/ropensci/readODS/blob/master/NEWS.md",
   "readme": "https://github.com/ropensci/readODS/blob/v2.0/README.md",
   "contIntegration": ["https://app.codecov.io/gh/ropensci/readODS?branch=master", "https://github.com/ropensci/readODS/actions/workflows/R-CMD-check.yaml"],
