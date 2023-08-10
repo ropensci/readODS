@@ -90,7 +90,7 @@
         }
         .write_as_utf8("</table:table-row>", con)
     }
-    x2 <- lapply(x, as.character)
+    x_list <- lapply(x, as.character)
     for (i in seq_len(NROW(x))) {
         ## create a row
         .write_as_utf8("<table:table-row table:style-name=\"ro1\">", con)
@@ -98,7 +98,7 @@
             .cell_out(type = "string", value = rownames_x[i], con = con)
         }
         for (j in colj) {
-            value <- x2[[j, drop = TRUE]][i, drop = TRUE]
+            value <- x_list[[j, drop = TRUE]][i, drop = TRUE]
             type <- types[j]
             if (!is.na(value)) {
                 .cell_out(type = type, value = value, con = con)
