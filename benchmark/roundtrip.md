@@ -15,7 +15,7 @@ Let’s break it down
 date()
 ```
 
-    [1] "Wed Jul 26 23:04:13 2023"
+    [1] "Wed Aug  9 23:38:22 2023"
 
 ``` r
 library(nycflights13)
@@ -23,14 +23,14 @@ system.time(path <- writexl::write_xlsx(flights))
 ```
 
        user  system elapsed 
-      6.020   0.272   6.292 
+      5.949   0.304   6.262 
 
 ``` r
 system.time(out <- readxl::read_xlsx(path))
 ```
 
        user  system elapsed 
-      2.209   0.589   2.797 
+      2.188   0.640   2.837 
 
 ``` r
 all.equal(out, flights)
@@ -51,14 +51,14 @@ system.time(path <- readODS::write_ods(flights))
 ```
 
        user  system elapsed 
-    182.091  32.098 214.351 
+     94.480   0.452  95.059 
 
 ``` r
 system.time(out <- readODS::read_ods(path))
 ```
 
        user  system elapsed 
-     29.581   1.979  31.573 
+     26.438   1.660  28.104 
 
 ``` r
 all.equal(out, flights)
@@ -73,7 +73,7 @@ sessionInfo()
 
     R version 4.3.1 (2023-06-16)
     Platform: x86_64-pc-linux-gnu (64-bit)
-    Running under: Ubuntu 22.04.2 LTS
+    Running under: Ubuntu 22.04.3 LTS
 
     Matrix products: default
     BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0 
