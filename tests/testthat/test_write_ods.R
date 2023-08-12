@@ -49,3 +49,10 @@ test_that("na_as_string, round trip", {
     expect_true(all.equal(iris2, readODS::read_ods(readODS::write_ods(iris2, na_as_string = FALSE))))
     expect_true(all.equal(iris2, readODS::read_ods(readODS::write_ods(iris2, na_as_string = TRUE))))
 })
+
+test_that("data time columns #137", {
+    flights_head <- readRDS("../testdata/flights_head.RDS")
+    back <- read_ods(write_ods(flights_head))
+    expect_equal(ncol(back), ncol(flights_head))
+    expect_equal(colnames(back), colnames(flights_head))
+})
