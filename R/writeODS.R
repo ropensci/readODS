@@ -37,12 +37,12 @@
 }
 
 .cell_out <- function(type, value, con) {
-    escaped_value <- .escape_xml(value)
+    ##escaped_value <- .escape_xml(value)
     .write_as_utf8(stringi::stri_join("<table:table-cell office:value-type=\"", type, sep = ""), con)
     if (type != "string") {
-        .write_as_utf8(stringi::stri_join("\" office:value=\"", escaped_value, sep = ""), con)
+        .write_as_utf8(stringi::stri_join("\" office:value=\"", value, sep = ""), con)
     }
-    .write_as_utf8(stringi::stri_join("\" table:style-name=\"ce1\"><text:p>", escaped_value,
+    .write_as_utf8(stringi::stri_join("\" table:style-name=\"ce1\"><text:p>", value,
                                       "</text:p></table:table-cell>",
                                       sep = ""), con)
 }
@@ -56,6 +56,13 @@
     sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="%d" table:default-cell-style-name="ce1"/>', .escape_xml(sheet), cols)
 }
 
+.flatten <- function(x, column_type) {
+    if (column_type == "string") {
+        return(.escape_xml(as.character(x)))
+    }
+    as.character(x)
+}
+
 .write_sheet_con <- function(x, con, sheet = "Sheet1", row_names = FALSE, col_names = FALSE, na_as_string = FALSE, padding = FALSE) {
     cmax <- force(if(ncol(x) > 1024) { 16384 } else { 1024 })
     types <- unlist(lapply(x, class))
@@ -63,12 +70,12 @@
     colj <- seq_len(NCOL(x))
     cols <- ncol(x)
     if (row_names) {
-        rownames_x <- rownames(x)
+        rownames_x <- .escape_xml(rownames(x))
         cols <- cols + 1
     }
     rows <- nrow(x)
     if (col_names) {
-        colnames_x <- colnames(x)
+        colnames_x <- .escape_xml(colnames(x))
         rows <- rows + 1
     }
     if (padding) {
@@ -90,7 +97,7 @@
         }
         .write_as_utf8("</table:table-row>", con)
     }
-    x_list <- lapply(x, as.character)
+    x_list <- mapply(.flatten, x = x, column_type = types, SIMPLIFY = FALSE)
     for (i in seq_len(NROW(x))) {
         ## create a row
         .write_as_utf8("<table:table-row table:style-name=\"ro1\">", con)
