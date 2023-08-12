@@ -1,3 +1,9 @@
+# readODS 2.0.1
+
+## Fix writing data time columns error #137
+
+A dttm column was incorrectly written with one more column. It's now fixed.
+
 # readODS 2.0.0
 
 ## BREAKING CHANGES: Changed `write_ods(na_as_string)` behaviour

@@ -65,7 +65,7 @@
 
 .write_sheet_con <- function(x, con, sheet = "Sheet1", row_names = FALSE, col_names = FALSE, na_as_string = FALSE, padding = FALSE) {
     cmax <- force(if(ncol(x) > 1024) { 16384 } else { 1024 })
-    types <- unlist(lapply(x, class))
+    types <- unlist(lapply(x, function(x) class(x)[1]))
     types <- ifelse(types %in% c("integer", "numeric"), "float", "string")
     colj <- seq_len(NCOL(x))
     cols <- ncol(x)
