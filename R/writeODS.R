@@ -37,7 +37,6 @@
 }
 
 .cell_out <- function(type, value, con) {
-    ##escaped_value <- .escape_xml(value)
     .write_as_utf8(stringi::stri_join("<table:table-cell office:value-type=\"", type, sep = ""), con)
     if (type != "string") {
         .write_as_utf8(stringi::stri_join("\" office:value=\"", value, sep = ""), con)

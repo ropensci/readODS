@@ -4,7 +4,7 @@
 date()
 ```
 
-    [1] "Wed Aug  9 23:32:12 2023"
+    [1] "Sat Aug 12 15:38:13 2023"
 
 ``` r
 devtools::load_all()
@@ -27,7 +27,7 @@ system.time(write_ods(df1, path = tempfile(fileext = ".ods")))
 ```
 
        user  system elapsed 
-      0.354   0.004   0.362 
+      0.283   0.016   0.298 
 
 Large df
 
@@ -36,7 +36,7 @@ system.time(write_ods(nycflights13::flights))
 ```
 
        user  system elapsed 
-     94.700   0.592  95.384 
+     77.828   0.621  78.560 
 
 ``` r
 sessionInfo()
@@ -65,7 +65,7 @@ sessionInfo()
     [1] stats     graphics  grDevices utils     datasets  methods   base     
 
     other attached packages:
-    [1] readODS_2.0.0   testthat_3.1.10
+    [1] readODS_2.0.1   testthat_3.1.10
 
     loaded via a namespace (and not attached):
      [1] utf8_1.2.3         xml2_1.3.5         stringi_1.7.12     hms_1.1.3         
