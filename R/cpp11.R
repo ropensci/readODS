@@ -15,3 +15,7 @@ read_flat_ods_ <- function(file, start_row, stop_row, start_col, stop_col, sheet
 read_ods_ <- function(file, start_row, stop_row, start_col, stop_col, sheet, formula_as_formula) {
   .Call(`_readODS_read_ods_`, file, start_row, stop_row, start_col, stop_col, sheet, formula_as_formula)
 }
+
+write_sheet_ <- function(filename, x_list, column_types, sheet, row_names, col_names, rownames_x, colnames_x, na_as_string, padding, header, footer) {
+  .Call(`_readODS_write_sheet_`, filename, x_list, column_types, sheet, row_names, col_names, rownames_x, colnames_x, na_as_string, padding, header, footer)
+}
