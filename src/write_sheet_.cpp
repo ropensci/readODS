@@ -33,7 +33,6 @@ cpp11::r_string write_sheet_(const std::string& filename,
 			     const cpp11::list_of<cpp11::strings>& x_list,
 			     const cpp11::strings& column_types,
 			     const std::string& sheet,
-			     const int cmax,
 			     const bool row_names,
 			     const bool col_names,
 			     const cpp11::strings& rownames_x,
@@ -44,14 +43,14 @@ cpp11::r_string write_sheet_(const std::string& filename,
 			     const std::string& footer) {
     int rows = col_names ? x_list[0].size() + 1 : x_list[0].size();
     int cols = row_names ? column_types.size() + 1 : column_types.size();
+    int cmax = column_types.size() > 1024 ? 16384 : 1024;
     // please escape all strings first!
     std::ofstream xml_file(filename);
     // gen_sheet_tag
     xml_file << header;
     xml_file << "<table:table table:name=\"";
     xml_file << sheet;
-    xml_file << "\" table:style-name=\"ta1\"><table:table-column table:style-name=\"co1\" table:number-columns-repeated=\"";
-    
+    xml_file << "\" table:style-name=\"ta1\"><table:table-column table:style-name=\"co1\" table:number-columns-repeated=\"";    
     padding ? xml_file << cmax : xml_file << cols;
     xml_file << "\" table:default-cell-style-name=\"ce1\"/>";
     // add_data	
