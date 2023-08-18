@@ -42,17 +42,8 @@ cpp11::r_string write_sheet_(const std::string& filename,
 			     const bool padding,
 			     const std::string& header,
 			     const std::string& footer) {
-    int rows, cols;
-    if (col_names) {
-	rows = x_list[0].size() + 1;
-    } else {
-	rows = x_list[0].size();
-    }
-    if (row_names) {
-	cols = column_types.size() + 1;
-    } else {
-	cols = column_types.size();
-    }    
+    int rows = col_names ? x_list[0].size() + 1 : x_list[0].size();
+    int cols = row_names ? column_types.size() + 1 : column_types.size();
     // please escape all strings first!
     std::ofstream xml_file(filename);
     // gen_sheet_tag
@@ -61,11 +52,7 @@ cpp11::r_string write_sheet_(const std::string& filename,
     xml_file << sheet;
     xml_file << "\" table:style-name=\"ta1\"><table:table-column table:style-name=\"co1\" table:number-columns-repeated=\"";
     
-    if (padding) {
-	xml_file << cmax;
-    } else {
-	xml_file << cols;
-    }
+    padding ? xml_file << cmax : xml_file << cols;
     xml_file << "\" table:default-cell-style-name=\"ce1\"/>";
     // add_data	
     if (col_names) {
@@ -85,8 +72,15 @@ cpp11::r_string write_sheet_(const std::string& filename,
 	    cell_out_("string", rownames_x[i], xml_file);
 	}
 	for (int j = 0; j < column_types.size(); j++) {
-	    //TODO: NA
-	    cell_out_(column_types[j], x_list[j][i], xml_file);
+	    if (x_list[j][i] != NA_STRING) {
+		cell_out_(column_types[j], x_list[j][i], xml_file);
+		continue;
+	    }
+	    if (!na_as_string) {
+		xml_file << "<table:table-cell/>";
+		continue;
+	    }
+            cell_out_("string", "NA", xml_file);
 	}
 	pad_rows_(padding, cols, cmax, xml_file);
 	xml_file << "</table:table-row>";

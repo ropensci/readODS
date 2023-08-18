@@ -2,10 +2,8 @@
 
 test_that("padding TRUE, ncol <= 1024", {
     throwaway_xml_file <- tempfile(fileext = ".xml")
-    con <- file(file.path(throwaway_xml_file), open = "w+", encoding = "native.enc")
     test_data <- data.frame(x = c(1.1, 2.2, 3.3), y = c("a", "b", "c"))
-    .write_sheet_con(test_data, con, padding = TRUE)
-    close(con)
+    .write_sheet_(test_data, filename = throwaway_xml_file, padding = TRUE)
     content <- readLines(throwaway_xml_file, warn = FALSE)
     expect_true(grepl("table:number-columns-repeated=\"1024\"", content))
     ## 1024 - ncol(test_data)
@@ -16,10 +14,8 @@ test_that("padding TRUE, ncol <= 1024", {
 
 test_that("padding FALSE, ncol <= 1024", {
     throwaway_xml_file <- tempfile(fileext = ".xml")
-    con <- file(file.path(throwaway_xml_file), open = "w+", encoding = "native.enc")
     test_data <- data.frame(x = c(1.1, 2.2, 3.3), y = c("a", "b", "c"))
-    .write_sheet_con(test_data, con, padding = FALSE)
-    close(con)
+    .write_sheet_(test_data, throwaway_xml_file, padding = FALSE)
     content <- readLines(throwaway_xml_file, warn = FALSE)
     expect_false(grepl("table:number-columns-repeated=\"1024\"", content))
     ## 1024 - ncol(test_data)
@@ -32,10 +28,8 @@ test_that("padding FALSE, ncol <= 1024", {
 
 test_that("padding TRUE, ncol > 1024", {
     throwaway_xml_file <- tempfile(fileext = ".xml")
-    con <- file(file.path(throwaway_xml_file), open = "w+", encoding = "native.enc")
     test_data <- as.data.frame(matrix(rnorm(1025), nrow = 1))
-    .write_sheet_con(test_data, con, padding = TRUE)
-    close(con)
+    .write_sheet_(test_data, throwaway_xml_file, padding = TRUE)
     content <- readLines(throwaway_xml_file, warn = FALSE)
     expect_true(grepl("table:number-columns-repeated=\"16384\"", content))
     ## 16384 - ncol(test_data) 
