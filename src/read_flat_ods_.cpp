@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
-
+#include <stdexcept>
 
 [[cpp11::register]]
 cpp11::strings read_flat_ods_(const std::string file,

@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <string>
+#include <stdexcept>
 
 [[cpp11::register]]
 cpp11::strings read_ods_(const std::string file,
