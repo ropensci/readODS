@@ -28,10 +28,10 @@ void pad_rows_ (const bool& padding, const int& cols, const int& cmax, std::ofst
     }
 }
 
-cpp11::list_of<cpp11::strings> dimnames_(const cpp11::data_frame& x) {
+cpp11::strings dimnames_(const cpp11::data_frame& x, bool cols) {
     // Is there a better way?
     cpp11::function dimnames_rfun = cpp11::package("readODS")[".get_sanitized_dimnames"];
-    return cpp11::writable::list_of<cpp11::strings>(static_cast<SEXP>(dimnames_rfun(x)));
+    return cpp11::writable::strings(static_cast<SEXP>(dimnames_rfun(x, cols)));
 }
 
 cpp11::list_of<cpp11::strings> sanitize_(const cpp11::data_frame& x, const cpp11::strings column_types) {
@@ -55,11 +55,15 @@ cpp11::r_string write_sheet_(const std::string& filename,
                              const std::string& header,
                              const std::string& footer) {
     // TODO: if x.nrow() == 0; just write empty xml
+    cpp11::strings rownames_x, colnames_x;
     cpp11::strings column_types = get_column_types_(x);
     cpp11::list_of<cpp11::strings> x_list = sanitize_(x, column_types);
-    cpp11::list_of<cpp11::strings> raw_dimnames = dimnames_(x);
-    cpp11::strings rownames_x = raw_dimnames[0];
-    cpp11::strings colnames_x = raw_dimnames[1];
+    if (row_names) {
+        rownames_x = dimnames_(x, false);
+    }
+    if (col_names) {
+        colnames_x = dimnames_(x, true);
+    }
     int rows = col_names ? x_list[0].size() + 1 : x_list[0].size();
     int cols = row_names ? column_types.size() + 1 : column_types.size();
     int cmax = column_types.size() > 1024 ? 16384 : 1024;

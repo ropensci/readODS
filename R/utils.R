@@ -18,8 +18,11 @@ check_nonnegative_integer <- function(x, argument) {
     mapply(.sanitize, x = x, column_type = column_types, SIMPLIFY = FALSE)
 }
 
-.get_sanitized_dimnames <- function(x) {
-    lapply(dimnames(x), .escape_xml)
+.get_sanitized_dimnames <- function(x, cols = TRUE) {
+    if (cols) {
+        return(.escape_xml(colnames(x)))
+    }
+    return(.escape_xml(rownames(x)))
 }
 
 .get_column_types <- function(x) {
