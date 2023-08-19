@@ -3,6 +3,7 @@
 
 #include <cstring>
 #include <fstream>
+#include <stdexcept>
 
 bool is_ods(const std::string file){
     /*Checks that file conforms to some of the spec at

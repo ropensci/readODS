@@ -1,8 +1,18 @@
+# readODS 2.0.2
+
+## performance improvement for `write_ods`
+
+`write_ods` has been partially rewritten in C++ #140
+
+## Ensure R 3.6 compatibility
+
+To ensure UTF-8 everywhere, fix #107
+
 # readODS 2.0.1
 
 ## Fix writing data time columns error #137
 
-A dttm column was incorrectly written with one more column. It's now fixed.
+`dttm` column was incorrectly written with one more column. It's now fixed. 
 
 # readODS 2.0.0
 

@@ -10,6 +10,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <stdexcept>
 
 cpp11::strings get_sheet_names_from_content (rapidxml::xml_node<>* rootNode, const bool include_external_data){
 
