@@ -42,12 +42,6 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      - name: Print 3.6 sysinfo
-        if: matrix.config.r == '3.6'
-        run: |
-          sessionInfo()
-        shell: Rscript {0}
-
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck
