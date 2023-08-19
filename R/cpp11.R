@@ -16,6 +16,6 @@ read_ods_ <- function(file, start_row, stop_row, start_col, stop_col, sheet, for
   .Call(`_readODS_read_ods_`, file, start_row, stop_row, start_col, stop_col, sheet, formula_as_formula)
 }
 
-write_sheet_ <- function(filename, x_list, column_types, sheet, row_names, col_names, rownames_x, colnames_x, na_as_string, padding, header, footer) {
-  .Call(`_readODS_write_sheet_`, filename, x_list, column_types, sheet, row_names, col_names, rownames_x, colnames_x, na_as_string, padding, header, footer)
+write_sheet_ <- function(filename, x, sheet, row_names, col_names, na_as_string, padding, header, footer) {
+  .Call(`_readODS_write_sheet_`, filename, x, sheet, row_names, col_names, na_as_string, padding, header, footer)
 }

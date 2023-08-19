@@ -37,42 +37,12 @@
 ## .FOOTER <- readLines("benchmark/footer.xml")
 ## usethis::use_data(.CONTENT, .FOOTER, internal = TRUE, overwrite = TRUE)
 
-.flatten <- function(x, column_type) {
-    if (column_type == "string") {
-        return(.escape_xml(as.character(x)))
-    }
-    as.character(x)
-}
-
-.write_sheet_ <- function(x, filename, sheet = "Sheet1", row_names = FALSE, col_names = FALSE, na_as_string = FALSE, padding = FALSE, header = "", footer = "") {
-    column_types <- ifelse(unlist(lapply(x, function(x) class(x)[1])) %in% c("integer", "numeric"), "float", "string")
-    x_list <- mapply(.flatten, x = x, column_type = column_types, SIMPLIFY = FALSE)
-    if (row_names) {
-        rownames_x <- .escape_xml(rownames(x))
-    } else {
-        rownames_x <- c(NA_character_)
-    }
-    if (col_names) {
-        colnames_x <- .escape_xml(colnames(x))
-    } else {
-        colnames_x <- c(NA_character_)
-    }
-    write_sheet_(filename = filename, x_list = x_list,
-                 column_types = column_types, sheet = .escape_xml(sheet),
-                 row_names = row_names, col_names = col_names,
-                 rownames_x = rownames_x, colnames_x = colnames_x,
-                 na_as_string = na_as_string, padding = padding, header = header, footer = footer)
-    return(invisible(filename))
-}
-
-
 .convert_df_to_sheet <- function(x, sheet = "Sheet1", row_names = FALSE, col_names = FALSE, na_as_string = FALSE, padding = FALSE) {
     throwaway_xml_file <- file.path(tempfile(fileext = ".xml"))
-    .write_sheet_(x = x, filename = throwaway_xml_file, sheet = sheet, row_names = row_names, col_names = col_names,
+    write_sheet_(x = x, filename = throwaway_xml_file, sheet = .escape_xml(sheet), row_names = row_names, col_names = col_names,
                   na_as_string = na_as_string, padding = padding,
                   header = "",
                   footer = "")
-    return(throwaway_xml_file)
 }
 
 ## https://github.com/ropensci/readODS/issues/88
@@ -80,11 +50,10 @@
     templatedir <- system.file("template", package = "readODS")
     file.copy(dir(templatedir, full.names = TRUE), temp_ods_dir, recursive = TRUE, copy.mode = FALSE)
     filename <- file.path(temp_ods_dir, "content.xml")
-    .write_sheet_(x = x, filename = filename, sheet = sheet, row_names = row_names, col_names = col_names,
+    write_sheet_(x = x, filename = filename, sheet = .escape_xml(sheet), row_names = row_names, col_names = col_names,
                   na_as_string = na_as_string, padding = padding,
                   header = paste0(.CONTENT[1], .CONTENT[2]),
                   footer = .FOOTER)
-    return(filename)
 }
 
 #' Write Data to ODS File

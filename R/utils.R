@@ -5,3 +5,23 @@ check_nonnegative_integer <- function(x, argument) {
     return(x)
 }
 
+## for single column, so `column_type`
+.sanitize <- function(x, column_type) {
+    if (column_type == "string") {
+        return(.escape_xml(as.character(x)))
+    }
+    as.character(x)
+}
+
+## To use inside cpp
+.sanitize_df <- function(x, column_types) {
+    mapply(.sanitize, x = x, column_type = column_types, SIMPLIFY = FALSE)
+}
+
+.get_sanitized_dimnames <- function(x) {
+    lapply(dimnames(x), .escape_xml)
+}
+
+.get_column_types <- function(x) {
+    ifelse(unlist(lapply(x, function(x) class(x)[1])) %in% c("integer", "numeric"), "float", "string")
+}
