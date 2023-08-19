@@ -34,20 +34,20 @@ extern "C" SEXP _readODS_read_ods_(SEXP file, SEXP start_row, SEXP stop_row, SEX
   END_CPP11
 }
 // write_sheet_.cpp
-cpp11::r_string write_sheet_(const std::string& filename, const cpp11::list_of<cpp11::strings>& x_list, const cpp11::strings& column_types, const std::string& sheet, const bool row_names, const bool col_names, const cpp11::strings& rownames_x, const cpp11::strings& colnames_x, const bool na_as_string, const bool padding, const std::string& header, const std::string& footer);
-extern "C" SEXP _readODS_write_sheet_(SEXP filename, SEXP x_list, SEXP column_types, SEXP sheet, SEXP row_names, SEXP col_names, SEXP rownames_x, SEXP colnames_x, SEXP na_as_string, SEXP padding, SEXP header, SEXP footer) {
+cpp11::r_string write_sheet_(const std::string& filename, const cpp11::data_frame& x, const std::string& sheet, const bool row_names, const bool col_names, const bool na_as_string, const bool padding, const std::string& header, const std::string& footer);
+extern "C" SEXP _readODS_write_sheet_(SEXP filename, SEXP x, SEXP sheet, SEXP row_names, SEXP col_names, SEXP na_as_string, SEXP padding, SEXP header, SEXP footer) {
   BEGIN_CPP11
-    return cpp11::as_sexp(write_sheet_(cpp11::as_cpp<cpp11::decay_t<const std::string&>>(filename), cpp11::as_cpp<cpp11::decay_t<const cpp11::list_of<cpp11::strings>&>>(x_list), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(column_types), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(sheet), cpp11::as_cpp<cpp11::decay_t<const bool>>(row_names), cpp11::as_cpp<cpp11::decay_t<const bool>>(col_names), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(rownames_x), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(colnames_x), cpp11::as_cpp<cpp11::decay_t<const bool>>(na_as_string), cpp11::as_cpp<cpp11::decay_t<const bool>>(padding), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(header), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(footer)));
+    return cpp11::as_sexp(write_sheet_(cpp11::as_cpp<cpp11::decay_t<const std::string&>>(filename), cpp11::as_cpp<cpp11::decay_t<const cpp11::data_frame&>>(x), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(sheet), cpp11::as_cpp<cpp11::decay_t<const bool>>(row_names), cpp11::as_cpp<cpp11::decay_t<const bool>>(col_names), cpp11::as_cpp<cpp11::decay_t<const bool>>(na_as_string), cpp11::as_cpp<cpp11::decay_t<const bool>>(padding), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(header), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(footer)));
   END_CPP11
 }
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
-    {"_readODS_get_flat_sheet_names_", (DL_FUNC) &_readODS_get_flat_sheet_names_,  2},
-    {"_readODS_get_sheet_names_",      (DL_FUNC) &_readODS_get_sheet_names_,       2},
-    {"_readODS_read_flat_ods_",        (DL_FUNC) &_readODS_read_flat_ods_,         7},
-    {"_readODS_read_ods_",             (DL_FUNC) &_readODS_read_ods_,              7},
-    {"_readODS_write_sheet_",          (DL_FUNC) &_readODS_write_sheet_,          12},
+    {"_readODS_get_flat_sheet_names_", (DL_FUNC) &_readODS_get_flat_sheet_names_, 2},
+    {"_readODS_get_sheet_names_",      (DL_FUNC) &_readODS_get_sheet_names_,      2},
+    {"_readODS_read_flat_ods_",        (DL_FUNC) &_readODS_read_flat_ods_,        7},
+    {"_readODS_read_ods_",             (DL_FUNC) &_readODS_read_ods_,             7},
+    {"_readODS_write_sheet_",          (DL_FUNC) &_readODS_write_sheet_,          9},
     {NULL, NULL, 0}
 };
 }
