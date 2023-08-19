@@ -28,10 +28,6 @@
     .silent_read_xml(sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="16384" table:default-cell-style-name="ce1"/></table:table>', sheet))
 }
 
-.escape_xml <- function(x) {
-    stringi::stri_replace_all_fixed(str = stringi::stri_enc_toutf8(x), pattern = c("&", "\"", "<", ">", "'"), replacement = c("&amp;", "&quot;", "&lt;", "&gt;", "&apos;"), vectorize_all = FALSE)
-}
-
 ## CREATION OF sysdata
 ## .CONTENT <- readLines("benchmark/header.xml")
 ## .FOOTER <- readLines("benchmark/footer.xml")
@@ -39,7 +35,7 @@
 
 .convert_df_to_sheet <- function(x, sheet = "Sheet1", row_names = FALSE, col_names = FALSE, na_as_string = FALSE, padding = FALSE) {
     throwaway_xml_file <- file.path(tempfile(fileext = ".xml"))
-    write_sheet_(x = x, filename = throwaway_xml_file, sheet = .escape_xml(sheet), row_names = row_names, col_names = col_names,
+    write_sheet_(x = x, filename = throwaway_xml_file, sheet = sheet, row_names = row_names, col_names = col_names,
                   na_as_string = na_as_string, padding = padding,
                   header = "",
                   footer = "")
@@ -50,7 +46,7 @@
     templatedir <- system.file("template", package = "readODS")
     file.copy(dir(templatedir, full.names = TRUE), temp_ods_dir, recursive = TRUE, copy.mode = FALSE)
     filename <- file.path(temp_ods_dir, "content.xml")
-    write_sheet_(x = x, filename = filename, sheet = .escape_xml(sheet), row_names = row_names, col_names = col_names,
+    write_sheet_(x = x, filename = filename, sheet = sheet, row_names = row_names, col_names = col_names,
                   na_as_string = na_as_string, padding = padding,
                   header = paste0(.CONTENT[1], .CONTENT[2]),
                   footer = .FOOTER)

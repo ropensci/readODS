@@ -5,6 +5,12 @@ check_nonnegative_integer <- function(x, argument) {
     return(x)
 }
 
+## To use inside cpp
+
+.escape_xml <- function(x) {
+    stringi::stri_replace_all_fixed(str = stringi::stri_enc_toutf8(x), pattern = c("&", "\"", "<", ">", "'"), replacement = c("&amp;", "&quot;", "&lt;", "&gt;", "&apos;"), vectorize_all = FALSE)
+}
+
 ## for single column, so `column_type`
 .sanitize <- function(x, column_type) {
     if (column_type == "string") {
@@ -12,8 +18,6 @@ check_nonnegative_integer <- function(x, argument) {
     }
     as.character(x)
 }
-
-## To use inside cpp
 .sanitize_df <- function(x, column_types) {
     mapply(.sanitize, x = x, column_type = column_types, SIMPLIFY = FALSE)
 }

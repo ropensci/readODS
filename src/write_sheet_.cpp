@@ -44,6 +44,12 @@ cpp11::strings get_column_types_(const cpp11::data_frame& x) {
     return cpp11::writable::strings(static_cast<SEXP>(get_column_types_rfun(x)));
 }
 
+std::string escape_xml_(const std::string& input) {
+    cpp11::sexp input_sexp = cpp11::as_sexp(input);
+    cpp11::function escape_xml_rfun = cpp11::package("readODS")[".escape_xml"];
+    return cpp11::as_cpp<std::string>(escape_xml_rfun(input_sexp));
+}
+
 [[cpp11::register]]
 cpp11::r_string write_sheet_(const std::string& filename,
                              const cpp11::data_frame& x,
@@ -71,7 +77,8 @@ cpp11::r_string write_sheet_(const std::string& filename,
     // gen_sheet_tag
     xml_file << header;
     xml_file << "<table:table table:name=\"";
-    xml_file << sheet;
+    std::string escaped_sheet = escape_xml_(sheet);
+    xml_file << escaped_sheet;
     xml_file << "\" table:style-name=\"ta1\"><table:table-column table:style-name=\"co1\" table:number-columns-repeated=\"";
     padding ? xml_file << cmax : xml_file << cols;
     xml_file << "\" table:default-cell-style-name=\"ce1\"/>";

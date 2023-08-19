@@ -3,7 +3,7 @@
 ## keep here for the defaults
 .write_sheet_ <- function(x, filename, sheet = "Sheet1", row_names = FALSE, col_names = FALSE, na_as_string = FALSE, padding = FALSE, header = "", footer = "") {
     write_sheet_(filename = filename, x = x,
-                 sheet = .escape_xml(sheet),
+                 sheet = sheet,
                  row_names = row_names, col_names = col_names,
                  na_as_string = na_as_string, padding = padding, header = header, footer = footer)
     return(invisible(filename))
