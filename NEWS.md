@@ -10,6 +10,10 @@ To ensure UTF-8 everywhere, fix #107
 
 Bump requirement to R>=3.6
 
+## Bug fixes
+
+* write empty sheet #142
+
 # readODS 2.0.1
 
 ## Fix writing data time columns error #137
