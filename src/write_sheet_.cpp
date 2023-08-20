@@ -50,6 +50,15 @@ std::string escape_xml_(const std::string& input) {
     return cpp11::as_cpp<std::string>(escape_xml_rfun(input_sexp));
 }
 
+void write_empty_(const std::string& escaped_sheet, std::ofstream& xml_file, const std::string& header, const std::string& footer) {
+    xml_file << header;
+    xml_file << "<table:table table:name=\"";
+    xml_file << escaped_sheet;
+    xml_file << "\" table:style-name=\"ta1\">";
+    xml_file << "</table:table>";
+    xml_file << footer;
+}
+
 [[cpp11::register]]
 cpp11::r_string write_sheet_(const std::string& filename,
                              const cpp11::data_frame& x,
@@ -61,8 +70,14 @@ cpp11::r_string write_sheet_(const std::string& filename,
                              const std::string& header,
                              const std::string& footer) {
     // TODO: if x.nrow() == 0; just write empty xml
-    cpp11::strings rownames_x, colnames_x;
+    std::ofstream xml_file(filename);
+    std::string escaped_sheet = escape_xml_(sheet);
+    if (x.ncol() == 0 || (x.nrow() == 0 && !col_names && x.ncol() != 0)) {
+        write_empty_(escaped_sheet, xml_file, header, footer);
+        return filename;
+    }
     cpp11::strings column_types = get_column_types_(x);
+    cpp11::strings rownames_x, colnames_x;
     cpp11::list_of<cpp11::strings> x_list = sanitize_(x, column_types);
     if (row_names) {
         rownames_x = dimnames_(x, false);
@@ -73,13 +88,13 @@ cpp11::r_string write_sheet_(const std::string& filename,
     int rows = col_names ? x_list[0].size() + 1 : x_list[0].size();
     int cols = row_names ? column_types.size() + 1 : column_types.size();
     int cmax = column_types.size() > 1024 ? 16384 : 1024;
-    std::ofstream xml_file(filename);
     // gen_sheet_tag
     xml_file << header;
     xml_file << "<table:table table:name=\"";
-    std::string escaped_sheet = escape_xml_(sheet);
     xml_file << escaped_sheet;
-    xml_file << "\" table:style-name=\"ta1\"><table:table-column table:style-name=\"co1\" table:number-columns-repeated=\"";
+    xml_file << "\" table:style-name=\"ta1\">";
+    // column
+    xml_file << "<table:table-column table:style-name=\"co1\" table:number-columns-repeated=\"";
     padding ? xml_file << cmax : xml_file << cols;
     xml_file << "\" table:default-cell-style-name=\"ce1\"/>";
     // add_data

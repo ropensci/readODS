@@ -8,10 +8,12 @@ check_nonnegative_integer <- function(x, argument) {
 ## To use inside cpp
 
 .escape_xml <- function(x) {
-    stringi::stri_replace_all_fixed(str = stringi::stri_enc_toutf8(x), pattern = c("&", "\"", "<", ">", "'"), replacement = c("&amp;", "&quot;", "&lt;", "&gt;", "&apos;"), vectorize_all = FALSE)
+    stringi::stri_replace_all_fixed(str = stringi::stri_enc_toutf8(x), pattern = c("&", "\"", "<", ">", "'"),
+                                    replacement = c("&amp;", "&quot;", "&lt;", "&gt;", "&apos;"), vectorize_all = FALSE)
 }
 
 ## for single column, so `column_type`
+
 .sanitize <- function(x, column_type) {
     if (column_type == "string") {
         return(.escape_xml(as.character(x)))
@@ -30,5 +32,6 @@ check_nonnegative_integer <- function(x, argument) {
 }
 
 .get_column_types <- function(x) {
-    ifelse(unlist(lapply(x, function(x) class(x)[1])) %in% c("integer", "numeric"), "float", "string")
+    ## if ncol == 0, without as.character would return `logical(0)`
+    as.character(ifelse(unlist(lapply(x, function(x) class(x)[1])) %in% c("integer", "numeric"), "float", "string"))
 }

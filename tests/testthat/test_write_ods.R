@@ -45,7 +45,7 @@ test_that("na_as_string, round trip", {
     expect_false(is.logical(all.equal(iris_na, readODS::read_ods(readODS::write_ods(iris_na, na_as_string = TRUE)))))
     ## sanity check
     iris2 <- tibble::as_tibble(iris)
-    iris2$Species <- as.character(iris2$Species)    
+    iris2$Species <- as.character(iris2$Species)
     expect_true(all.equal(iris2, readODS::read_ods(readODS::write_ods(iris2, na_as_string = FALSE))))
     expect_true(all.equal(iris2, readODS::read_ods(readODS::write_ods(iris2, na_as_string = TRUE))))
 })
@@ -55,4 +55,19 @@ test_that("data time columns #137", {
     back <- read_ods(write_ods(flights_head))
     expect_equal(ncol(back), ncol(flights_head))
     expect_equal(colnames(back), colnames(flights_head))
+})
+
+test_that("edge cases 0 x 0 no column info #142", {
+    expect_error(filename <- write_ods(tibble::tibble()), NA)
+    expect_equal(suppressWarnings(read_ods(filename)), tibble::tibble())
+    expect_error(filename <- write_ods(data.frame()), NA)
+    expect_equal(suppressWarnings(read_ods(filename)), tibble::tibble())
+})
+
+test_that("edge cases 0 x 0 with column info #142", {
+    zero_rows <- tibble::tibble(mtcars[0,])
+    expect_error(filename <- write_ods(zero_rows), NA) ## default col_names = TRUE
+    expect_true(nrow(suppressMessages(read_ods(filename, col_names = FALSE))) == 1)
+    expect_error(filename <- write_ods(zero_rows, col_names = FALSE), NA)
+    expect_true(nrow(suppressWarnings(read_ods(filename, col_names = FALSE))) == 0)
 })
