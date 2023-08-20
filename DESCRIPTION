@@ -47,5 +47,5 @@ Roxygen: list(markdown = TRUE)
 Encoding: UTF-8
 VignetteBuilder: knitr
 Depends: 
-    R (>= 3.5)
+    R (>= 3.6)
 Language: en-GB
