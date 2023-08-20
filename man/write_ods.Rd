@@ -2,7 +2,8 @@
 % Please edit documentation in R/write_ods.R
 \name{write_ods}
 \alias{write_ods}
-\title{Write Data to ODS File}
+\alias{write_fods}
+\title{Write Data to (F)ODS File}
 \usage{
 write_ods(
   x,
@@ -15,11 +16,20 @@ write_ods(
   na_as_string = FALSE,
   padding = FALSE
 )
+
+write_fods(
+  x,
+  path = tempfile(fileext = ".fods"),
+  sheet = "Sheet1",
+  row_names = FALSE,
+  col_names = TRUE,
+  na_as_string = FALSE
+)
 }
 \arguments{
 \item{x}{a data.frame}
 
-\item{path}{Path to the ods file to write}
+\item{path}{Path to the (f)ods file to write}
 
 \item{sheet}{Name of the sheet}
 
@@ -36,10 +46,10 @@ write_ods(
 \item{padding}{logical, TRUE indicates that the sheet is padded with repeated empty cells to the maximum size, either 2^20 x 1024 (if the number of columns of \code{x} is less than or equal 1024) or 2^20 x 16,384 (otherwise). This is the default behaviour of Microsoft Excel. Default is FALSE}
 }
 \value{
-An ODS file written to the file path location specified by the user. The value of \code{path} is also returned invisibly.
+An (F)ODS file written to the file path location specified by the user. The value of \code{path} is also returned invisibly.
 }
 \description{
-Function to write a single data.frame to an ods file.
+Function to write a single data.frame to a (f)ods file.
 }
 \details{
 This function emulates \code{\link[writexl:write_xlsx]{writexl::write_xlsx()}} and \code{\link[openxlsx:write.xlsx]{openxlsx::write.xlsx()}} except in the handling of list columns. The expected behaviour for this is undefined and the two functions behave differently. This function handles list columns by converting them to character vectors of R code (similar to the output of \code{\link[=dput]{dput()}}), which is probably not ideal.
@@ -50,6 +60,8 @@ This function emulates \code{\link[writexl:write_xlsx]{writexl::write_xlsx()}} a
 write_ods(mtcars, "mtcars.ods", row_names = TRUE)
 # append a sheet to an existing file
 write_ods(PlantGrowth, "mtcars.ods", append = TRUE, sheet = "plant")
+# write flat ODS file
+write_fods(mtcars, "mtcars.fods", sheet = "mtcars")
 }
 }
 \author{
