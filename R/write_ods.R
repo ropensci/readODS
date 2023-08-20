@@ -66,6 +66,7 @@
 #' @param na_as_string logical, TRUE indicates that NAs are written as string; FALSE indicates that NAs are written as empty cells.
 #' @param padding logical, TRUE indicates that the sheet is padded with repeated empty cells to the maximum size, either 2^20 x 1024 (if the number of columns of `x` is less than or equal 1024) or 2^20 x 16,384 (otherwise). This is the default behaviour of Microsoft Excel. Default is FALSE
 #' @return An ODS file written to the file path location specified by the user. The value of \code{path} is also returned invisibly.
+#' @details This function emulates [writexl::write_xlsx()] and [openxlsx::write.xlsx()] except in the handling of list columns. The expected behaviour for this is undefined and the two functions behave differently. This function handles list columns by converting them to character vectors of R code (similar to the output of [dput()]), which is probably not ideal.
 #' @author Detlef Steuer <steuer@@hsu-hh.de>, Thomas J. Leeper <thosjleeper@@gmail.com>, John Foster <john.x.foster@@nab.com.au>, Chung-hong Chan <chainsawtiney@@gmail.com>
 #' @examples
 #' \dontrun{

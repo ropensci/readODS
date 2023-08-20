@@ -41,6 +41,9 @@ An ODS file written to the file path location specified by the user. The value o
 \description{
 Function to write a single data.frame to an ods file.
 }
+\details{
+This function emulates \code{\link[writexl:write_xlsx]{writexl::write_xlsx()}} and \code{\link[openxlsx:write.xlsx]{openxlsx::write.xlsx()}} except in the handling of list columns. The expected behaviour for this is undefined and the two functions behave differently. This function handles list columns by converting them to character vectors of R code (similar to the output of \code{\link[=dput]{dput()}}), which is probably not ideal.
+}
 \examples{
 \dontrun{
 # preserve the row names

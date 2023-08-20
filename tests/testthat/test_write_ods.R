@@ -71,3 +71,26 @@ test_that("edge cases 0 x 0 with column info #142", {
     expect_error(filename <- write_ods(zero_rows, col_names = FALSE), NA)
     expect_true(nrow(suppressWarnings(read_ods(filename, col_names = FALSE))) == 0)
 })
+
+test_that("edge cases rownames / colnames only, no data, #142", {
+    all_na <- mtcars[,c(1,2), drop = FALSE]
+    all_na[,1] <- NA
+    all_na[,2] <- NA
+    expect_error(filename <- write_ods(all_na), NA)
+    expect_true(nrow(suppressMessages(read_ods(filename, col_names = FALSE))) == 1)
+    expect_error(filename <- write_ods(all_na, col_names = FALSE), NA)
+    expect_true(nrow(suppressWarnings(read_ods(filename, col_names = FALSE))) == 0)
+    expect_error(filename <- write_ods(all_na, row_names = TRUE), NA)
+    expect_equal(dim(suppressMessages(read_ods(filename, col_names = FALSE))), dim(all_na) + 1)
+    ## just rownames
+    expect_error(filename <- write_ods(all_na, row_names = TRUE, col_names = FALSE), NA)
+    expect_equal(nrow(suppressMessages(read_ods(filename, col_names = FALSE))), nrow(all_na))
+})
+
+test_that("edge case, list-columns #142", {
+    ## no one knows how list-columns should be dealt with.
+    ## just process them with no errors
+    lc_test <- tibble::tibble(mtcars)
+    lc_test$lc <- strsplit(rownames(mtcars), " ")
+    expect_error(write_ods(lc_test), NA)
+})
