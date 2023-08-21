@@ -21,9 +21,12 @@ write_fods(
   x,
   path = tempfile(fileext = ".fods"),
   sheet = "Sheet1",
+  append = FALSE,
+  update = FALSE,
   row_names = FALSE,
   col_names = TRUE,
-  na_as_string = FALSE
+  na_as_string = FALSE,
+  padding = FALSE
 )
 }
 \arguments{

@@ -92,25 +92,27 @@
         if (isFALSE(flat)) {
             zip::unzip(path, exdir = temp_ods_dir)
             contentfile <- file.path(temp_ods_dir, "content.xml")
-            content <- xml2::read_xml(contentfile)
+            sheet_exist <- sheet %in% list_ods_sheets(path, include_external_data = TRUE)
+
         } else {
-            content <- xml2::read_xml(path)
             contentfile <- path
+            sheet_exist <- sheet %in% list_fods_sheets(path, include_external_data = TRUE)
         }
-        spreadsheet_node <- xml2::xml_children(xml2::xml_children(content)[[which(!is.na(xml2::xml_find_first(xml2::xml_children(content),"office:spreadsheet")))]])[[1]]
-        sheet_node <- .find_sheet_node_by_sheet(spreadsheet_node, sheet)
-        if ((!is.null(sheet_node) && append && !update) || (!is.null(sheet_node) && !update)) {
+        if ((sheet_exist && append && !update) || (sheet_exist && !update)) {
             ## Sheet exists so we cannot append
             stop(paste0("Sheet ", sheet, " exists. Set update to TRUE is you want to update this sheet."), call. = FALSE)
         }
-        if (is.null(sheet_node) && update) {
+        if (!sheet_exist && update) {
             stop(paste0("Sheet ", sheet, " does not exist. Cannot update."), call. = FALSE)
         }
-        if (!is.null(sheet_node) && update) {
+        content <- xml2::read_xml(contentfile)
+        spreadsheet_node <- xml2::xml_children(xml2::xml_children(content)[[which(!is.na(xml2::xml_find_first(xml2::xml_children(content),"office:spreadsheet")))]])[[1]]
+        if (update) {
             ## clean up the sheet
+            sheet_node <- .find_sheet_node_by_sheet(spreadsheet_node, sheet)
             xml2::xml_remove(xml2::xml_children(sheet_node)[2:length(xml2::xml_children(sheet_node))])
         }
-        if (is.null(sheet_node) && append) {
+        if (append) {
             ## Add a new sheet
             sheet_node <- xml2::xml_add_child(spreadsheet_node, .silent_add_sheet_node(sheet))
         }
@@ -125,7 +127,6 @@
         .zip_tmp_to_path(temp_ods_dir, path)
     }
     invisible(path)
-
 }
 
 #' Write Data to (F)ODS File
