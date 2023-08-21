@@ -1,17 +1,15 @@
-library(dplyr)
-
 tmp <- tempfile(fileext=".ods")
 
 # Use this instead of numbers_to_letters for testing - only works for 1:26
 cols_to_letters <- function(n) {
     stopifnot(n <= 26)
-    
+
     seq <- seq_len(n)
     vapply(seq, function(n) LETTERS[n], character(1))
 }
 
 setup({
-    
+
 })
 teardown({
 
