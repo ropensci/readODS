@@ -38,6 +38,20 @@ test_that("write to non-existing location", {
     expect_error(write_fods(mtcars, file.path("/there/is/no/way/this/exists/anyway", stringi::stri_rand_strings(1, 20, pattern = "[A-Za-z0-9]"),"mtcars.fods")))
 })
 
+test_that("round trip ods", {
+    a <- read_ods("../testdata/starwars.ods")
+    b <- write_ods(a)
+    d <- read_ods(b)
+    expect_equal(a,d)
+})
+
+test_that("round trip fods", {
+    a <- read_ods("../testdata/starwars.ods")
+    b <- write_fods(a)
+    d <- read_fods(b)
+    expect_equal(a,d)
+})
+
 ## from now on no need to test both fods and ods and they are using the same engine
 
 test_that("na_as_string, #79", {

@@ -1,3 +1,10 @@
+## CREATION OF sysdata
+## .CONTENT <- readLines("benchmark/header.xml")
+## .FOOTER <- readLines("benchmark/footer.xml")
+## .FODS_HEADER <- paste(readLines("benchmark/fods_header.xml"), collapse = "\n")
+## .FODS_FOOTER <- paste(readLines("benchmark/fods_footer.xml"), collapse = "\n")
+## usethis::use_data(.CONTENT, .FOOTER, .FODS_HEADER, .FODS_FOOTER, internal = TRUE, overwrite = TRUE)
+
 .zip_tmp_to_path <- function(temp_ods_dir, path, overwrite = TRUE) {
     wd <- getwd()
     on.exit(setwd(wd), add = TRUE)
@@ -28,30 +35,12 @@
     .silent_read_xml(sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="16384" table:default-cell-style-name="ce1"/></table:table>', sheet))
 }
 
-## CREATION OF sysdata
-## .CONTENT <- readLines("benchmark/header.xml")
-## .FOOTER <- readLines("benchmark/footer.xml")
-## .FODS_HEADER <- paste(readLines("benchmark/fods_header.xml"), collapse = "\n")
-## .FODS_FOOTER <- paste(readLines("benchmark/fods_footer.xml"), collapse = "\n")
-## usethis::use_data(.CONTENT, .FOOTER, .FODS_HEADER, .FODS_FOOTER, internal = TRUE, overwrite = TRUE)
-
 .convert_df_to_sheet <- function(x, sheet = "Sheet1", row_names = FALSE, col_names = FALSE, na_as_string = FALSE, padding = FALSE) {
     throwaway_xml_file <- file.path(tempfile(fileext = ".xml"))
     write_sheet_(x = x, filename = throwaway_xml_file, sheet = sheet, row_names = row_names, col_names = col_names,
                   na_as_string = na_as_string, padding = padding,
                   header = "",
                   footer = "")
-}
-
-## https://github.com/ropensci/readODS/issues/88
-.vfwrite_ods <- function(x, temp_ods_dir, sheet = "Sheet1", row_names = FALSE, col_names = TRUE, na_as_string = FALSE, padding = FALSE) {
-    templatedir <- system.file("template", package = "readODS")
-    file.copy(dir(templatedir, full.names = TRUE), temp_ods_dir, recursive = TRUE, copy.mode = FALSE)
-    filename <- file.path(temp_ods_dir, "content.xml")
-    write_sheet_(x = x, filename = filename, sheet = sheet, row_names = row_names, col_names = col_names,
-                  na_as_string = na_as_string, padding = padding,
-                  header = paste0(.CONTENT[1], .CONTENT[2]),
-                  footer = .FOOTER)
 }
 
 .preprocess_x <- function(x) {
@@ -76,6 +65,68 @@
         stop("File cannot be created at this path: ", normalized_path, call. = FALSE)
     }
     return(normalized_path)
+}
+
+.write_ods <- function(x, path = tempfile(fileext = ".ods"), sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, na_as_string = FALSE, padding = FALSE, flat = FALSE) {
+    if (isFALSE(flat)) {
+        temp_ods_dir <- file.path(tempdir(), stringi::stri_rand_strings(1, 20, pattern = "[A-Za-z0-9]"))
+        dir.create(temp_ods_dir)
+        on.exit(unlink(temp_ods_dir))
+    }
+    x <- .preprocess_x(x)
+    if (!file.exists(path) || (!append && !update)) {
+        path <- .preprocess_path(path)
+        if (isFALSE(flat)) {
+            templatedir <- system.file("template", package = "readODS")
+            file.copy(dir(templatedir, full.names = TRUE), temp_ods_dir, recursive = TRUE, copy.mode = FALSE)
+            filename <- file.path(temp_ods_dir, "content.xml")
+            header <- paste0(.CONTENT[1], .CONTENT[2])
+            footer <- .FOOTER
+        } else {
+            filename <- path
+            header <- .FODS_HEADER
+            footer <- .FODS_FOOTER
+        }
+        write_sheet_(filename = filename, x = x, sheet = sheet, row_names = row_names, col_names = col_names, na_as_string = na_as_string, padding = padding, header = header, footer = footer)
+    } else {
+        if (isFALSE(flat)) {
+            zip::unzip(path, exdir = temp_ods_dir)
+            contentfile <- file.path(temp_ods_dir, "content.xml")
+            sheet_exist <- sheet %in% list_ods_sheets(path, include_external_data = TRUE)
+
+        } else {
+            contentfile <- path
+            sheet_exist <- sheet %in% list_fods_sheets(path, include_external_data = TRUE)
+        }
+        if ((sheet_exist && append && !update) || (sheet_exist && !update)) {
+            ## Sheet exists so we cannot append
+            stop(paste0("Sheet ", sheet, " exists. Set update to TRUE is you want to update this sheet."), call. = FALSE)
+        }
+        if (!sheet_exist && update) {
+            stop(paste0("Sheet ", sheet, " does not exist. Cannot update."), call. = FALSE)
+        }
+        content <- xml2::read_xml(contentfile)
+        spreadsheet_node <- xml2::xml_children(xml2::xml_children(content)[[which(!is.na(xml2::xml_find_first(xml2::xml_children(content),"office:spreadsheet")))]])[[1]]
+        if (update) {
+            ## clean up the sheet
+            sheet_node <- .find_sheet_node_by_sheet(spreadsheet_node, sheet)
+            xml2::xml_remove(xml2::xml_children(sheet_node)[2:length(xml2::xml_children(sheet_node))])
+        }
+        if (append) {
+            ## Add a new sheet
+            sheet_node <- xml2::xml_add_child(spreadsheet_node, .silent_add_sheet_node(sheet))
+        }
+        throwaway_xml_file <- .convert_df_to_sheet(x = x, sheet = sheet, row_names = row_names, col_names = col_names,
+                                                       na_as_string = na_as_string, padding = padding)
+        xml2::xml_replace(sheet_node, .silent_read_xml(throwaway_xml_file))
+        ## write xml to contentfile
+        xml2::write_xml(content, contentfile)
+    }
+    if (isFALSE(flat)) {
+        ## zip up ODS archive
+        .zip_tmp_to_path(temp_ods_dir, path)
+    }
+    invisible(path)
 }
 
 #' Write Data to (F)ODS File
@@ -105,53 +156,13 @@
 #' }
 #' @export
 write_ods <- function(x, path = tempfile(fileext = ".ods"), sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, na_as_string = FALSE, padding = FALSE) {
-    ## setup temp directory
-    ## one can't just use tempdir() because it is the same in the same session
-    temp_ods_dir <- file.path(tempdir(), stringi::stri_rand_strings(1, 20, pattern = "[A-Za-z0-9]"))
-    dir.create(temp_ods_dir)
-    on.exit(unlink(temp_ods_dir))
-    ## x <- .preprocess_x(x)
-    if (!file.exists(path) || (!append && !update)) {
-        path <- .preprocess_path(path)
-        .vfwrite_ods(x = x, temp_ods_dir = temp_ods_dir, sheet = sheet, row_names = row_names, col_names = col_names, na_as_string = na_as_string, padding = padding)
-    } else {
-        ## The file must be there.
-        zip::unzip(path, exdir = temp_ods_dir)
-        contentfile <- file.path(temp_ods_dir, "content.xml")
-        content <- xml2::read_xml(contentfile)
-        spreadsheet_node <- xml2::xml_children(xml2::xml_children(content)[[which(!is.na(xml2::xml_find_first(xml2::xml_children(content),"office:spreadsheet")))]])[[1]]
-        sheet_node <- .find_sheet_node_by_sheet(spreadsheet_node, sheet)
-        if ((!is.null(sheet_node) && append && !update) || (!is.null(sheet_node) && !update)) {
-            ## Sheet exists so we cannot append
-            stop(paste0("Sheet ", sheet, " exists. Set update to TRUE is you want to update this sheet."), call. = FALSE)
-        }
-        if (is.null(sheet_node) && update) {
-            stop(paste0("Sheet ", sheet, " does not exist. Cannot update."), call. = FALSE)
-        }
-        if (!is.null(sheet_node) && update) {
-            ## clean up the sheet
-            xml2::xml_remove(xml2::xml_children(sheet_node)[2:length(xml2::xml_children(sheet_node))])
-        }
-        if (is.null(sheet_node) && append) {
-            ## Add a new sheet
-            sheet_node <- xml2::xml_add_child(spreadsheet_node, .silent_add_sheet_node(sheet))
-        }
-        throwaway_xml_file <- .convert_df_to_sheet(x = x, sheet = sheet, row_names = row_names, col_names = col_names,
-                                                       na_as_string = na_as_string, padding = padding)
-        xml2::xml_replace(sheet_node, .silent_read_xml(throwaway_xml_file))
-        ## write xml to contentfile
-        xml2::write_xml(content, contentfile)
-    }
-    ## zip up ODS archive
-    .zip_tmp_to_path(temp_ods_dir, path)
-    invisible(path)
+    .write_ods(x = x, path = path, sheet = sheet, append = append, update = update, row_names = row_names, col_names = col_names,
+               na_as_string = na_as_string, padding = padding, flat = FALSE)
 }
 
 #' @rdname write_ods
 #' @export
-write_fods <- function(x, path = tempfile(fileext = ".fods"), sheet = "Sheet1", row_names = FALSE, col_names = TRUE, na_as_string = FALSE) {
-    x <- .preprocess_x(x)
-    path <- .preprocess_path(path)
-    write_sheet_(filename = path, x = x, sheet = sheet, row_names = row_names, col_names = col_names, na_as_string = na_as_string, padding = FALSE, header = .FODS_HEADER, footer = .FODS_FOOTER)
-    invisible(path)
+write_fods <- function(x, path = tempfile(fileext = ".fods"), sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, na_as_string = FALSE, padding = FALSE) {
+    .write_ods(x = x, path = path, sheet = sheet, append = append, update = update, row_names = row_names, col_names = col_names,
+               na_as_string = na_as_string, padding = padding, flat = TRUE)
 }

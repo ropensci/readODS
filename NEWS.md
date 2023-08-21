@@ -2,7 +2,7 @@
 
 ## Add support for writing flat ODS
 
-`write_fods` is available; but it can't update or append sheets ref #103
+`write_fods` is available, fix #103
 
 # readODS 2.0.2
 

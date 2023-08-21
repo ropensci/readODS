@@ -35,7 +35,6 @@ LinkingTo:
     cpp11
 Suggests:
     spelling, 
-    dplyr,
     testthat,
     datasets,
     covr,
