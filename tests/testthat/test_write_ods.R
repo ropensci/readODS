@@ -25,6 +25,14 @@ test_that("overwrite (fods), #54", {
     expect_true(nrow(content_in_file) == 84)
 })
 
+test_that(".preprocess_x", {
+    expect_error(.preprocess_x(matrix()))
+    expect_error(.preprocess_x(matrix()))
+    expect_error(.preprocess_x(as.data.frame(t(matrix(rep(NA, times = 16385))))))
+    expect_error(.preprocess_x(as.data.frame(matrix(rep(NA, times = 2^20 + 1)))))
+    expect_false(inherits(.preprocess_x(tibble::tibble()), "tbl_df"))
+})
+
 test_that("write to non-existing location", {
     expect_error(write_ods(mtcars, file.path("/there/is/no/way/this/exists/anyway", stringi::stri_rand_strings(1, 20, pattern = "[A-Za-z0-9]"),"mtcars.ods")))
     expect_error(write_fods(mtcars, file.path("/there/is/no/way/this/exists/anyway", stringi::stri_rand_strings(1, 20, pattern = "[A-Za-z0-9]"),"mtcars.fods")))
