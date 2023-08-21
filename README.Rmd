@@ -18,16 +18,16 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/readODS)](https://CRAN.R-project.org/package=readODS)
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
-[![Codecov test coverage](https://codecov.io/gh/ropensci/readODS/branch/master/graph/badge.svg)](https://app.codecov.io/gh/ropensci/readODS?branch=master)
+[![Codecov test coverage](https://codecov.io/gh/ropensci/readODS/branch/v2.1/graph/badge.svg)](https://app.codecov.io/gh/ropensci/readODS?branch=v2.1)
 [![rOpenSci](https://badges.ropensci.org/302_status.svg)](https://github.com/ropensci/software-review/issues/386)
 [![R-CMD-check](https://github.com/ropensci/readODS/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ropensci/readODS/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The only goal of readODS is to enable R to read and write OpenDocument Spreadsheet (ODS) files.
+The only goal of `readODS` is to enable R to read and write OpenDocument Spreadsheet (ODS) files. This package supports both ordinary ODS and "Flat ODS" (`fods`).
 
 ## Installation
 
-Install the latest stable version from CRAN: 
+Install the latest stable version from CRAN:
 
 ```r
 install.packages("readODS")
@@ -42,7 +42,7 @@ install.packages("readODS", repos = "https://ropensci.r-universe.dev")
 Or install the development version from Github:
 
 ```r
-devtools::install_github("ropensci/readODS")
+remotes::install_github("ropensci/readODS")
 ```
 
 ## Usage
@@ -95,17 +95,11 @@ read_ods("mtcars.ods")
 read_ods("mtcars.ods", sheet = "plant", range = "A1:B10")
 ```
 
-### Text Encoding
-
-In older versions of R (<4.2) on Windows, the default encoding for text is not UTF-8, and instead depends on your locale. This can cause problems processing characters that are not part of the character set R is using (usually [Windows-1252](https://en.wikipedia.org/wiki/Windows-1252)). Sheets written using these characters generally contains errors. The problem can be fixed by upgrading to a version of R >= 4.2.
-
-**Radian:** Even for up-to-date versions of R, these issues with character encoding are still a known issue with Radian. Their suggested workaround is [here](https://github.com/randy3k/radian/issues/269#issuecomment-1169663251).
-
 ### Maximum Sheet Size
 
-**Reading** The maximum size of sheet you can read is determined by your machine's RAM. 
+**Reading** The maximum size of sheet you can read is determined by your machine's RAM.
 
-**Writing** You can theoretically write sheets up to 16 384 columns by 1 048 576 rows (the current maximum sheet size in Excel and LibreOffice Calc). While larger ODS files than this are valid, they are not well supported. However older version of LibreOffice [(<=7.3)](https://wiki.documentfoundation.org/Faq/Calc/022) and Excel [(<=2003)](https://support.microsoft.com/en-gb/office/use-excel-with-earlier-versions-of-excel-2fd9ffcb-6fce-485b-85af-fecfd651a5ac#:~:text=What%20it%20means%20Beginning%20with,lost%20in%20Excel%2097%2D2003.) have significantly smaller maximum sheet sizes, and so this should be considered when writing files for distribution. 
+**Writing** You can theoretically write sheets up to 16 384 columns by 1 048 576 rows (the current maximum sheet size in Excel and LibreOffice Calc). While larger ODS files than this are valid, they are not well supported. However older version of LibreOffice [(<=7.3)](https://wiki.documentfoundation.org/Faq/Calc/022) and Excel [(<=2003)](https://support.microsoft.com/en-gb/office/use-excel-with-earlier-versions-of-excel-2fd9ffcb-6fce-485b-85af-fecfd651a5ac#:~:text=What%20it%20means%20Beginning%20with,lost%20in%20Excel%2097%2D2003.) have significantly smaller maximum sheet sizes, and so this should be considered when writing files for distribution.
 
 ### Misc
 
