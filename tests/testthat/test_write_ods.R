@@ -1,19 +1,44 @@
 library("datasets")
 test_that("Single column ODS", {
-    expect_true(write_ods(mtcars, "test.ods") %in% dir())
-    file.remove("test.ods")
+    expect_true(file.exists(write_ods(mtcars)))
+})
+
+test_that("Single column FODS", {
+    expect_true(file.exists(write_fods(mtcars)))
 })
 
 test_that("overwrite, #54", {
     data("faithful")
-    write_ods(faithful, "mydata.ods")
+    path <- write_ods(faithful)
     data("CO2")
-    write_ods(CO2, "mydata.ods")
-    content_in_file <- read_ods('mydata.ods')
+    write_ods(CO2, path)
+    content_in_file <- read_ods(path)
     expect_true(nrow(content_in_file) == 84)
-    ## cleanup
-    file.remove("mydata.ods")
 })
+
+test_that("overwrite (fods), #54", {
+    data("faithful")
+    path <- write_fods(faithful)
+    data("CO2")
+    write_fods(CO2, path)
+    content_in_file <- read_fods(path)
+    expect_true(nrow(content_in_file) == 84)
+})
+
+test_that(".preprocess_x", {
+    expect_error(.preprocess_x(matrix()))
+    expect_error(.preprocess_x(matrix()))
+    expect_error(.preprocess_x(as.data.frame(t(matrix(rep(NA, times = 16385))))))
+    expect_error(.preprocess_x(as.data.frame(matrix(rep(NA, times = 2^20 + 1)))))
+    expect_false(inherits(.preprocess_x(tibble::tibble()), "tbl_df"))
+})
+
+test_that("write to non-existing location", {
+    expect_error(write_ods(mtcars, file.path("/there/is/no/way/this/exists/anyway", stringi::stri_rand_strings(1, 20, pattern = "[A-Za-z0-9]"),"mtcars.ods")))
+    expect_error(write_fods(mtcars, file.path("/there/is/no/way/this/exists/anyway", stringi::stri_rand_strings(1, 20, pattern = "[A-Za-z0-9]"),"mtcars.fods")))
+})
+
+## from now on no need to test both fods and ods and they are using the same engine
 
 test_that("na_as_string, #79", {
     temp_odsfile <- tempfile(fileext = ".ods")
@@ -22,14 +47,14 @@ test_that("na_as_string, #79", {
     write_ods(na_data, path = temp_odsfile, na_as_string = TRUE, col_names = FALSE)
     zip::unzip(temp_odsfile, exdir = temp_odsdir)
     contentfile <- file.path(temp_odsdir, "content.xml")
-    expect_true(grepl("office:value-type=\"string\"", suppressWarnings(readLines(contentfile))))
+    expect_true(any(grepl("office:value-type=\"string\"", suppressWarnings(readLines(contentfile)))))
     temp_odsfile <- tempfile(fileext = ".ods")
     temp_odsdir <- tempdir()
     na_data <- data.frame(x = c(1.0, NA, 2.0))
     write_ods(na_data, path = temp_odsfile, na_as_string = FALSE, col_names = FALSE)
     zip::unzip(temp_odsfile, exdir = temp_odsdir)
     contentfile <- file.path(temp_odsdir, "content.xml")
-    expect_false(grepl("office:value-type=\"string\"", suppressWarnings(readLines(contentfile))))
+    expect_false(any(grepl("office:value-type=\"string\"", suppressWarnings(readLines(contentfile)))))
 })
 
 test_that("na_as_string, round trip", {
