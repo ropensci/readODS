@@ -140,6 +140,11 @@ write_ods <- function(x, path = tempfile(fileext = ".ods"), sheet = "Sheet1", ap
 #' @export
 write_fods <- function(x, path = tempfile(fileext = ".fods"), sheet = "Sheet1", row_names = FALSE, col_names = TRUE, na_as_string = FALSE) {
     normalized_path <- normalizePath(path, mustWork = FALSE)
+    ## ensure the file can be created
+    file.create(normalized_path)
+    if (!file.exists(normalized_path)) {
+        stop("File cannot be created at this path: ", normalized_path, call. = FALSE)
+    }
     x <- .preprocess_x(x)
     write_sheet_(filename = normalized_path, x = x, sheet = sheet, row_names = row_names, col_names = col_names, na_as_string = na_as_string, padding = FALSE, header = .FODS_HEADER, footer = .FODS_FOOTER)
     invisible(path)
