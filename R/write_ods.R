@@ -68,6 +68,16 @@
     return(x)
 }
 
+.preprocess_path <- function(path) {
+    normalized_path <- normalizePath(path, mustWork = FALSE)
+    ## ensure the file can be created
+    file.create(normalized_path, showWarnings = FALSE)
+    if (!file.exists(normalized_path)) {
+        stop("File cannot be created at this path: ", normalized_path, call. = FALSE)
+    }
+    return(normalized_path)
+}
+
 #' Write Data to (F)ODS File
 #' @description
 #' Function to write a single data.frame to a (f)ods file.
@@ -100,8 +110,9 @@ write_ods <- function(x, path = tempfile(fileext = ".ods"), sheet = "Sheet1", ap
     temp_ods_dir <- file.path(tempdir(), stringi::stri_rand_strings(1, 20, pattern = "[A-Za-z0-9]"))
     dir.create(temp_ods_dir)
     on.exit(unlink(temp_ods_dir))
-    x <- .preprocess_x(x)
+    ## x <- .preprocess_x(x)
     if (!file.exists(path) || (!append && !update)) {
+        path <- .preprocess_path(path)
         .vfwrite_ods(x = x, temp_ods_dir = temp_ods_dir, sheet = sheet, row_names = row_names, col_names = col_names, na_as_string = na_as_string, padding = padding)
     } else {
         ## The file must be there.
@@ -139,13 +150,8 @@ write_ods <- function(x, path = tempfile(fileext = ".ods"), sheet = "Sheet1", ap
 #' @rdname write_ods
 #' @export
 write_fods <- function(x, path = tempfile(fileext = ".fods"), sheet = "Sheet1", row_names = FALSE, col_names = TRUE, na_as_string = FALSE) {
-    normalized_path <- normalizePath(path, mustWork = FALSE)
-    ## ensure the file can be created
-    file.create(normalized_path)
-    if (!file.exists(normalized_path)) {
-        stop("File cannot be created at this path: ", normalized_path, call. = FALSE)
-    }
     x <- .preprocess_x(x)
-    write_sheet_(filename = normalized_path, x = x, sheet = sheet, row_names = row_names, col_names = col_names, na_as_string = na_as_string, padding = FALSE, header = .FODS_HEADER, footer = .FODS_FOOTER)
+    path <- .preprocess_path(path)
+    write_sheet_(filename = path, x = x, sheet = sheet, row_names = row_names, col_names = col_names, na_as_string = na_as_string, padding = FALSE, header = .FODS_HEADER, footer = .FODS_FOOTER)
     invisible(path)
 }
