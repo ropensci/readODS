@@ -1,7 +1,7 @@
 Package: readODS
 Type: Package
 Title: Read and Write ODS Files
-Version: 2.0.2
+Version: 2.0.3
 Authors@R: 
     c(person("Gerrit-Jan", "Schutten", role = c("aut"), email = "phonixor@gmail.com"),
     person("Chung-hong", "Chan", role = c("aut", "cre"), email = "chainsawtiney@gmail.com", comment = c(ORCID = "0000-0002-6232-7530")),
