@@ -86,11 +86,17 @@ write_ods(iris, "plant.ods", sheet = "iris", update = TRUE)
 
 ## Flat ODS files (`.xml` or `.fods`)
 
-Can be read (but not written) with `read_fods()` (note that the same function is used to read flat files, no matter the extension).
+Can be read with `read_fods()` (note that the same function is used to read flat files, no matter the extension).
 This has the same behaviour and arguments as `read_ods()`
 
 ```{r read fods, eval = file.exists("plant.fods")}
 read_fods("plant.fods")
+```
+
+`write_fods()` can be used to write Flat ODS files
+
+```{r write_fods}
+write_fods(PlantGrowth, "plant.fods")
 ```
 
 ## Misc.
@@ -168,4 +174,5 @@ lapply(list_ods_sheets("plant.ods"),
 
 ```{r, echo = FALSE, message = FALSE}
 unlink("plant.ods")
+unlink("plant.fods")
 ```
