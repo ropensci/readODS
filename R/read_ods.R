@@ -228,7 +228,7 @@
 #' @param path path to the (f)ods file.
 #' @param sheet sheet to read. Either a string (the sheet name), or an integer sheet number. The default is 1.
 #' @param col_names logical, indicating whether the file contains the names of the variables as its first line. Default is TRUE.
-#' @param col_types Either NULL to guess from the spreadsheet or refer to [readr::type_convert()] to specify cols specification. NA will return a data frame with all columns being "characters".
+#' @param col_types Either NULL to guess from the spreadsheet or refer to [readr::type_convert()] to specify cols specification. It can also be a shorthand such as "ccf" ("character", "character", "factor"), a list, or an object created by [readr::cols()]. NA will return a data frame with all columns being "characters". Please note that it will not speed up the reading by a lot by specifying this parameter explicitly. It is more for accuracy.
 #' @param na Character vector of strings to use for missing values. By default read_ods converts blank cells to missing data. It can also be set to
 #' NULL, so that empty cells are treated as NA.
 #' @param skip the number of lines of the data file to skip before beginning to read data. If this parameter is larger than the total number of lines in the ods file, an empty data frame is returned.
@@ -265,6 +265,10 @@
 #' read_fods("starwars.fods", sheet = 2, range = "A1:C11")
 #' # Give a warning and read from Sheet1 (not 2)
 #' read_fods("starwars.fods", sheet = 2, range = "Sheet1!A1:C11")
+#' # Specifying col_types as shorthand, the third column as factor; other by guessing
+#' read_ods("starwars.ods", col_types = "??f")
+#' # Specifying col_types as list
+#' read_ods("starwars.ods", col_types = list(species = "f"))
 #' }
 #' @export
 read_ods <- function(path,

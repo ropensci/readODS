@@ -44,7 +44,7 @@ read_fods(
 
 \item{col_names}{logical, indicating whether the file contains the names of the variables as its first line. Default is TRUE.}
 
-\item{col_types}{Either NULL to guess from the spreadsheet or refer to \code{\link[readr:type_convert]{readr::type_convert()}} to specify cols specification. NA will return a data frame with all columns being "characters".}
+\item{col_types}{Either NULL to guess from the spreadsheet or refer to \code{\link[readr:type_convert]{readr::type_convert()}} to specify cols specification. It can also be a shorthand such as "ccf" ("character", "character", "factor"), a list, or an object created by \code{\link[readr:cols]{readr::cols()}}. NA will return a data frame with all columns being "characters". Please note that it will not speed up the reading by a lot by specifying this parameter explicitly. It is more for accuracy.}
 
 \item{na}{Character vector of strings to use for missing values. By default read_ods converts blank cells to missing data. It can also be set to
 NULL, so that empty cells are treated as NA.}
@@ -97,6 +97,10 @@ read_fods("starwars.fods", sheet = 2)
 read_fods("starwars.fods", sheet = 2, range = "A1:C11")
 # Give a warning and read from Sheet1 (not 2)
 read_fods("starwars.fods", sheet = 2, range = "Sheet1!A1:C11")
+# Specifying col_types as shorthand, the third column as factor; other by guessing
+read_ods("starwars.ods", col_types = "??f")
+# Specifying col_types as list
+read_ods("starwars.ods", col_types = list(species = "f"))
 }
 }
 \author{
