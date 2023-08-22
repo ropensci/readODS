@@ -50,17 +50,6 @@
     return(limits)
 }
 
-.silent_type_convert <- function(x, verbose = TRUE, na = c("", "NA")) {
-    if (verbose) {
-        res <- readr::type_convert(df = x, na = na)
-    } else {
-        suppressMessages({
-            res <- readr::type_convert(df = x, na = na)
-        })
-    }
-    return(res)
-}
-
 .convert_strings_to_factors <- function(df) {
     i <- vapply(df, is.character, logical(1))
     df[i] <- lapply(df[i], as.factor)
@@ -106,6 +95,14 @@
     if (row_names && as_tibble) {
         stop("Tibbles do not support row names. To use row names, set as_tibble to false", call. = FALSE)
     }
+    if (!inherits(col_types, "col_spec") &&
+        isFALSE(is.na(col_types)) &&
+        isFALSE(is.null(col_types)) &&
+        isFALSE(is.character(col_types)) &&
+        isFALSE(is.list(col_types))) {
+        stop("Unknown col_types. Can either be a class col_spec, list, character, NULL or NA.",
+             call. = FALSE)
+    }
 }
 
 .return_empty <- function(as_tibble = FALSE) {
@@ -116,16 +113,22 @@
     return(data.frame())
 }
 
+.type_convert <- function(df, col_types = NULL, verbose = TRUE, na = c("", "NA")) {
+    if (verbose) {
+        res <- readr::type_convert(df = df, col_types, na = na)
+    } else {
+        suppressMessages({
+            res <- readr::type_convert(df = df, col_types, na = na)
+        })
+    }
+    return(res)
+}
+
 .handle_col_types <- function(res, col_types, verbose, na) {
-    if (inherits(col_types, "col_spec")) {
-        return(readr::type_convert(df = res, col_types = col_types, na = na))
-    } else if (length(col_types) == 0 && is.null(col_types)) {
-        return(.silent_type_convert(x = res, verbose = verbose, na = na))
-    } else if (length(col_types) == 1 && is.na(col_types[1])) {
+    if (isTRUE(is.na(col_types))) {
         return(res)
     }
-    stop("Unknown col_types. Can either be a class col_spec, NULL or NA.",
-            call. = FALSE)
+    .type_convert(df = res, col_types = col_types, verbose = verbose, na = na)
 }
 
 ## standardise `sheet` parameter as a number
@@ -188,9 +191,8 @@
     }
     ## Get cell range info
     limits <- .standardise_limits(range, skip)
-    ## Get sheet number.
-    sheets <- .get_sheet_names_func(file = path, include_external_data = TRUE)
-    sheet <- .standardise_sheet(sheet = sheet, sheets = sheets, limits = limits, range = range)
+    sheet <- .standardise_sheet(sheet = sheet, sheets = .get_sheet_names_func(file = path, include_external_data = TRUE),
+                                limits = limits, range = range)
     strings <- .read_ods_func(file = path,
                               start_row = limits["min_row"],
                               stop_row = limits["max_row"],
