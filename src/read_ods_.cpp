@@ -1,13 +1,5 @@
-#include "cpp11.hpp"
-#include "cpp11/r_string.hpp"
-
-#include "rapidxml/rapidxml.hpp"
 #include "is_ods.h"
 #include "read_ods_internals.h"
-
-#include <vector>
-#include <string>
-#include <stdexcept>
 
 [[cpp11::register]]
 cpp11::strings read_ods_(const std::string file,
@@ -19,7 +11,7 @@ cpp11::strings read_ods_(const std::string file,
     const bool formula_as_formula) {
     if(!is_ods(file)){
         throw std::invalid_argument(file + " is not a correct ODS file");
-    } 
+    }
     if(sheet < 1){
         throw std::invalid_argument("Cannot have sheet index less than 1");
     }
@@ -80,5 +72,3 @@ cpp11::strings read_ods_(const std::string file,
     }
     return cell_values;
  }
-
- 

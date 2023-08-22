@@ -1,16 +1,6 @@
-#include "cpp11.hpp"
-#include "cpp11/r_string.hpp"
-#include "cpp11/strings.hpp"
-
-#include "rapidxml/rapidxml.hpp"
 #include "readxl/zip.cpp"
 #include "is_ods.h"
-
-
-#include <string>
-#include <fstream>
-#include <iostream>
-#include <stdexcept>
+#include "read_ods_internals.h"
 
 cpp11::strings get_sheet_names_from_content (rapidxml::xml_node<>* rootNode, const bool include_external_data){
 
@@ -19,7 +9,7 @@ cpp11::strings get_sheet_names_from_content (rapidxml::xml_node<>* rootNode, con
     int i = 0;
     int n = 1;
 
-    for (rapidxml::xml_node<>* sheetData = rootNode->first_node("table:table"); 
+    for (rapidxml::xml_node<>* sheetData = rootNode->first_node("table:table");
             sheetData;
             sheetData = sheetData->next_sibling("table:table")){
 

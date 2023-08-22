@@ -1,10 +1,4 @@
-#include "cpp11.hpp"
-#include "cpp11/r_string.hpp"
-#include "cpp11/list.hpp"
-#include <R.h>
-#include <Rinternals.h>
-#include <fstream>
-#include <iostream>
+#include "write_sheet_.h"
 
 void cell_out (const cpp11::r_string& value_type, const cpp11::r_string& value, std::ofstream& xml_file) {
     const char* value_type_c = Rf_translateCharUTF8(value_type);
