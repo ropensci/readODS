@@ -1,3 +1,16 @@
+# readODS 2.04
+
+## `col_types` can be character ("shorthand") or list
+
+fix #135 and the review by Dr  Ruedni
+
+```r
+# Specifying col_types as shorthand, the third column as factor; other by guessing
+read_ods("starwars.ods", col_types = "??f")
+# Specifying col_types as list
+read_ods("starwars.ods", col_types = list(species = "f"))
+```
+
 # readODS 2.0.3
 
 ## Add support for writing flat ODS

@@ -2,7 +2,6 @@ test_that("Incorrect Argument", {
     expect_error(read_ods(), "No file path was")
     expect_error(read_ods(path = "not/real/file.ods"), "file does not exist")
     expect_error(read_ods(path = "../testdata/sum.ods", col_names = "a"), "col_names must be of type `boolean`")
-    expect_error(read_ods(path = '../testdata/sum.ods', col_types = "a"), "Unknown col_types. Can either be a class col_spec, NULL or NA.")
     expect_error(read_ods(path = "../testdata/sum.ods", skip = -1), "skip must be a positive integer")
     expect_error(read_ods(path = "../testdata/sum.ods", formula_as_formula = "a"), "formula_as_formula must be of type `boolean`")
     expect_error(read_ods(path = "../testdata/sum.ods", row_names = "a"), "row_names must be of type `boolean`")

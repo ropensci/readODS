@@ -44,7 +44,7 @@ read_fods(
 
 \item{col_names}{logical, indicating whether the file contains the names of the variables as its first line. Default is TRUE.}
 
-\item{col_types}{Either NULL to guess from the spreadsheet or refer to \code{\link[readr:type_convert]{readr::type_convert()}} to specify cols specification. NA will return a data frame with all columns being "characters".}
+\item{col_types}{Either NULL to guess from the spreadsheet or refer to \code{\link[readr:type_convert]{readr::type_convert()}} to specify cols specification. It can also be a shorthand such as "ccf" ("character", "character", "factor"), a list, or an object created by \code{\link[readr:cols]{readr::cols()}}. NA will return a data frame with all columns being "characters". Please note that it will not speed up the reading by a lot by specifying this parameter explicitly. It is more for accuracy.}
 
 \item{na}{Character vector of strings to use for missing values. By default read_ods converts blank cells to missing data. It can also be set to
 NULL, so that empty cells are treated as NA.}
@@ -53,7 +53,7 @@ NULL, so that empty cells are treated as NA.}
 
 \item{formula_as_formula}{logical, a switch to display formulas as formulas "SUM(A1:A3)" or as the resulting value "3"... or "8".. . Default is FALSE.}
 
-\item{range}{selection of rectangle using Excel-like cell range, such as \code{range = "D12:F15"} or \code{range = "R1C12:R6C15"}. Cell range processing is handled by the \code{\link[=cellranger]{cellranger}} package.}
+\item{range}{selection of rectangle using Excel-like cell range, such as \code{range = "D12:F15"} or \code{range = "R1C12:R6C15"}. Cell range processing is handled by the \code{\link[=cellranger]{cellranger}} package. If sheet name is in the range, such as \code{range = "Sheet2!A2:B7"}, this sheet name is used instead of the provided \code{sheet}. If \code{sheet} is not the default value (1), a warning is given.}
 
 \item{row_names}{logical, indicating whether the file contains the names of the rows as its first column. Default is FALSE.}
 
@@ -95,6 +95,12 @@ read_fods("starwars.fods")
 read_fods("starwars.fods", sheet = 2)
 # Read a specific range, e.g. A1:C11
 read_fods("starwars.fods", sheet = 2, range = "A1:C11")
+# Give a warning and read from Sheet1 (not 2)
+read_fods("starwars.fods", sheet = 2, range = "Sheet1!A1:C11")
+# Specifying col_types as shorthand, the third column as factor; other by guessing
+read_ods("starwars.ods", col_types = "??f")
+# Specifying col_types as list
+read_ods("starwars.ods", col_types = list(species = "f"))
 }
 }
 \author{
