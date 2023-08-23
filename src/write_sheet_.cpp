@@ -44,30 +44,19 @@ std::string escape_xml(const std::string& input) {
     return cpp11::as_cpp<std::string>(escape_xml_rfun(input_sexp));
 }
 
-void write_empty(const std::string& escaped_sheet, std::ofstream& xml_file, const std::string& header, const std::string& footer) {
-    xml_file << header;
+void write_empty(const std::string& sheet, std::ofstream& xml_file, const std::string& escaped_sheet) {
     xml_file << "<table:table table:name=\"";
     xml_file << escaped_sheet;
     xml_file << "\" table:style-name=\"ta1\">";
     xml_file << "</table:table>";
-    xml_file << footer;
 }
 
-[[cpp11::register]]
-cpp11::r_string write_sheet_(const std::string& filename,
-                             const cpp11::data_frame& x,
-                             const std::string& sheet,
-                             const bool row_names,
-                             const bool col_names,
-                             const bool na_as_string,
-                             const bool padding,
-                             const std::string& header,
-                             const std::string& footer) {
-    std::ofstream xml_file(filename);
+bool write_df(const cpp11::data_frame& x, const std::string& sheet, const bool row_names, const bool col_names,
+              const bool na_as_string, const bool padding, std::ofstream& xml_file) {
     std::string escaped_sheet = escape_xml(sheet);
     if (x.ncol() == 0 || (x.nrow() == 0 && !col_names && x.ncol() != 0)) {
-        write_empty(escaped_sheet, xml_file, header, footer);
-        return filename;
+        write_empty(sheet, xml_file, escaped_sheet);
+        return true;
     }
     cpp11::strings column_types = get_column_types(x);
     cpp11::strings rownames_x, colnames_x;
@@ -82,7 +71,6 @@ cpp11::r_string write_sheet_(const std::string& filename,
     int cols = row_names ? column_types.size() + 1 : column_types.size();
     int cmax = column_types.size() > 1024 ? 16384 : 1024;
     // gen_sheet_tag
-    xml_file << header;
     xml_file << "\n<table:table table:name=\"";
     xml_file << escaped_sheet;
     xml_file << "\" table:style-name=\"ta1\">\n";
@@ -132,6 +120,22 @@ cpp11::r_string write_sheet_(const std::string& filename,
         xml_file << "</table:table-row>\n";
     }
     xml_file << "</table:table>\n";
+    return true;
+}
+
+[[cpp11::register]]
+cpp11::r_string write_sheet_(const std::string& filename,
+                             const cpp11::data_frame& x,
+                             const std::string& sheet,
+                             const bool row_names,
+                             const bool col_names,
+                             const bool na_as_string,
+                             const bool padding,
+                             const std::string& header,
+                             const std::string& footer) {
+    std::ofstream xml_file(filename);
+    xml_file << header;
+    bool success = write_df(x, sheet, row_names, col_names, na_as_string, padding, xml_file);
     xml_file << footer;
     xml_file << "\n";
     xml_file.close();
