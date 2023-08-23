@@ -107,7 +107,8 @@ test_that("Update / append sheets ods & fods", {
 
 test_that("issue 107", {
     legend <- readRDS("../testdata/legend.rds")
-    expect_error(write_ods(legend, sheet = "Legend"), NA)
-    expect_error(write_ods(legend, sheet = "Legend", update = TRUE), NA)
-    expect_error(write_ods(legend, sheet = "Legend2", append = TRUE), NA)
+    temp <- tempfile()
+    expect_error(write_ods(legend, path = temp, sheet = "Legend"), NA)
+    expect_error(write_ods(legend, path = temp, sheet = "Legend", update = TRUE), NA)
+    expect_error(write_ods(legend, path = temp, sheet = "Legend2", append = TRUE), NA)
 })
