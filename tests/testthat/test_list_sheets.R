@@ -13,8 +13,8 @@ test_that("fods works as well", {
     c("Sheet1", "Sheet2"))
 })
 
-test_that("keep `ods_sheets` #131", {
-    expect_warning(y <- ods_sheets("../testdata/linkeddata.ods"))
+test_that("keep `ods_sheets` #131 #133", {
+    expect_silent(y <- ods_sheets("../testdata/linkeddata.ods"))
     expect_equal(y,
                  c("Own",
                    "contains_linked_data",

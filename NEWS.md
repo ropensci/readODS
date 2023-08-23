@@ -1,3 +1,9 @@
+# readODS 2.05
+
+## Reverse the decision to deprecate `ods_sheets`
+
+See discussion #133
+
 # readODS 2.04
 
 ## `col_types` can be character ("shorthand") or list
