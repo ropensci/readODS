@@ -7,6 +7,9 @@
 
 #include <vector>
 #include <string>
+#include <fstream>
+#include <iostream>
+#include <stdexcept>
 
 std::string parse_p(rapidxml::xml_node<>* node);
 std::string parse_textp(rapidxml::xml_node<>* cell);
