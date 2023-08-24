@@ -40,6 +40,13 @@ extern "C" SEXP _readODS_write_sheet_(SEXP filename, SEXP x, SEXP sheet, SEXP ro
     return cpp11::as_sexp(write_sheet_(cpp11::as_cpp<cpp11::decay_t<const std::string&>>(filename), cpp11::as_cpp<cpp11::decay_t<const cpp11::data_frame&>>(x), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(sheet), cpp11::as_cpp<cpp11::decay_t<const bool>>(row_names), cpp11::as_cpp<cpp11::decay_t<const bool>>(col_names), cpp11::as_cpp<cpp11::decay_t<const bool>>(na_as_string), cpp11::as_cpp<cpp11::decay_t<const bool>>(padding), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(header), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(footer)));
   END_CPP11
 }
+// write_sheet_.cpp
+cpp11::r_string write_sheet_list_(const std::string& filename, const cpp11::list_of<cpp11::data_frame>& x, const std::string& sheet, const bool row_names, const bool col_names, const bool na_as_string, const bool padding, const std::string& header, const std::string& footer);
+extern "C" SEXP _readODS_write_sheet_list_(SEXP filename, SEXP x, SEXP sheet, SEXP row_names, SEXP col_names, SEXP na_as_string, SEXP padding, SEXP header, SEXP footer) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(write_sheet_list_(cpp11::as_cpp<cpp11::decay_t<const std::string&>>(filename), cpp11::as_cpp<cpp11::decay_t<const cpp11::list_of<cpp11::data_frame>&>>(x), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(sheet), cpp11::as_cpp<cpp11::decay_t<const bool>>(row_names), cpp11::as_cpp<cpp11::decay_t<const bool>>(col_names), cpp11::as_cpp<cpp11::decay_t<const bool>>(na_as_string), cpp11::as_cpp<cpp11::decay_t<const bool>>(padding), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(header), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(footer)));
+  END_CPP11
+}
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
@@ -48,6 +55,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_readODS_read_flat_ods_",        (DL_FUNC) &_readODS_read_flat_ods_,        7},
     {"_readODS_read_ods_",             (DL_FUNC) &_readODS_read_ods_,             7},
     {"_readODS_write_sheet_",          (DL_FUNC) &_readODS_write_sheet_,          9},
+    {"_readODS_write_sheet_list_",     (DL_FUNC) &_readODS_write_sheet_list_,     9},
     {NULL, NULL, 0}
 };
 }

@@ -1,3 +1,13 @@
+# readODS 2.06
+
+## `write_ods` and `write_fods` allow list of data frames
+
+Fix #56; and it is now the same as `writexl::write_xlsx()`.
+
+```r
+write_ods(list("some_car_data" = mtcars, "some_flower_data" = iris))
+```
+
 # readODS 2.05
 
 ## Reverse the decision to deprecate `ods_sheets`
@@ -8,7 +18,7 @@ See discussion #133
 
 ## `col_types` can be character ("shorthand") or list
 
-fix #135 and the review by Dr  Ruedni
+fix #135 and the review by Dr Ruedni
 
 ```r
 # Specifying col_types as shorthand, the third column as factor; other by guessing

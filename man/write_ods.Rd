@@ -30,29 +30,29 @@ write_fods(
 )
 }
 \arguments{
-\item{x}{a data.frame}
+\item{x}{data frame or list of data frames that will be sheets in the (f)ods. If the list is named, the names are used as sheet names}
 
 \item{path}{Path to the (f)ods file to write}
 
-\item{sheet}{Name of the sheet}
+\item{sheet}{Name of the sheet; ignore if \code{x} is a list of data frames}
 
-\item{append}{logical, TRUE indicates that x should be appended to the existing file (path) as a new sheet. If a sheet with the same sheet_name exists, an exception is thrown. See update. Please also note that writing is slower if TRUE. Default is FALSE.}
+\item{append}{logical, TRUE indicates that x should be appended to the existing file (path) as a new sheet. If a sheet with the same sheet_name exists, an exception is thrown. See update. Please also note that writing is slower if TRUE. Default is FALSE. Ignore if \code{x} is a list of data frames}
 
-\item{update}{logical, TRUE indicates that the sheet with sheet_name in the existing file (path) should be updated with the content of x. If a sheet with sheet_name does not exist, an exception is thrown. Please also note that writing is slower if TRUE. Default is FALSE.}
+\item{update}{logical, TRUE indicates that the sheet with sheet_name in the existing file (path) should be updated with the content of x. If a sheet with sheet_name does not exist, an exception is thrown. Please also note that writing is slower if TRUE. Default is FALSE. Ignore if \code{x} is a list of data frames}
 
-\item{row_names}{logical, TRUE indicates that row names of x are to be included in the sheet. Default is FALSE.}
+\item{row_names}{logical, TRUE indicates that row names of x are to be included in the sheet. Default is FALSE}
 
-\item{col_names}{logical, TRUE indicates that column names of x are to be included in the sheet. Default is TRUE.}
+\item{col_names}{logical, TRUE indicates that column names of x are to be included in the sheet. Default is TRUE}
 
-\item{na_as_string}{logical, TRUE indicates that NAs are written as string; FALSE indicates that NAs are written as empty cells.}
+\item{na_as_string}{logical, TRUE indicates that NAs are written as string; FALSE indicates that NAs are written as empty cells}
 
 \item{padding}{logical, TRUE indicates that the sheet is padded with repeated empty cells to the maximum size, either 2^20 x 1024 (if the number of columns of \code{x} is less than or equal 1024) or 2^20 x 16,384 (otherwise). This is the default behaviour of Microsoft Excel. Default is FALSE}
 }
 \value{
-An (F)ODS file written to the file path location specified by the user. The value of \code{path} is also returned invisibly.
+A (F)ODS file written to the file path location specified by the user. The value of \code{path} is also returned invisibly
 }
 \description{
-Function to write a single data.frame to a (f)ods file.
+Function to write a single data frame or a list of data frames to a (f)ods file.
 }
 \details{
 This function emulates \code{\link[writexl:write_xlsx]{writexl::write_xlsx()}} and \code{\link[openxlsx:write.xlsx]{openxlsx::write.xlsx()}} except in the handling of list columns. The expected behaviour for this is undefined and the two functions behave differently. This function handles list columns by converting them to character vectors of R code (similar to the output of \code{\link[=dput]{dput()}}), which is probably not ideal.
@@ -63,6 +63,8 @@ This function emulates \code{\link[writexl:write_xlsx]{writexl::write_xlsx()}} a
 write_ods(mtcars, "mtcars.ods", row_names = TRUE)
 # append a sheet to an existing file
 write_ods(PlantGrowth, "mtcars.ods", append = TRUE, sheet = "plant")
+# This is however faster
+write_ods(list("Sheet1" = mtcars, "plant" = PlantGrowth), "mtcars.ods", row_names = TRUE)
 # write flat ODS file
 write_fods(mtcars, "mtcars.fods", sheet = "mtcars")
 }
