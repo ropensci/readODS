@@ -49,7 +49,7 @@ write_fods(
 \item{padding}{logical, TRUE indicates that the sheet is padded with repeated empty cells to the maximum size, either 2^20 x 1024 (if the number of columns of \code{x} is less than or equal 1024) or 2^20 x 16,384 (otherwise). This is the default behaviour of Microsoft Excel. Default is FALSE}
 }
 \value{
-An (F)ODS file written to the file path location specified by the user. The value of \code{path} is also returned invisibly.
+A (F)ODS file written to the file path location specified by the user. The value of \code{path} is also returned invisibly.
 }
 \description{
 Function to write a single data.frame to a (f)ods file.

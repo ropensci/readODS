@@ -19,3 +19,7 @@ read_ods_ <- function(file, start_row, stop_row, start_col, stop_col, sheet, for
 write_sheet_ <- function(filename, x, sheet, row_names, col_names, na_as_string, padding, header, footer) {
   .Call(`_readODS_write_sheet_`, filename, x, sheet, row_names, col_names, na_as_string, padding, header, footer)
 }
+
+write_sheet_list_ <- function(filename, x, sheet, row_names, col_names, na_as_string, padding, header, footer) {
+  .Call(`_readODS_write_sheet_list_`, filename, x, sheet, row_names, col_names, na_as_string, padding, header, footer)
+}

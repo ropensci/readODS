@@ -107,20 +107,32 @@
     xml2::write_xml(content, contentfile)
 }
 
-
 .write_ods <- function(x, path = tempfile(fileext = ".ods"), sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, na_as_string = FALSE, padding = FALSE, flat = FALSE) {
+    if (isFALSE(inherits(x, "data.frame")) && !is.list(x)) {
+        stop("x must be data.frame or list.", call. = FALSE)
+    }
     temp_ods_dir <- NULL
     if (isFALSE(flat)) {
         temp_ods_dir <- file.path(tempdir(), stringi::stri_rand_strings(1, 20, pattern = "[A-Za-z0-9]"))
         dir.create(temp_ods_dir)
         on.exit(unlink(temp_ods_dir))
     }
-    x <- .preprocess_x(x)
     if (append || update) {
-        .update_ods(x = x, path = path, sheet = sheet, append = append, update = update, row_names = row_names,
+        .update_ods(x = .preprocess_x(x), path = path, sheet = sheet, append = append, update = update, row_names = row_names,
                     col_names = col_names, na_as_string = na_as_string, padding = padding, flat = flat,
                     temp_ods_dir = temp_ods_dir)
         return(invisible(.zip_tmp_to_path(temp_ods_dir, path, flat = flat)))
+    }
+    if (isTRUE(inherits(x, "data.frame"))) {
+        x <- .preprocess_x(x)
+        .write_fun <- write_sheet_
+    } else {
+        ## it's a list (at least we assume)
+        x <- lapply(x, .preprocess_x)
+        if (is.null(names(x))) {
+            names(x) <- paste0("Sheet", seq_along(x))
+        }
+        .write_fun <- write_sheet_list_
     }
     path <- .preprocess_path(path)
     if (isFALSE(flat)) {
@@ -134,7 +146,7 @@
         header <- .FODS_HEADER
         footer <- .FODS_FOOTER
     }
-    write_sheet_(filename = filename, x = x, sheet = sheet, row_names = row_names, col_names = col_names, na_as_string = na_as_string, padding = padding, header = header, footer = footer)
+    .write_fun(filename = filename, x = x, sheet = sheet, row_names = row_names, col_names = col_names, na_as_string = na_as_string, padding = padding, header = header, footer = footer)
     return(invisible(.zip_tmp_to_path(temp_ods_dir, path, flat = flat)))
 }
 
@@ -151,7 +163,7 @@
 #' @param col_names logical, TRUE indicates that column names of x are to be included in the sheet. Default is TRUE.
 #' @param na_as_string logical, TRUE indicates that NAs are written as string; FALSE indicates that NAs are written as empty cells.
 #' @param padding logical, TRUE indicates that the sheet is padded with repeated empty cells to the maximum size, either 2^20 x 1024 (if the number of columns of `x` is less than or equal 1024) or 2^20 x 16,384 (otherwise). This is the default behaviour of Microsoft Excel. Default is FALSE
-#' @return An (F)ODS file written to the file path location specified by the user. The value of \code{path} is also returned invisibly.
+#' @return A (F)ODS file written to the file path location specified by the user. The value of \code{path} is also returned invisibly.
 #' @details This function emulates [writexl::write_xlsx()] and [openxlsx::write.xlsx()] except in the handling of list columns. The expected behaviour for this is undefined and the two functions behave differently. This function handles list columns by converting them to character vectors of R code (similar to the output of [dput()]), which is probably not ideal.
 #' @author Detlef Steuer <steuer@@hsu-hh.de>, Thomas J. Leeper <thosjleeper@@gmail.com>, John Foster <john.x.foster@@nab.com.au>, Chung-hong Chan <chainsawtiney@@gmail.com>
 #' @examples

@@ -51,12 +51,12 @@ void write_empty(const std::string& sheet, std::ofstream& xml_file, const std::s
     xml_file << "</table:table>";
 }
 
-bool write_df(const cpp11::data_frame& x, const std::string& sheet, const bool row_names, const bool col_names,
+void write_df(const cpp11::data_frame& x, const std::string& sheet, const bool row_names, const bool col_names,
               const bool na_as_string, const bool padding, std::ofstream& xml_file) {
     std::string escaped_sheet = escape_xml(sheet);
     if (x.ncol() == 0 || (x.nrow() == 0 && !col_names && x.ncol() != 0)) {
         write_empty(sheet, xml_file, escaped_sheet);
-        return true;
+        return;
     }
     cpp11::strings column_types = get_column_types(x);
     cpp11::strings rownames_x, colnames_x;
@@ -120,7 +120,6 @@ bool write_df(const cpp11::data_frame& x, const std::string& sheet, const bool r
         xml_file << "</table:table-row>\n";
     }
     xml_file << "</table:table>\n";
-    return true;
 }
 
 [[cpp11::register]]
@@ -135,7 +134,29 @@ cpp11::r_string write_sheet_(const std::string& filename,
                              const std::string& footer) {
     std::ofstream xml_file(filename);
     xml_file << header;
-    bool success = write_df(x, sheet, row_names, col_names, na_as_string, padding, xml_file);
+    write_df(x, sheet, row_names, col_names, na_as_string, padding, xml_file);
+    xml_file << footer;
+    xml_file << "\n";
+    xml_file.close();
+    return filename;
+}
+
+[[cpp11::register]]
+cpp11::r_string write_sheet_list_(const std::string& filename,
+                                  const cpp11::list_of<cpp11::data_frame>& x,
+                                  const std::string& sheet, // wont use; just for maintain the same interface
+                                  const bool row_names,
+                                  const bool col_names,
+                                  const bool na_as_string,
+                                  const bool padding,
+                                  const std::string& header,
+                                  const std::string& footer) {
+    std::ofstream xml_file(filename);
+    xml_file << header;
+    cpp11::strings sheet_names = x.names();
+    for (int i = 0; i < sheet_names.size(); i++) {
+        write_df(x[i], sheet_names[i], row_names, col_names, na_as_string, padding, xml_file);
+    }
     xml_file << footer;
     xml_file << "\n";
     xml_file.close();
