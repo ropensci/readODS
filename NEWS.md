@@ -8,6 +8,10 @@ Fix #56; and it is now the same as `writexl::write_xlsx()`.
 write_ods(list("some_car_data" = mtcars, "some_flower_data" = iris))
 ```
 
+## bug fixes
+
+* Fix #157 `list_fods_sheets()` cannot accept `~` as path
+
 # readODS 2.05
 
 ## Reverse the decision to deprecate `ods_sheets`

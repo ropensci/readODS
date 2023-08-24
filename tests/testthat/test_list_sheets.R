@@ -20,3 +20,11 @@ test_that("keep `ods_sheets` #131 #133", {
                    "contains_linked_data",
                    "'file:///D:/Users/peter.brohan/Documents/R/readODScpp/tests/testdata/linksource.xlsx'#Sheet1"))
 })
+
+test_that("fix #157", {
+    skip_if(file.access("~/", 2) != 0)
+    file.copy("../testdata/flat.fods", "~/flat_you_must_not_use_this_path.fods")
+    expect_equal(list_fods_sheets("~/flat_you_must_not_use_this_path.fods"),
+                 c("Sheet1", "Sheet2"))
+    on.exit(unlink("~/flat_you_must_not_use_this_path.fods"))
+})
