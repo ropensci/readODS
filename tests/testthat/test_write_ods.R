@@ -1,3 +1,9 @@
+test_that("defensive", {
+    expect_error(write_ods(matrix()))
+    expect_error(write_ods(c(1,2,3)))
+})
+
+
 library("datasets")
 test_that("Single column ODS", {
     expect_true(file.exists(write_ods(mtcars)))
@@ -132,4 +138,45 @@ test_that("edge case, list-columns #142", {
     lc_test <- tibble::tibble(mtcars)
     lc_test$lc <- strsplit(rownames(mtcars), " ")
     expect_error(write_ods(lc_test), NA)
+})
+
+test_that("list of dataframes, base case, #56", {
+    mtcars2 <- mtcars
+    rownames(mtcars2) <- NULL
+    x <- list("some_flower_data" = iris, "some_car_data" = mtcars2)
+    path <- write_ods(x)
+    expect_equal(list_ods_sheets(path), c("some_flower_data", "some_car_data"))
+    expect_equal(read_ods(path, sheet = "some_flower_data", as_tibble = FALSE, col_types = c("nnnnf")), iris)
+    expect_equal(read_ods(path, sheet = "some_car_data", as_tibble = FALSE), mtcars2)
+    path <- write_fods(x)
+    expect_equal(list_fods_sheets(path), c("some_flower_data", "some_car_data"))
+    expect_equal(read_fods(path, sheet = "some_flower_data", as_tibble = FALSE, col_types = c("nnnnf")), iris)
+    expect_equal(read_fods(path, sheet = "some_car_data", as_tibble = FALSE), mtcars2)
+})
+
+test_that("list of dataframes, error, #56", {
+    mtcars2 <- mtcars
+    rownames(mtcars2) <- NULL
+    x <- list("some_flower_data" = matrix(), "some_car_data" = mtcars2)
+    expect_error(path <- write_ods(x))
+    expect_error(path <- write_fods(x))
+})
+
+test_that("list of dataframes, unnamed #56", {
+    mtcars2 <- mtcars
+    rownames(mtcars2) <- NULL
+    x <- list(iris, mtcars2)
+    path <- write_ods(x)
+    expect_equal(list_ods_sheets(path), c("Sheet1", "Sheet2"))
+    path <- write_fods(x)
+    expect_equal(list_fods_sheets(path), c("Sheet1", "Sheet2"))
+})
+
+test_that("list of dataframes, edge cases #56", {
+    expect_error(write_ods(list()))
+    expect_error(write_fods(list()))
+    expect_error(path <- write_ods(list("iris" = iris), sheet = "whatever"), NA)
+    expect_equal(list_ods_sheets(path), c("iris")) ## sheet is ignored
+    expect_error(path <- write_fods(list("iris" = iris), sheet = "whatever"), NA)
+    expect_equal(list_fods_sheets(path), c("iris")) ## sheet is ignored
 })

@@ -111,6 +111,9 @@
     if (isFALSE(inherits(x, "data.frame")) && !is.list(x)) {
         stop("x must be data.frame or list.", call. = FALSE)
     }
+    if (isFALSE(inherits(x, "data.frame")) && is.list(x) && length(x) == 0) {
+        stop("x must contain at least one data.frame.", call. = FALSE)
+    }
     temp_ods_dir <- NULL
     if (isFALSE(flat)) {
         temp_ods_dir <- file.path(tempdir(), stringi::stri_rand_strings(1, 20, pattern = "[A-Za-z0-9]"))
