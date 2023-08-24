@@ -17,13 +17,13 @@
 #' use \code{\link{read_ods}} to read the data
 #' @export
 list_ods_sheets <- function(path, include_external_data = FALSE) {
-    return(get_sheet_names_(file = path, include_external_data = include_external_data))
+    return(get_sheet_names_(file = normalizePath(path, mustWork = FALSE), include_external_data = include_external_data))
 }
 
 #' @rdname list_ods_sheets
 #' @export
 list_fods_sheets <- function(path, include_external_data = FALSE) {
-    return(get_flat_sheet_names_(file = path, include_external_data = include_external_data))
+    return(get_flat_sheet_names_(file = normalizePath(path, mustWork = FALSE), include_external_data = include_external_data))
 }
 
 
