@@ -24,8 +24,7 @@ For \verb{list_(f)ods_sheets}, a character vector of sheet names; for \verb{get_
 \verb{list_(f)ods_sheets} lists all sheets in an (f)ods file.
 }
 \details{
-\code{ods_sheets} will be removed in the next major version. It was kept for backward compatibility. Please use \code{list_ods_sheet}
-instead. The default "include_external_data" for \code{ods_sheets} is TRUE to maintain compatibility with version 1 of readODS.
+The default "include_external_data" for \code{ods_sheets} is TRUE to maintain compatibility with version 1 of readODS. It will change to \code{TRUE} in version 3.
 }
 \examples{
 \dontrun{
