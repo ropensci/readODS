@@ -175,6 +175,8 @@
 #' write_ods(mtcars, "mtcars.ods", row_names = TRUE)
 #' # append a sheet to an existing file
 #' write_ods(PlantGrowth, "mtcars.ods", append = TRUE, sheet = "plant")
+#' # This is however faster
+#' write_ods(list("Sheet1" = mtcars, "plant" = PlantGrowth), "mtcars.ods", row_names = TRUE)
 #' # write flat ODS file
 #' write_fods(mtcars, "mtcars.fods", sheet = "mtcars")
 #' }

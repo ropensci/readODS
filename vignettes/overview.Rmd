@@ -84,6 +84,15 @@ You cannot update a missing sheet.
 write_ods(iris, "plant.ods", sheet = "iris", update = TRUE)
 ```
 
+## Writing multiple sheets simultaneously
+
+It is much faster to write data frames into the same file by putting them in a (named) list.
+
+```{r writelist}
+write_ods(list("iris" = iris, "plant" = PlantGrowth), "plant_multi.ods")
+read_ods("plant_multi.ods", sheet = "plant")
+```
+
 ## Flat ODS files (`.xml` or `.fods`)
 
 Can be read with `read_fods()` (note that the same function is used to read flat files, no matter the extension).
@@ -175,4 +184,5 @@ lapply(list_ods_sheets("plant.ods"),
 ```{r, echo = FALSE, message = FALSE}
 unlink("plant.ods")
 unlink("plant.fods")
+unlink("plant_multi.ods")
 ```
