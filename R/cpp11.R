@@ -16,6 +16,10 @@ read_ods_ <- function(file, start_row, stop_row, start_col, stop_col, sheet, for
   .Call(`_readODS_read_ods_`, file, start_row, stop_row, start_col, stop_col, sheet, formula_as_formula)
 }
 
+splice_sheet <- function(original_xml, sheet_xml, flat) {
+  .Call(`_readODS_splice_sheet`, original_xml, sheet_xml, flat)
+}
+
 write_sheet_ <- function(filename, x, sheet, row_names, col_names, na_as_string, padding, header, footer) {
   .Call(`_readODS_write_sheet_`, filename, x, sheet, row_names, col_names, na_as_string, padding, header, footer)
 }

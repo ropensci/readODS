@@ -89,22 +89,26 @@
     if (!sheet_exist && update) {
         stop(paste0("Sheet ", sheet, " does not exist. Cannot update."), call. = FALSE)
     }
-    content <- xml2::read_xml(contentfile)
-    spreadsheet_node <- xml2::xml_children(xml2::xml_children(content)[[which(!is.na(xml2::xml_find_first(xml2::xml_children(content),"office:spreadsheet")))]])[[1]]
+    ## content <- xml2::read_xml(contentfile)
+    ## spreadsheet_node <- xml2::xml_children(xml2::xml_children(content)[[which(!is.na(xml2::xml_find_first(xml2::xml_children(content),"office:spreadsheet")))]])[[1]]
     if (update) {
         ## clean up the sheet
-        sheet_node <- .find_sheet_node_by_sheet(spreadsheet_node, sheet)
-        xml2::xml_remove(xml2::xml_children(sheet_node)[2:length(xml2::xml_children(sheet_node))])
+        ## sheet_node <- .find_sheet_node_by_sheet(spreadsheet_node, sheet)
+        ## xml2::xml_remove(xml2::xml_children(sheet_node)[2:length(xml2::xml_children(sheet_node))])
+        return(NA)
     }
-    if (append) {
-        ## Add a new sheet
-        sheet_node <- xml2::xml_add_child(spreadsheet_node, .silent_add_sheet_node(sheet))
-    }
+    ## if (append) {
+    ##     ## Add a new sheet
+    ##     sheet_node <- xml2::xml_add_child(spreadsheet_node, .silent_add_sheet_node(sheet))
+    ## }
     throwaway_xml_file <- .convert_df_to_sheet(x = x, sheet = sheet, row_names = row_names, col_names = col_names,
                                                na_as_string = na_as_string, padding = padding)
-    xml2::xml_replace(sheet_node, .silent_read_xml(throwaway_xml_file))
-    ## write xml to contentfile
-    xml2::write_xml(content, contentfile)
+    ## print(throwaway_xml_file)
+    ## print(contentfile)
+    ## xml2::xml_replace(sheet_node, .silent_read_xml(throwaway_xml_file))
+    ## ## write xml to contentfile
+    ## xml2::write_xml(content, contentfile)
+    splice_sheet(contentfile, throwaway_xml_file, flat)
 }
 
 .write_ods <- function(x, path = tempfile(fileext = ".ods"), sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, na_as_string = FALSE, padding = FALSE, flat = FALSE) {
