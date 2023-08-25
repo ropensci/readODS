@@ -14,3 +14,11 @@ test_that("Return blank/error if mangled FODS", {
   expect_warning(read_fods("../testdata/norows.fods"))
   expect_warning(read_fods("../testdata/nocells.fods"))
 })
+
+test_that("fix #157", {
+    skip_if(file.access("~/", 2) != 0)
+    file.copy("../testdata/flat.fods", "~/flat_you_must_not_use_this_path.fods")
+    expect_error(read_fods("~/flat_you_must_not_use_this_path.fods"), NA)
+    expect_error(read_fods("~/flat_you_must_not_use_this_path_not.fods"))
+    on.exit(unlink("~/flat_you_must_not_use_this_path.fods"))
+})

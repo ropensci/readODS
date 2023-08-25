@@ -182,6 +182,7 @@
         strings_as_factors,
         verbose,
         as_tibble)
+    path <- normalizePath(path)
     if (flat) {
         .get_sheet_names_func <- get_flat_sheet_names_
         .read_ods_func <- read_flat_ods_
@@ -317,7 +318,7 @@ read_fods <- function(path,
                         as_tibble = TRUE,
                         .name_repair = "unique") {
     ## Should use match.call but there's a weird bug if one of the variable names is 'file'
-    .read_ods(path = path,
+    .read_ods(path = normalizePath(path, mustWork = FALSE),
               sheet = sheet,
               col_names = col_names,
               col_types = col_types,
