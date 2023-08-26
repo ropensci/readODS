@@ -20,6 +20,10 @@ splice_sheet <- function(original_xml, sheet_xml, flat) {
   .Call(`_readODS_splice_sheet`, original_xml, sheet_xml, flat)
 }
 
+update_sheet <- function(original_xml, sheet_xml, flat, sheet) {
+  .Call(`_readODS_update_sheet`, original_xml, sheet_xml, flat, sheet)
+}
+
 write_sheet_ <- function(filename, x, sheet, row_names, col_names, na_as_string, padding, header, footer) {
   .Call(`_readODS_write_sheet_`, filename, x, sheet, row_names, col_names, na_as_string, padding, header, footer)
 }

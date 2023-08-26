@@ -77,11 +77,13 @@
     if (isFALSE(flat)) {
         zip::unzip(path, exdir = temp_ods_dir)
         contentfile <- file.path(temp_ods_dir, "content.xml")
-        sheet_exist <- sheet %in% list_ods_sheets(path, include_external_data = TRUE)
+        sheets <- list_ods_sheets(path, include_external_data = TRUE)
     } else {
         contentfile <- path
-        sheet_exist <- sheet %in% list_fods_sheets(path, include_external_data = TRUE)
+        sheets <- list_fods_sheets(path, include_external_data = TRUE)
     }
+    is_in_sheet_names <- stringi::stri_cmp(e1 = sheet, e2 = sheets) == 0
+    sheet_exist <- any(is_in_sheet_names)
     if ((sheet_exist && append && !update) || (sheet_exist && !update)) {
         ## Sheet exists so we cannot append
         stop(paste0("Sheet ", sheet, " exists. Set update to TRUE is you want to update this sheet."), call. = FALSE)
@@ -89,26 +91,14 @@
     if (!sheet_exist && update) {
         stop(paste0("Sheet ", sheet, " does not exist. Cannot update."), call. = FALSE)
     }
-    ## content <- xml2::read_xml(contentfile)
-    ## spreadsheet_node <- xml2::xml_children(xml2::xml_children(content)[[which(!is.na(xml2::xml_find_first(xml2::xml_children(content),"office:spreadsheet")))]])[[1]]
-    if (update) {
-        ## clean up the sheet
-        ## sheet_node <- .find_sheet_node_by_sheet(spreadsheet_node, sheet)
-        ## xml2::xml_remove(xml2::xml_children(sheet_node)[2:length(xml2::xml_children(sheet_node))])
-        return(NA)
-    }
-    ## if (append) {
-    ##     ## Add a new sheet
-    ##     sheet_node <- xml2::xml_add_child(spreadsheet_node, .silent_add_sheet_node(sheet))
-    ## }
+    ## numeric
+    normalized_sheet <- which(is_in_sheet_names)
     throwaway_xml_file <- .convert_df_to_sheet(x = x, sheet = sheet, row_names = row_names, col_names = col_names,
                                                na_as_string = na_as_string, padding = padding)
-    ## print(throwaway_xml_file)
-    ## print(contentfile)
-    ## xml2::xml_replace(sheet_node, .silent_read_xml(throwaway_xml_file))
-    ## ## write xml to contentfile
-    ## xml2::write_xml(content, contentfile)
-    splice_sheet(contentfile, throwaway_xml_file, flat)
+    if (append) {
+        return(splice_sheet(contentfile, throwaway_xml_file, flat))
+    }
+    return(update_sheet(contentfile, throwaway_xml_file, flat, normalized_sheet))
 }
 
 .write_ods <- function(x, path = tempfile(fileext = ".ods"), sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, na_as_string = FALSE, padding = FALSE, flat = FALSE) {
@@ -120,7 +110,7 @@
     }
     temp_ods_dir <- NULL
     if (isFALSE(flat)) {
-        temp_ods_dir <- file.path(tempdir(), stringi::stri_rand_strings(1, 20, pattern = "[A-Za-z0-9]"))
+        temp_ods_dir <- file.path(tempdir(), stringi::stri_rand_strings(1, 30, pattern = "[A-Za-z0-9]"))
         dir.create(temp_ods_dir)
         on.exit(unlink(temp_ods_dir))
     }
