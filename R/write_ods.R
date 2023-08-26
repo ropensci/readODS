@@ -18,27 +18,6 @@
     return(path)
 }
 
-.find_sheet_node_by_sheet <- function(spreadsheet_node, sheet) {
-    sheet_node <- NULL
-    for (i in seq(2, length(xml2::xml_children(spreadsheet_node)))) {
-        if (!is.na(xml2::xml_attr(xml2::xml_children(spreadsheet_node)[[i]], "name") == sheet) &&
-            xml2::xml_attr(xml2::xml_children(spreadsheet_node)[[i]], "name") == sheet) {
-            sheet_node <- xml2::xml_children(spreadsheet_node)[[i]]
-        }
-    }
-    return(sheet_node)
-}
-
-.silent_read_xml <- function(x) {
-    suppressWarnings({
-        return(xml2::read_xml(x))
-    })
-}
-
-.silent_add_sheet_node <- function(sheet) {
-    .silent_read_xml(sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="16384" table:default-cell-style-name="ce1"/></table:table>', sheet))
-}
-
 .convert_df_to_sheet <- function(x, sheet = "Sheet1", row_names = FALSE, col_names = FALSE, na_as_string = FALSE, padding = FALSE, xml_file = file.path(tempfile(fileext = ".xml"))) {
     write_sheet_(x = x, filename = xml_file, sheet = sheet, row_names = row_names, col_names = col_names,
                  na_as_string = na_as_string, padding = padding,

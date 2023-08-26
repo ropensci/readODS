@@ -24,7 +24,6 @@ Description: Read ODS (OpenDocument Spreadsheet) into R as data frame. Also supp
 URL: https://github.com/ropensci/readODS
 BugReports: https://github.com/ropensci/readODS/issues
 Imports:
-    xml2 (>= 1.3.2),
     cellranger,
     readr (>= 1.2.1),
     stringi,
