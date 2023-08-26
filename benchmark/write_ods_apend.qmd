@@ -19,7 +19,7 @@ df1 <- data.frame(a1 = sample(c(1:100), size = 3000, replace = TRUE),
 path <- tempfile(fileext = ".ods")
 write_ods(df1, path = path)
 system.time(write_ods(df1, path = path, sheet = "aaaa", append = TRUE))
-system.time(write_ods(df1, path = path, sheet = "aaaa", update = TRUE))
+##system.time(write_ods(df1, path = path, sheet = "aaaa", update = TRUE))
 ```
 
 ```{r}
