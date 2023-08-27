@@ -34,17 +34,17 @@ extern "C" SEXP _readODS_read_ods_(SEXP file, SEXP start_row, SEXP stop_row, SEX
   END_CPP11
 }
 // splice.cpp
-std::string splice_sheet(const std::string original_xml, const std::string sheet_xml, const bool flat);
-extern "C" SEXP _readODS_splice_sheet(SEXP original_xml, SEXP sheet_xml, SEXP flat) {
+std::string splice_sheet_(const std::string original_xml, const std::string sheet_xml, const bool flat);
+extern "C" SEXP _readODS_splice_sheet_(SEXP original_xml, SEXP sheet_xml, SEXP flat) {
   BEGIN_CPP11
-    return cpp11::as_sexp(splice_sheet(cpp11::as_cpp<cpp11::decay_t<const std::string>>(original_xml), cpp11::as_cpp<cpp11::decay_t<const std::string>>(sheet_xml), cpp11::as_cpp<cpp11::decay_t<const bool>>(flat)));
+    return cpp11::as_sexp(splice_sheet_(cpp11::as_cpp<cpp11::decay_t<const std::string>>(original_xml), cpp11::as_cpp<cpp11::decay_t<const std::string>>(sheet_xml), cpp11::as_cpp<cpp11::decay_t<const bool>>(flat)));
   END_CPP11
 }
 // splice.cpp
-std::string update_sheet(const std::string original_xml, const std::string sheet_xml, const bool flat, const int sheet);
-extern "C" SEXP _readODS_update_sheet(SEXP original_xml, SEXP sheet_xml, SEXP flat, SEXP sheet) {
+std::string update_sheet_(const std::string original_xml, const std::string sheet_xml, const bool flat, const int sheet);
+extern "C" SEXP _readODS_update_sheet_(SEXP original_xml, SEXP sheet_xml, SEXP flat, SEXP sheet) {
   BEGIN_CPP11
-    return cpp11::as_sexp(update_sheet(cpp11::as_cpp<cpp11::decay_t<const std::string>>(original_xml), cpp11::as_cpp<cpp11::decay_t<const std::string>>(sheet_xml), cpp11::as_cpp<cpp11::decay_t<const bool>>(flat), cpp11::as_cpp<cpp11::decay_t<const int>>(sheet)));
+    return cpp11::as_sexp(update_sheet_(cpp11::as_cpp<cpp11::decay_t<const std::string>>(original_xml), cpp11::as_cpp<cpp11::decay_t<const std::string>>(sheet_xml), cpp11::as_cpp<cpp11::decay_t<const bool>>(flat), cpp11::as_cpp<cpp11::decay_t<const int>>(sheet)));
   END_CPP11
 }
 // write_sheet_.cpp
@@ -68,8 +68,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_readODS_get_sheet_names_",      (DL_FUNC) &_readODS_get_sheet_names_,      2},
     {"_readODS_read_flat_ods_",        (DL_FUNC) &_readODS_read_flat_ods_,        7},
     {"_readODS_read_ods_",             (DL_FUNC) &_readODS_read_ods_,             7},
-    {"_readODS_splice_sheet",          (DL_FUNC) &_readODS_splice_sheet,          3},
-    {"_readODS_update_sheet",          (DL_FUNC) &_readODS_update_sheet,          4},
+    {"_readODS_splice_sheet_",         (DL_FUNC) &_readODS_splice_sheet_,         3},
+    {"_readODS_update_sheet_",         (DL_FUNC) &_readODS_update_sheet_,         4},
     {"_readODS_write_sheet_",          (DL_FUNC) &_readODS_write_sheet_,          9},
     {"_readODS_write_sheet_list_",     (DL_FUNC) &_readODS_write_sheet_list_,     9},
     {NULL, NULL, 0}

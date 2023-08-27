@@ -75,9 +75,9 @@
     throwaway_xml_file <- .convert_df_to_sheet(x = x, sheet = sheet, row_names = row_names, col_names = col_names,
                                                na_as_string = na_as_string, padding = padding)
     if (append) {
-        return(splice_sheet(contentfile, throwaway_xml_file, flat))
+        return(splice_sheet_(contentfile, throwaway_xml_file, flat))
     }
-    return(update_sheet(contentfile, throwaway_xml_file, flat, normalized_sheet))
+    return(update_sheet_(contentfile, throwaway_xml_file, flat, normalized_sheet))
 }
 
 .write_ods <- function(x, path = tempfile(fileext = ".ods"), sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, na_as_string = FALSE, padding = FALSE, flat = FALSE) {
