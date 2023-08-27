@@ -1,3 +1,9 @@
+# readODS 2.07
+
+## `append` and `update` of `write_ods` in C++
+
+Significant speed improvement
+
 # readODS 2.06
 
 ## `write_ods` and `write_fods` allow list of data frames

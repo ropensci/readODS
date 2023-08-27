@@ -36,9 +36,9 @@ write_fods(
 
 \item{sheet}{Name of the sheet; ignore if \code{x} is a list of data frames}
 
-\item{append}{logical, TRUE indicates that x should be appended to the existing file (path) as a new sheet. If a sheet with the same sheet_name exists, an exception is thrown. See update. Please also note that writing is slower if TRUE. Default is FALSE. Ignore if \code{x} is a list of data frames}
+\item{append}{logical, TRUE indicates that x should be appended to the existing file (path) as a new sheet. If a sheet with the same sheet_name exists, an exception is thrown. See update. Please also note that writing is slightly slower if TRUE. Default is FALSE. Ignore if \code{x} is a list of data frames}
 
-\item{update}{logical, TRUE indicates that the sheet with sheet_name in the existing file (path) should be updated with the content of x. If a sheet with sheet_name does not exist, an exception is thrown. Please also note that writing is slower if TRUE. Default is FALSE. Ignore if \code{x} is a list of data frames}
+\item{update}{logical, TRUE indicates that the sheet with sheet_name in the existing file (path) should be updated with the content of x. If a sheet with sheet_name does not exist, an exception is thrown. Please also note that writing is slightly slower if TRUE. Default is FALSE. Ignore if \code{x} is a list of data frames}
 
 \item{row_names}{logical, TRUE indicates that row names of x are to be included in the sheet. Default is FALSE}
 

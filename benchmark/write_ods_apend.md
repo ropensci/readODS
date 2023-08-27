@@ -4,7 +4,7 @@
 date()
 ```
 
-    [1] "Sun Aug 27 00:43:23 2023"
+    [1] "Sun Aug 27 17:00:14 2023"
 
 ``` r
 devtools::load_all()
@@ -29,21 +29,21 @@ system.time(write_ods(df1, path = path, sheet = "aaaa", append = TRUE))
 ```
 
        user  system elapsed 
-      0.265   0.015   0.290 
+      0.259   0.020   0.279 
 
 ``` r
 system.time(write_ods(df1, path = path, sheet = "aaaa", update = TRUE))
 ```
 
        user  system elapsed 
-      0.330   0.032   0.369 
+      0.315   0.040   0.359 
 
 ``` r
 system.time(write_ods(mtcars, path = path, sheet = "aaaa", update = TRUE))
 ```
 
        user  system elapsed 
-      0.222   0.020   0.250 
+      0.213   0.027   0.241 
 
 ``` r
 sessionInfo()
@@ -72,22 +72,22 @@ sessionInfo()
     [1] stats     graphics  grDevices utils     datasets  methods   base     
 
     other attached packages:
-    [1] readODS_2.0.6   testthat_3.1.10
+    [1] readODS_2.0.7   testthat_3.1.10
 
     loaded via a namespace (and not attached):
-     [1] utf8_1.2.3        xml2_1.3.5        stringi_1.7.12    hms_1.1.3        
-     [5] digest_0.6.33     magrittr_2.0.3    evaluate_0.21     pkgload_1.3.2.1  
-     [9] fastmap_1.1.1     cellranger_1.1.0  rprojroot_2.0.3   jsonlite_1.8.7   
-    [13] zip_2.3.0         processx_3.8.2    pkgbuild_1.4.2    sessioninfo_1.2.2
-    [17] brio_1.1.3        urlchecker_1.0.1  ps_1.7.5          promises_1.2.1   
-    [21] purrr_1.0.2       fansi_1.0.4       cli_3.6.1         shiny_1.7.5      
-    [25] rlang_1.1.1       crayon_1.5.2      ellipsis_0.3.2    remotes_2.4.2.1  
-    [29] withr_2.5.0       cachem_1.0.8      yaml_2.3.7        devtools_2.4.5   
-    [33] tools_4.3.1       tzdb_0.4.0        memoise_2.0.1     httpuv_1.6.11    
-    [37] vctrs_0.6.3       R6_2.5.1          mime_0.12         lifecycle_1.0.3  
-    [41] stringr_1.5.0     fs_1.6.3          htmlwidgets_1.6.2 usethis_2.2.2    
-    [45] miniUI_0.1.1.1    pkgconfig_2.0.3   desc_1.4.2        callr_3.7.3      
-    [49] pillar_1.9.0      later_1.3.1       glue_1.6.2        profvis_0.3.8    
-    [53] Rcpp_1.0.11       xfun_0.40         tibble_3.2.1      rstudioapi_0.15.0
-    [57] knitr_1.43        xtable_1.8-4      htmltools_0.5.6   rmarkdown_2.24   
-    [61] readr_2.1.4       compiler_4.3.1    prettyunits_1.1.1
+     [1] utf8_1.2.3        stringi_1.7.12    hms_1.1.3         digest_0.6.33    
+     [5] magrittr_2.0.3    evaluate_0.21     pkgload_1.3.2.1   fastmap_1.1.1    
+     [9] cellranger_1.1.0  rprojroot_2.0.3   jsonlite_1.8.7    zip_2.3.0        
+    [13] processx_3.8.2    pkgbuild_1.4.2    sessioninfo_1.2.2 brio_1.1.3       
+    [17] urlchecker_1.0.1  ps_1.7.5          promises_1.2.1    purrr_1.0.2      
+    [21] fansi_1.0.4       cli_3.6.1         shiny_1.7.5       rlang_1.1.1      
+    [25] crayon_1.5.2      ellipsis_0.3.2    remotes_2.4.2.1   withr_2.5.0      
+    [29] cachem_1.0.8      yaml_2.3.7        devtools_2.4.5    tools_4.3.1      
+    [33] tzdb_0.4.0        memoise_2.0.1     httpuv_1.6.11     vctrs_0.6.3      
+    [37] R6_2.5.1          mime_0.12         lifecycle_1.0.3   stringr_1.5.0    
+    [41] fs_1.6.3          htmlwidgets_1.6.2 usethis_2.2.2     miniUI_0.1.1.1   
+    [45] pkgconfig_2.0.3   desc_1.4.2        callr_3.7.3       pillar_1.9.0     
+    [49] later_1.3.1       glue_1.6.2        profvis_0.3.8     Rcpp_1.0.11      
+    [53] xfun_0.40         tibble_3.2.1      rstudioapi_0.15.0 knitr_1.43       
+    [57] xtable_1.8-4      htmltools_0.5.6   rmarkdown_2.24    readr_2.1.4      
+    [61] compiler_4.3.1    prettyunits_1.1.1

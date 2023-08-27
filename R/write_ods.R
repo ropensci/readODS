@@ -133,8 +133,8 @@
 #' @param x data frame or list of data frames that will be sheets in the (f)ods. If the list is named, the names are used as sheet names
 #' @param path Path to the (f)ods file to write
 #' @param sheet Name of the sheet; ignore if `x` is a list of data frames
-#' @param append logical, TRUE indicates that x should be appended to the existing file (path) as a new sheet. If a sheet with the same sheet_name exists, an exception is thrown. See update. Please also note that writing is slower if TRUE. Default is FALSE. Ignore if `x` is a list of data frames
-#' @param update logical, TRUE indicates that the sheet with sheet_name in the existing file (path) should be updated with the content of x. If a sheet with sheet_name does not exist, an exception is thrown. Please also note that writing is slower if TRUE. Default is FALSE. Ignore if `x` is a list of data frames
+#' @param append logical, TRUE indicates that x should be appended to the existing file (path) as a new sheet. If a sheet with the same sheet_name exists, an exception is thrown. See update. Please also note that writing is slightly slower if TRUE. Default is FALSE. Ignore if `x` is a list of data frames
+#' @param update logical, TRUE indicates that the sheet with sheet_name in the existing file (path) should be updated with the content of x. If a sheet with sheet_name does not exist, an exception is thrown. Please also note that writing is slightly slower if TRUE. Default is FALSE. Ignore if `x` is a list of data frames
 #' @param row_names logical, TRUE indicates that row names of x are to be included in the sheet. Default is FALSE
 #' @param col_names logical, TRUE indicates that column names of x are to be included in the sheet. Default is TRUE
 #' @param na_as_string logical, TRUE indicates that NAs are written as string; FALSE indicates that NAs are written as empty cells
