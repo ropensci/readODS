@@ -18,27 +18,6 @@
     return(path)
 }
 
-.find_sheet_node_by_sheet <- function(spreadsheet_node, sheet) {
-    sheet_node <- NULL
-    for (i in seq(2, length(xml2::xml_children(spreadsheet_node)))) {
-        if (!is.na(xml2::xml_attr(xml2::xml_children(spreadsheet_node)[[i]], "name") == sheet) &&
-            xml2::xml_attr(xml2::xml_children(spreadsheet_node)[[i]], "name") == sheet) {
-            sheet_node <- xml2::xml_children(spreadsheet_node)[[i]]
-        }
-    }
-    return(sheet_node)
-}
-
-.silent_read_xml <- function(x) {
-    suppressWarnings({
-        return(xml2::read_xml(x))
-    })
-}
-
-.silent_add_sheet_node <- function(sheet) {
-    .silent_read_xml(sprintf('<table:table table:name="%s" table:style-name="ta1"><table:table-column table:style-name="co1" table:number-columns-repeated="16384" table:default-cell-style-name="ce1"/></table:table>', sheet))
-}
-
 .convert_df_to_sheet <- function(x, sheet = "Sheet1", row_names = FALSE, col_names = FALSE, na_as_string = FALSE, padding = FALSE, xml_file = file.path(tempfile(fileext = ".xml"))) {
     write_sheet_(x = x, filename = xml_file, sheet = sheet, row_names = row_names, col_names = col_names,
                  na_as_string = na_as_string, padding = padding,
@@ -77,11 +56,13 @@
     if (isFALSE(flat)) {
         zip::unzip(path, exdir = temp_ods_dir)
         contentfile <- file.path(temp_ods_dir, "content.xml")
-        sheet_exist <- sheet %in% list_ods_sheets(path, include_external_data = TRUE)
+        sheets <- list_ods_sheets(path, include_external_data = TRUE)
     } else {
         contentfile <- path
-        sheet_exist <- sheet %in% list_fods_sheets(path, include_external_data = TRUE)
+        sheets <- list_fods_sheets(path, include_external_data = TRUE)
     }
+    is_in_sheet_names <- stringi::stri_cmp(e1 = sheet, e2 = sheets) == 0
+    sheet_exist <- any(is_in_sheet_names)
     if ((sheet_exist && append && !update) || (sheet_exist && !update)) {
         ## Sheet exists so we cannot append
         stop(paste0("Sheet ", sheet, " exists. Set update to TRUE is you want to update this sheet."), call. = FALSE)
@@ -89,22 +70,14 @@
     if (!sheet_exist && update) {
         stop(paste0("Sheet ", sheet, " does not exist. Cannot update."), call. = FALSE)
     }
-    content <- xml2::read_xml(contentfile)
-    spreadsheet_node <- xml2::xml_children(xml2::xml_children(content)[[which(!is.na(xml2::xml_find_first(xml2::xml_children(content),"office:spreadsheet")))]])[[1]]
-    if (update) {
-        ## clean up the sheet
-        sheet_node <- .find_sheet_node_by_sheet(spreadsheet_node, sheet)
-        xml2::xml_remove(xml2::xml_children(sheet_node)[2:length(xml2::xml_children(sheet_node))])
-    }
-    if (append) {
-        ## Add a new sheet
-        sheet_node <- xml2::xml_add_child(spreadsheet_node, .silent_add_sheet_node(sheet))
-    }
+    ## numeric
+    normalized_sheet <- which(is_in_sheet_names)
     throwaway_xml_file <- .convert_df_to_sheet(x = x, sheet = sheet, row_names = row_names, col_names = col_names,
                                                na_as_string = na_as_string, padding = padding)
-    xml2::xml_replace(sheet_node, .silent_read_xml(throwaway_xml_file))
-    ## write xml to contentfile
-    xml2::write_xml(content, contentfile)
+    if (append) {
+        return(splice_sheet_(contentfile, throwaway_xml_file, flat))
+    }
+    return(update_sheet_(contentfile, throwaway_xml_file, flat, normalized_sheet))
 }
 
 .write_ods <- function(x, path = tempfile(fileext = ".ods"), sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, na_as_string = FALSE, padding = FALSE, flat = FALSE) {
@@ -116,7 +89,7 @@
     }
     temp_ods_dir <- NULL
     if (isFALSE(flat)) {
-        temp_ods_dir <- file.path(tempdir(), stringi::stri_rand_strings(1, 20, pattern = "[A-Za-z0-9]"))
+        temp_ods_dir <- file.path(tempdir(), stringi::stri_rand_strings(1, 30, pattern = "[A-Za-z0-9]"))
         dir.create(temp_ods_dir)
         on.exit(unlink(temp_ods_dir))
     }
@@ -160,8 +133,8 @@
 #' @param x data frame or list of data frames that will be sheets in the (f)ods. If the list is named, the names are used as sheet names
 #' @param path Path to the (f)ods file to write
 #' @param sheet Name of the sheet; ignore if `x` is a list of data frames
-#' @param append logical, TRUE indicates that x should be appended to the existing file (path) as a new sheet. If a sheet with the same sheet_name exists, an exception is thrown. See update. Please also note that writing is slower if TRUE. Default is FALSE. Ignore if `x` is a list of data frames
-#' @param update logical, TRUE indicates that the sheet with sheet_name in the existing file (path) should be updated with the content of x. If a sheet with sheet_name does not exist, an exception is thrown. Please also note that writing is slower if TRUE. Default is FALSE. Ignore if `x` is a list of data frames
+#' @param append logical, TRUE indicates that x should be appended to the existing file (path) as a new sheet. If a sheet with the same sheet_name exists, an exception is thrown. See update. Please also note that writing is slightly slower if TRUE. Default is FALSE. Ignore if `x` is a list of data frames
+#' @param update logical, TRUE indicates that the sheet with sheet_name in the existing file (path) should be updated with the content of x. If a sheet with sheet_name does not exist, an exception is thrown. Please also note that writing is slightly slower if TRUE. Default is FALSE. Ignore if `x` is a list of data frames
 #' @param row_names logical, TRUE indicates that row names of x are to be included in the sheet. Default is FALSE
 #' @param col_names logical, TRUE indicates that column names of x are to be included in the sheet. Default is TRUE
 #' @param na_as_string logical, TRUE indicates that NAs are written as string; FALSE indicates that NAs are written as empty cells

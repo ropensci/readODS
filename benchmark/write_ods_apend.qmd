@@ -20,6 +20,7 @@ path <- tempfile(fileext = ".ods")
 write_ods(df1, path = path)
 system.time(write_ods(df1, path = path, sheet = "aaaa", append = TRUE))
 system.time(write_ods(df1, path = path, sheet = "aaaa", update = TRUE))
+system.time(write_ods(mtcars, path = path, sheet = "aaaa", update = TRUE))
 ```
 
 ```{r}
