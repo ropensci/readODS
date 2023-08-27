@@ -2,7 +2,7 @@
 
 ## `append` and `update` of `write_ods` in C++
 
-Significant speed improvement
+Significant speed improvement; also `xml2` is no longer a dependency.
 
 # readODS 2.06
 
