@@ -77,12 +77,8 @@ bool is_flat_ods(const std::string file){
             throw std::invalid_argument("XML parse error");
         }
     }
-
-    rootNode = workbook.first_node("office:document");
     // Section 2.2.1C)
-    // while(rootNode != 0 && strcmp(rootNode->name(), "office:document") != 0){
-    //     rootNode->next_sibling();
-    // }
+    rootNode = workbook.first_node("office:document");
     if (rootNode == 0){
         return false;
     }
