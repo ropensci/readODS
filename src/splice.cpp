@@ -1,7 +1,4 @@
-#include "is_ods.h"
-#include "read_ods_internals.h"
-#include "write_sheet_.h"
-#include "rapidxml/rapidxml_utils.hpp"
+#include "splice.h"
 
 [[cpp11::register]]
 std::string splice_sheet(const std::string original_xml, const std::string sheet_xml, const bool flat) {

@@ -3,8 +3,7 @@
 #include "cpp11.hpp"
 #include "cpp11/r_string.hpp"
 
-// #include "rapidxml/rapidxml.hpp"
-#include "rapidxml/rapidxml_ext.hpp"
+#include "rapidxml/rapidxml.hpp"
 
 #include <vector>
 #include <string>
