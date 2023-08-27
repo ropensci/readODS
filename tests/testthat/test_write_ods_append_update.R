@@ -4,6 +4,25 @@ test_that("defensive", {
     expect_error(write_ods(mtcars, "../testdata/this_surely_doesnt_exists.ods", sheet = "whatever", update = TRUE))
     expect_error(write_fods(mtcars, "../testdata/this_surely_doesnt_exists.fods", sheet = "whatever", append = TRUE))
     expect_error(write_fods(mtcars, "../testdata/this_surely_doesnt_exists.fods", sheet = "whatever", update = TRUE))
+    ## non df
+    ods_path <- write_ods(mtcars, sheet = "whatever")
+    fods_path <- write_fods(mtcars, sheet = "whatever")
+
+    expect_error(write_ods(NA, ods_path, sheet = "whatever", update = TRUE))
+    expect_error(write_fods(NA, fods_path, sheet = "whatever", update = TRUE))
+    expect_error(write_ods(NULL, ods_path, sheet = "whatever", update = TRUE))
+    expect_error(write_fods(NULL, fods_path, sheet = "whatever", update = TRUE))
+    expect_error(write_ods(c(123), ods_path, sheet = "whatever", update = TRUE))
+    expect_error(write_fods(c(22323), fods_path, sheet = "whatever", update = TRUE))
+    expect_error(write_fods(list(c(22323)), fods_path, sheet = "whatever", update = TRUE))
+    expect_error(write_ods(NA, ods_path, sheet = "whatever1", append = TRUE))
+    expect_error(write_fods(NA, fods_path, sheet = "whatever1", append = TRUE))
+    expect_error(write_ods(NULL, ods_path, sheet = "whatever1", append = TRUE))
+    expect_error(write_fods(NULL, fods_path, sheet = "whatever1", append = TRUE))
+    expect_error(write_ods(c(123), ods_path, sheet = "whatever1", append = TRUE))
+    expect_error(write_fods(c(22323), fods_path, sheet = "whatever1", append = TRUE))
+    expect_error(write_fods(list(c(22323)), fods_path, sheet = "whatever1", append = TRUE))
+
 })
 
 .test_funcs <- function(funcs) {
@@ -70,4 +89,36 @@ test_that("issue 107", {
     expect_error(write_ods(legend, path = temp, sheet = "Legend"), NA)
     expect_error(write_ods(legend, path = temp, sheet = "Legend", update = TRUE), NA)
     expect_error(write_ods(legend, path = temp, sheet = "Legend2", append = TRUE), NA)
+})
+
+test_empty_edge <- function(.write_func, .list_func, .read_func) {
+    x <- .write_func(mtcars, sheet = "not_empty")
+    .write_func(tibble::tibble(), path = x, sheet = "empty", append = TRUE)
+    expect_equal(.list_func(x), c("not_empty", "empty"))
+    expect_true(nrow(.read_func(x, "not_empty")) > 0)
+    expect_true(nrow(suppressWarnings(.read_func(x, "empty"))) == 0)
+    ## reverse
+    x <- .write_func(tibble::tibble(), sheet = "empty")
+    .write_func(mtcars, path = x, sheet = "not_empty", append = TRUE)
+    expect_equal(.list_func(x), c("empty", "not_empty"))
+    expect_true(nrow(.read_func(x, "not_empty")) > 0)
+    expect_true(nrow(suppressWarnings(.read_func(x, "empty"))) == 0)
+    ## update
+    x <- .write_func(mtcars, sheet = "x1")
+    expect_error(.write_func(tibble::tibble(), path = x, sheet = "x1", update = TRUE), NA)
+    expect_true(nrow(suppressWarnings(.read_func(x, "x1"))) == 0)
+    x <- .write_func(tibble::tibble(), sheet = "x1")
+    expect_error(.write_func(mtcars, path = x, sheet = "x1", update = TRUE), NA)
+    expect_true(nrow(.read_func(x, "x1")) != 0)
+
+}
+
+test_that("edge cases", {
+    test_empty_edge(write_ods, list_ods_sheets, read_ods)
+    test_empty_edge(write_fods, list_fods_sheets, read_fods)
+    ## #163
+    rubbish_file <- tempfile(fileext = ".fods")
+    writeLines("<ul><li>hello</li></ul>", rubbish_file)
+    expect_error(write_fods(mtcars, rubbish_file, sheet = "whatever", append = TRUE))
+    expect_error(write_fods(mtcars, rubbish_file, sheet = "whatever", update = TRUE))
 })
