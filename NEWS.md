@@ -11,6 +11,7 @@ write_ods(list("some_car_data" = mtcars, "some_flower_data" = iris))
 ## bug fixes
 
 * Fix #157 `list_fods_sheets()` and `read_fods()` cannot accept `~` as path
+* Fix #163 `list_fods_sheets()` can't guard non-fods XML disguised as fods
 
 # readODS 2.05
 

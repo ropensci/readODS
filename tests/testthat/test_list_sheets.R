@@ -28,3 +28,9 @@ test_that("fix #157", {
                  c("Sheet1", "Sheet2"))
     on.exit(unlink("~/flat_you_must_not_use_this_path.fods"))
 })
+
+test_that("fix #163", {
+    rubbish_file <- tempfile(fileext = ".fods")
+    writeLines("<ul><li>hello</li></ul>", rubbish_file)
+    expect_error(list_fods_sheets(rubbish_file)) ## won't stat in infinite loop
+})
