@@ -9,12 +9,9 @@
     if (flat) {
         return(path) ## do nothing
     }
-    wd <- getwd()
-    on.exit(setwd(wd), add = TRUE)
-    setwd(temp_ods_dir)
-    zip::zip(basename(path), include_directories = FALSE, recurse = TRUE, files = dir(), mode = "cherry-pick")
-    setwd(wd)
-    file.copy(file.path(temp_ods_dir, basename(path)), path, overwrite = overwrite)
+    zip::zip(path, include_directories = FALSE, recurse = TRUE,
+             files = list.files(temp_ods_dir), mode = "cherry-pick",
+             root = temp_ods_dir)
     return(path)
 }
 
