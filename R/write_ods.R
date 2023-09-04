@@ -5,13 +5,15 @@
 ## .FODS_FOOTER <- paste(readLines("benchmark/fods_footer.xml"), collapse = "\n")
 ## usethis::use_data(.CONTENT, .FOOTER, .FODS_HEADER, .FODS_FOOTER, internal = TRUE, overwrite = TRUE)
 
-.zip_tmp_to_path <- function(temp_ods_dir, path, overwrite = TRUE, flat = FALSE) {
+.zip_tmp_to_path <- function(temp_ods_dir, path, flat = FALSE) {
     if (flat) {
         return(path) ## do nothing
     }
-    zip::zip(path, include_directories = FALSE, recurse = TRUE,
+    temp_ods <- file.path(temp_ods_dir, basename(path))
+    zip::zip(zipfile = temp_ods, include_directories = FALSE, recurse = TRUE,
              files = list.files(temp_ods_dir), mode = "cherry-pick",
              root = temp_ods_dir)
+    file.copy(temp_ods, path, overwrite = TRUE)
     return(path)
 }
 
