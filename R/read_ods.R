@@ -1,12 +1,19 @@
+.return_zerorow <- function(x, row_header, .name_repair) {
+    jcol <- ifelse(row_header, 2, 1)
+    col_n <- vctrs::vec_as_names(as.character(x[1,jcol:ncol(x)]), repair = .name_repair)
+    g <- data.frame(matrix(data = NA_character_, ncol = length(col_n), nrow = 0))
+    colnames(g) <- col_n
+    return(g)
+}
+
 .change_df_with_col_row_header <- function(x, col_header, row_header, .name_repair) {
-    if((nrow(x) < 2 && col_header )|| (ncol(x) < 2 && row_header)) {
-        warning("Cannot make column/row names if this would cause the dataframe to be empty.", call. = FALSE)
-        return(x)
+    if (nrow(x) == 1 && col_header) {
+        return(.return_zerorow(x, row_header, .name_repair))
     }
     irow <- ifelse(col_header, 2, 1)
     jcol <- ifelse(row_header, 2, 1)
 
-    g <- x[irow:nrow(x), jcol:ncol(x), drop=FALSE] # maintain as dataframe for single column
+    g <- x[irow:nrow(x), jcol:ncol(x), drop = FALSE] # maintain as dataframe for single column
 
 
     rownames(g) <- if(row_header) x[seq(irow, nrow(x)), 1] else NULL # don't want character row headers given by 1:nrow(g)
@@ -18,6 +25,8 @@
     colnames(g) <- vctrs::vec_as_names(unlist(col_n), repair = .name_repair)
     return(g)
 }
+
+
 
 ## Based on readxl, although the implementation is different.
 ## If max row is -1, read to end of row.
@@ -201,7 +210,7 @@
                               stop_col = limits["max_col"],
                               sheet = sheet,
                               formula_as_formula = formula_as_formula)
-    if (strings[1] == 0 || strings[2] == 0) {
+    if ((strings[1] == 0 || strings[2] == 0) || (strings[1] == 1 && row_names)) {
         return(.return_empty(as_tibble = as_tibble))
     }
     res <- as.data.frame(
