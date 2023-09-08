@@ -7,8 +7,14 @@
 }
 
 .change_df_with_col_row_header <- function(x, col_header, row_header, .name_repair) {
-    if (nrow(x) == 1 && col_header) {
+    if (nrow(x) == 1 && col_header && isFALSE(getOption("readODS.v200", FALSE))) {
         return(.return_zerorow(x, row_header, .name_repair))
+    }
+    if (((nrow(x) < 2 && col_header ) || (ncol(x) < 2 && row_header)) &&
+        isTRUE(getOption("readODS.v200", FALSE))) {
+        ## 2.0.0 behavior
+        warning("Cannot make column/row names if this would cause the dataframe to be empty.", call. = FALSE)
+        return(x)
     }
     irow <- ifelse(col_header, 2, 1)
     jcol <- ifelse(row_header, 2, 1)
@@ -115,8 +121,10 @@
 }
 
 .return_empty <- function(as_tibble = FALSE) {
-    warning("empty sheet, return empty data frame.", call. = FALSE)
-    if(as_tibble) {
+    if (getOption("readODS.v200", FALSE)) {
+        warning("empty sheet, return empty data frame.", call. = FALSE)
+    }
+    if (as_tibble) {
         return(tibble::tibble())
     }
     return(data.frame())
@@ -210,7 +218,13 @@
                               stop_col = limits["max_col"],
                               sheet = sheet,
                               formula_as_formula = formula_as_formula)
-    if ((strings[1] == 0 || strings[2] == 0) || (strings[1] == 1 && row_names)) {
+
+    if (((strings[1] == 0 || strings[2] == 0)) &&
+        isTRUE(getOption("readODS.v200", FALSE))) {
+        return(.return_empty(as_tibble = as_tibble))
+    }
+    if (((strings[1] == 0 || strings[2] == 0) || (strings[1] == 1 && row_names)) &&
+        isFALSE(getOption("readODS.v200", FALSE))) {
         return(.return_empty(as_tibble = as_tibble))
     }
     res <- as.data.frame(

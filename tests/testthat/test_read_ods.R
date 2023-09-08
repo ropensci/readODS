@@ -10,19 +10,6 @@ test_that("Incorrect Argument", {
     expect_error(read_ods(path = "../testdata/sum.ods", row_names = TRUE), "Tibbles do not support")
 })
 
-test_that("Single column ODS", {
-    single_col <- read_ods('../testdata/sum.ods', sheet = 1)
-    expect_equal(ncol(single_col),1)
-    expect_equal(colnames(single_col), c("X1"))
-    ##expect_warning(read_ods('../testdata/sum.ods', sheet = 1, row_names = TRUE, as_tibble = FALSE), "Cannot make")
-})
-
-test_that("Single row ODS", {
-    ##expect_warning(single_row <- read_ods('../testdata/onerow.ods', sheet = 1), "Cannot make")
-    ##expect_equal(nrow(single_row), 1)
-    ##expect_equal(single_row[[1,1]], 1)
-})
-
 test_that("Single column range", {
       expect_error(read_ods("../testdata/starwars.ods", range="A1:A5"), NA)
 })
@@ -51,15 +38,6 @@ test_that("eating space issue #74", {
     expect_equal(df[[1,1]], "A     B\nC")
 })
 
-test_that("skip", {
-    expect_silent(x <- read_ods("../testdata/starwars.ods", skip = 0))
-    expect_equal(nrow(x), 10)
-    expect_message(x <- read_ods("../testdata/starwars.ods", skip = 1, col_names = FALSE))
-    expect_equal(nrow(x), 10)
-    expect_warning(x <- read_ods("../testdata/starwars.ods", skip = 11), "empty sheet")
-    expect_equal(nrow(x), 0)
-})
-
 test_that("Check .name_repair works properly", {
     expect_silent(x <- read_ods("../testdata/test_naming.ods", .name_repair = "minimal"))
     expect_equal(colnames(x), c("a", "a.1", "Var.3"))
@@ -84,11 +62,6 @@ test_that("Deals with repeated spaces correctly when fetching only part of sheet
     expect_equal(read_ods("../testdata/excel_repeat.ods", range = "A9:B18", col_names = FALSE)[[5,1]], "C")
 })
 
-test_that("Warns of empty sheet", {
-    expect_warning(read_ods("../testdata/empty.ods"))
-    expect_warning(read_fods("../testdata/empty.fods"))
-})
-
 test_that("read with column headers", {
     expect_silent(x <- read_ods("../testdata/starwars.ods", col_names = TRUE))
     expect_equal(ncol(x), 3)
@@ -97,3 +70,64 @@ test_that("read with column headers", {
     expect_equal(ncol(x), 2)
     expect_equal(colnames(x), c("homeworld", "species"))
 })
+
+## default single behavior
+test_that("Single column ODS", {
+    single_col <- read_ods('../testdata/sum.ods', sheet = 1)
+    expect_equal(ncol(single_col),1)
+    expect_equal(colnames(single_col), c("X1"))
+    expect_equal(nrow(read_ods('../testdata/sum.ods', sheet = 1, row_names = TRUE, as_tibble = FALSE)), 0)
+})
+
+test_that("Single row ODS", {
+    expect_silent(single_row <- read_ods('../testdata/onerow.ods', sheet = 1))
+    expect_equal(nrow(single_row), 0)
+})
+
+test_that("skip", {
+    expect_silent(x <- read_ods("../testdata/starwars.ods", skip = 0))
+    expect_equal(nrow(x), 10)
+    expect_message(x <- read_ods("../testdata/starwars.ods", skip = 1, col_names = FALSE))
+    expect_equal(nrow(x), 10)
+    expect_silent(x <- read_ods("../testdata/starwars.ods", skip = 11))
+    expect_equal(nrow(x), 0)
+})
+
+test_that("No Warning of empty sheet", {
+    expect_silent(read_ods("../testdata/empty.ods"))
+    expect_silent(read_fods("../testdata/empty.fods"))
+})
+
+## V2.0.0 behavior: backward compatibility
+
+ori_option <- getOption("readODS.v200") ## probably NULL
+options("readODS.v200" = TRUE)
+
+test_that("Single column ODS v2.0.0", {
+    single_col <- read_ods('../testdata/sum.ods', sheet = 1)
+    expect_equal(ncol(single_col),1)
+    expect_equal(colnames(single_col), c("X1"))
+    expect_warning(read_ods('../testdata/sum.ods', sheet = 1, row_names = TRUE, as_tibble = FALSE), "Cannot make")
+})
+
+test_that("Single row ODS v2.0.0", {
+    expect_warning(single_row <- read_ods('../testdata/onerow.ods', sheet = 1), "Cannot make")
+    expect_equal(nrow(single_row), 1)
+    expect_equal(single_row[[1,1]], 1)
+})
+
+test_that("skip v2.0.0", {
+    expect_silent(x <- read_ods("../testdata/starwars.ods", skip = 0))
+    expect_equal(nrow(x), 10)
+    expect_message(x <- read_ods("../testdata/starwars.ods", skip = 1, col_names = FALSE))
+    expect_equal(nrow(x), 10)
+    expect_warning(x <- read_ods("../testdata/starwars.ods", skip = 11), "empty sheet")
+    expect_equal(nrow(x), 0)
+})
+
+test_that("Warns of empty sheet", {
+    expect_warning(read_ods("../testdata/empty.ods"))
+    expect_warning(read_fods("../testdata/empty.fods"))
+})
+
+options("readODS.v200" = ori_option)
