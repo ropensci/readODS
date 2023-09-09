@@ -142,7 +142,7 @@
 }
 
 .handle_col_types <- function(res, col_types, verbose, na) {
-    if (isTRUE(is.na(col_types))) {
+    if (isTRUE(is.na(col_types)) || nrow(res) == 0) {
         return(res)
     }
     .type_convert(df = res, col_types = col_types, verbose = verbose, na = na)
