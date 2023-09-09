@@ -10,11 +10,6 @@ test_that("Error when not correct", {
   expect_error(read_fods("../testdata/notreal.ods"))
 })
 
-test_that("Return blank/error if mangled FODS", {
-  expect_warning(read_fods("../testdata/norows.fods"))
-  expect_warning(read_fods("../testdata/nocells.fods"))
-})
-
 test_that("fix #157", {
     skip_if(file.access("~/", 2) != 0)
     file.copy("../testdata/flat.fods", "~/flat_you_must_not_use_this_path.fods")
@@ -22,3 +17,22 @@ test_that("fix #157", {
     expect_error(read_fods("~/flat_you_must_not_use_this_path_not.fods"))
     on.exit(unlink("~/flat_you_must_not_use_this_path.fods"))
 })
+
+## default
+
+test_that("Return blank/error if mangled FODS", {
+    expect_silent(read_fods("../testdata/norows.fods"))
+    expect_silent(read_fods("../testdata/nocells.fods"))
+})
+
+## V2.0.0 behavior: backward compatibility
+
+ori_option <- getOption("readODS.v200") ## probably NULL
+options("readODS.v200" = TRUE)
+
+test_that("Return blank/error if mangled FODS v2.0.0", {
+    expect_warning(read_fods("../testdata/norows.fods"))
+    expect_warning(read_fods("../testdata/nocells.fods"))
+})
+
+options("readODS.v200" = ori_option)
