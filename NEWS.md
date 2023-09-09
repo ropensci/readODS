@@ -4,6 +4,26 @@
 
 Significant speed improvement; also `xml2` is no longer a dependency.
 
+## POTENTIALLY BREAKING: reading single-row / single-column (F)ODS and `col_names` / `row_names` 
+
+Prior the previous stable release, <= 1.9.0, reading single-row / single-column with `col_names = TRUE` / `row_names = TRUE` produced errors.
+
+In v1.9.0 (and the stable version v2.0.0 on CRAN), reading single-row / single-column (F)ODS with `col_names = TRUE` / `row_names = TRUE` will
+override the two parameters and return a non-empty data frame. This behavior is consistent with other data reading R functions (see #146) such as `readxl::read_xlsx()`, `readr::read_csv()`, `data.table::fread()`, and `openxlsx::read.xlsx()`. For these functions, either a empty or zero-row data.frame is returned.
+
+We changed this behavior. The following will return a zero-row data.frame by default.
+
+```r
+read_ods(write_ods(mtcars[0,])) ## col_names is TRUE by default
+```
+
+However, the previous behavior is in the stable release and backward compatibility is needed. If you need that previous behavior, please set the `options("readODS.v200" = TRUE)`
+
+```r
+options("readODS.v200" = TRUE)
+read_ods(write_ods(mtcars[0,])) ## col_names is TRUE by default
+```
+
 # readODS 2.06
 
 ## `write_ods` and `write_fods` allow list of data frames
