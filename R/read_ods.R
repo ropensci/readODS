@@ -148,7 +148,7 @@
     .type_convert(df = res, col_types = col_types, verbose = verbose, na = na)
 }
 
-## standardise `sheet` parameter as a number
+## standardise `sheet` parameter as a number, i.e. sheet_index
 .standardise_sheet <- function(sheet, sheets, limits, range) {
     sheet_from_range <- cellranger::as.cell_limits(range)[["sheet"]]
     if (!is.null(range) && !is.na(sheet_from_range)) {
@@ -168,9 +168,11 @@
                     call. = FALSE))
     }
     if (!is.numeric(sheet)) {
-        sheet <- which(is_in_sheet_names)
+        sheet_index <- which(is_in_sheet_names)
+    } else {
+        sheet_index <- sheet
     }
-    return(sheet)
+    return(sheet_index)
 }
 
 .read_ods <- function(path,
@@ -209,14 +211,14 @@
     }
     ## Get cell range info
     limits <- .standardise_limits(range, skip)
-    sheet <- .standardise_sheet(sheet = sheet, sheets = .get_sheet_names_func(file = path, include_external_data = TRUE),
-                                limits = limits, range = range)
+    sheet_index <- .standardise_sheet(sheet = sheet, sheets = .get_sheet_names_func(file = path, include_external_data = TRUE),
+                                      limits = limits, range = range)
     strings <- .read_ods_func(file = path,
                               start_row = limits["min_row"],
                               stop_row = limits["max_row"],
                               start_col = limits["min_col"],
                               stop_col = limits["max_col"],
-                              sheet = sheet,
+                              sheet_index = sheet_index,
                               formula_as_formula = formula_as_formula)
 
     if (((strings[1] == 0 || strings[2] == 0)) &&
