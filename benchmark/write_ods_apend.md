@@ -4,7 +4,7 @@
 date()
 ```
 
-    [1] "Sun Aug 27 17:00:14 2023"
+    [1] "Sun Sep 10 16:20:22 2023"
 
 ``` r
 devtools::load_all()
@@ -29,21 +29,21 @@ system.time(write_ods(df1, path = path, sheet = "aaaa", append = TRUE))
 ```
 
        user  system elapsed 
-      0.259   0.020   0.279 
+      0.250   0.028   0.285 
 
 ``` r
 system.time(write_ods(df1, path = path, sheet = "aaaa", update = TRUE))
 ```
 
        user  system elapsed 
-      0.315   0.040   0.359 
+      0.325   0.032   0.358 
 
 ``` r
 system.time(write_ods(mtcars, path = path, sheet = "aaaa", update = TRUE))
 ```
 
        user  system elapsed 
-      0.213   0.027   0.241 
+      0.214   0.028   0.242 
 
 ``` r
 sessionInfo()
@@ -72,7 +72,7 @@ sessionInfo()
     [1] stats     graphics  grDevices utils     datasets  methods   base     
 
     other attached packages:
-    [1] readODS_2.0.7   testthat_3.1.10
+    [1] readODS_2.1.0   testthat_3.1.10
 
     loaded via a namespace (and not attached):
      [1] utf8_1.2.3        stringi_1.7.12    hms_1.1.3         digest_0.6.33    

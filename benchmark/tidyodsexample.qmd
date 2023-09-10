@@ -1,0 +1,22 @@
+---
+title: Benchmarks used in the README of tidyods
+format: gfm
+---
+
+
+```{r basicexample}
+date()
+devtools::load_all()
+file <- here::here("benchmark/basic_example.ods")
+## it was 50.4ms
+bench::mark("readODS" = read_ods(file, sheet = 2), check = FALSE, filter_gc = FALSE, iterations = 20) |>
+    dplyr::transmute(expression, min, median, mean = total_time/n_itr, n_itr)
+```
+
+```{r realworld}
+postcodes_file <- here::here("benchmark/civil-service-postcodes-2021.ods")
+## it was 13.7s
+bench::mark("readODS" = readODS::read_ods(postcodes_file, 2), check = FALSE, filter_gc = FALSE, iterations = 5) |>
+    dplyr::transmute(expression, min, median, mean = total_time/n_itr, n_itr)
+```
+
