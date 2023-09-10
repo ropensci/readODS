@@ -17,8 +17,8 @@
     return(path)
 }
 
-.convert_df_to_sheet <- function(x, sheet = "Sheet1", row_names = FALSE, col_names = FALSE, na_as_string = FALSE, padding = FALSE, xml_file = file.path(tempfile(fileext = ".xml"))) {
-    write_sheet_(x = x, filename = xml_file, sheet = sheet, row_names = row_names, col_names = col_names,
+.convert_df_to_sheet_file <- function(x, sheet_name = "Sheet1", row_names = FALSE, col_names = FALSE, na_as_string = FALSE, padding = FALSE, xml_file = file.path(tempfile(fileext = ".xml"))) {
+    write_sheet_file_(x = x, filename = xml_file, sheet_name = sheet_name, row_names = row_names, col_names = col_names,
                  na_as_string = na_as_string, padding = padding,
                  header = "",
                  footer = "")
@@ -49,37 +49,39 @@
 }
 
 .update_ods <- function(x, path = tempfile(fileext = ".ods"), sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, na_as_string = FALSE, padding = FALSE, flat = FALSE, temp_ods_dir = NULL) {
+    sheet_name <- sheet
     if (!file.exists(path)) {
         stop("File does not exist: ", path, call. = FALSE)
     }
     if (isFALSE(flat)) {
         zip::unzip(path, exdir = temp_ods_dir)
         contentfile <- file.path(temp_ods_dir, "content.xml")
-        sheets <- list_ods_sheets(path, include_external_data = TRUE)
+        sheet_names <- list_ods_sheets(path, include_external_data = TRUE)
     } else {
         contentfile <- path
-        sheets <- list_fods_sheets(path, include_external_data = TRUE)
+        sheet_names <- list_fods_sheets(path, include_external_data = TRUE)
     }
-    is_in_sheet_names <- stringi::stri_cmp(e1 = sheet, e2 = sheets) == 0
+    is_in_sheet_names <- stringi::stri_cmp(e1 = sheet_name, e2 = sheet_names) == 0
     sheet_exist <- any(is_in_sheet_names)
     if ((sheet_exist && append && !update) || (sheet_exist && !update)) {
         ## Sheet exists so we cannot append
-        stop(paste0("Sheet ", sheet, " exists. Set update to TRUE is you want to update this sheet."), call. = FALSE)
+        stop(paste0("Sheet ", sheet_name, " exists. Set update to TRUE is you want to update this sheet."), call. = FALSE)
     }
     if (!sheet_exist && update) {
-        stop(paste0("Sheet ", sheet, " does not exist. Cannot update."), call. = FALSE)
+        stop(paste0("Sheet ", sheet_name, " does not exist. Cannot update."), call. = FALSE)
     }
     ## numeric
-    normalized_sheet <- which(is_in_sheet_names)
-    throwaway_xml_file <- .convert_df_to_sheet(x = x, sheet = sheet, row_names = row_names, col_names = col_names,
-                                               na_as_string = na_as_string, padding = padding)
+    sheet_index <- which(is_in_sheet_names)
+    throwaway_xml_file <- .convert_df_to_sheet_file(x = x, sheet_name = sheet_name, row_names = row_names, col_names = col_names,
+                                                    na_as_string = na_as_string, padding = padding)
     if (append) {
         return(splice_sheet_(contentfile, throwaway_xml_file, flat))
     }
-    return(update_sheet_(contentfile, throwaway_xml_file, flat, normalized_sheet))
+    return(update_sheet_(contentfile, throwaway_xml_file, flat, sheet_index))
 }
 
 .write_ods <- function(x, path = tempfile(fileext = ".ods"), sheet = "Sheet1", append = FALSE, update = FALSE, row_names = FALSE, col_names = TRUE, na_as_string = FALSE, padding = FALSE, flat = FALSE) {
+    sheet_name <- sheet
     if (isFALSE(inherits(x, "data.frame")) && !is.list(x)) {
         stop("x must be data.frame or list.", call. = FALSE)
     }
@@ -100,14 +102,14 @@
     }
     if (isTRUE(inherits(x, "data.frame"))) {
         x <- .preprocess_x(x)
-        .write_fun <- write_sheet_
+        .write_fun <- write_sheet_file_
     } else {
         ## it's a list (at least we assume)
         x <- lapply(x, .preprocess_x)
         if (is.null(names(x))) {
             names(x) <- paste0("Sheet", seq_along(x))
         }
-        .write_fun <- write_sheet_list_
+        .write_fun <- write_sheet_file_list_
     }
     path <- .preprocess_path(path)
     if (isFALSE(flat)) {
@@ -121,7 +123,7 @@
         header <- .FODS_HEADER
         footer <- .FODS_FOOTER
     }
-    .write_fun(filename = filename, x = x, sheet = sheet, row_names = row_names, col_names = col_names, na_as_string = na_as_string, padding = padding, header = header, footer = footer)
+    .write_fun(filename = filename, x = x, sheet_name = sheet_name, row_names = row_names, col_names = col_names, na_as_string = na_as_string, padding = padding, header = header, footer = footer)
     return(invisible(.zip_tmp_to_path(temp_ods_dir, path, flat = flat)))
 }
 

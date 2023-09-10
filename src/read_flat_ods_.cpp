@@ -3,16 +3,13 @@
 
 [[cpp11::register]]
 cpp11::strings read_flat_ods_(const std::string file,
-    int start_row,
-    int stop_row,
-    int start_col,
-    int stop_col,
- const int sheet,
-    const bool formula_as_formula) {
+                              int start_row, int stop_row, int start_col, int stop_col,
+                              const int sheet_index,
+                              const bool formula_as_formula) {
     if(!is_flat_ods(file)){
         throw std::invalid_argument(file + " is not a correct FODS file");
     }
-    if(sheet < 1){
+    if(sheet_index < 1){
         throw std::invalid_argument("Cannot have sheet index less than 1");
     }
 
@@ -39,7 +36,7 @@ cpp11::strings read_flat_ods_(const std::string file,
     rootNode = spreadsheet.first_node("office:document")->first_node("office:body")->
         first_node("office:spreadsheet")->first_node("table:table");
 
-    for (int i = 1; i < sheet; i++){
+    for (int i = 1; i < sheet_index; i++){
         rootNode = rootNode->next_sibling("table:table");
     }
 

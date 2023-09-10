@@ -18,7 +18,7 @@ ods_sheets(path)
 \item{include_external_data}{A boolean value to show or hide sheets containing archived linked data (default false)}
 }
 \value{
-For \verb{list_(f)ods_sheets}, a character vector of sheet names; for \verb{get_num_sheets_in_(f)ods}, the total number of sheets
+A character vector of sheet names
 }
 \description{
 \verb{list_(f)ods_sheets} lists all sheets in an (f)ods file.

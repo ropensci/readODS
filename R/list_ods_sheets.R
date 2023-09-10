@@ -4,7 +4,7 @@
 #'
 #' @param path Path to the (f)ods file
 #' @param include_external_data A boolean value to show or hide sheets containing archived linked data (default false)
-#' @return For `list_(f)ods_sheets`, a character vector of sheet names; for `get_num_sheets_in_(f)ods`, the total number of sheets
+#' @return A character vector of sheet names
 #' @details The default "include_external_data" for `ods_sheets` is TRUE to maintain compatibility with version 1 of readODS. It will change to `TRUE` in version 3.
 #' @author Peter Brohan <peter.brohan+cran@@gmail.com>, Chung-hong Chan <chainsawtiney@@gmail.com>, Gerrit-Jan Schutten <phonixor@@gmail.com>
 #' @examples
