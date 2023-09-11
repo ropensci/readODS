@@ -236,7 +236,7 @@
             byrow = TRUE),
         stringsAsFactors = FALSE)
     res <- .change_df_with_col_row_header(x = res, col_header = col_names, row_header = row_names, .name_repair = .name_repair)
-    res <- .handle_col_types(data.frame(res), col_types = col_types, verbose = verbose, na = na)
+    res <- .handle_col_types(res, col_types = col_types, verbose = verbose, na = na)
     if (strings_as_factors) {
         res <- .convert_strings_to_factors(df = res)
     }

@@ -1,3 +1,7 @@
+## Bug fixes
+
+* Fix #170 - .name_repair is correctly passed.
+
 # readODS 2.1.0
 
 ## CRAN version

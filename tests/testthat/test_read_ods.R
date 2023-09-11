@@ -40,7 +40,7 @@ test_that("eating space issue #74", {
 
 test_that("Check .name_repair works properly", {
     expect_silent(x <- read_ods("../testdata/test_naming.ods", .name_repair = "minimal"))
-    expect_equal(colnames(x), c("a", "a.1", "Var.3"))
+    expect_equal(colnames(x), c("a", "a", ""))
     expect_error(x <- read_ods("../testdata/test_naming.ods", .name_repair = "check_unique"))
     expect_message(x <- read_ods("../testdata/test_naming.ods", .name_repair = "unique"))
     expect_equal(colnames(x), c("a...1", "a...2", "...3"))
@@ -75,7 +75,7 @@ test_that("read with column headers", {
 test_that("Single column ODS", {
     single_col <- read_ods('../testdata/sum.ods', sheet = 1)
     expect_equal(ncol(single_col),1)
-    expect_equal(colnames(single_col), c("X1"))
+    expect_equal(colnames(single_col), c("1"))
     expect_equal(nrow(read_ods('../testdata/sum.ods', sheet = 1, row_names = TRUE, as_tibble = FALSE)), 0)
 })
 
@@ -106,7 +106,7 @@ options("readODS.v200" = TRUE)
 test_that("Single column ODS v2.0.0", {
     single_col <- read_ods('../testdata/sum.ods', sheet = 1)
     expect_equal(ncol(single_col),1)
-    expect_equal(colnames(single_col), c("X1"))
+    expect_equal(colnames(single_col), c("1"))
     expect_warning(read_ods('../testdata/sum.ods', sheet = 1, row_names = TRUE, as_tibble = FALSE), "Cannot make")
 })
 

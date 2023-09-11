@@ -11,6 +11,7 @@ test_that("Cell ranger related problem #57", {
     expect_equal(nrow(ods_a1_noheader_3r), 3)
     expect_equal(ods_3r[[3,1]], 3)
     expect_equal(ods_2r[[2,1]], 2)
-    expect_equal(colnames(ods_a2_1r)[1], "X1")
-    expect_equal(colnames(ods_a2_1r_df)[1], "X1")
+    ## single row
+    expect_equal(colnames(ods_a2_1r)[1], "1")
+    expect_equal(colnames(ods_a2_1r_df)[1], "1")
 })
