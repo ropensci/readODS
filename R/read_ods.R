@@ -149,22 +149,22 @@
 }
 
 ## standardise `sheet` parameter as a number, i.e. sheet_index
-.standardise_sheet <- function(sheet, sheets, limits, range) {
+.standardise_sheet <- function(sheet, sheet_names, range) {
     sheet_from_range <- cellranger::as.cell_limits(range)[["sheet"]]
     if (!is.null(range) && !is.na(sheet_from_range)) {
         if (sheet != 1) {
             warning("Sheet suggested in range and using sheet argument. Defaulting to range",
                     call. = FALSE)
         }
-        sheet <- sheet_from_range ## override
+        sheet <- sheet_from_range ## override; should be a sheet_name
     }
-    is_in_sheet_names <- stringi::stri_cmp(e1 = sheet, e2 = sheets) == 0
+    is_in_sheet_names <- stringi::stri_cmp(e1 = sheet, e2 = sheet_names) == 0
     if (!is.numeric(sheet) && !any(is_in_sheet_names)) {
         stop(paste0("No sheet found with name '", sheet, "'", sep = ""),
              call. = FALSE)
     }
-    if (is.numeric(sheet) && sheet > length(sheets)) {
-        stop(paste0("File contains only ", length(sheets), " sheets. Sheet index out of range.",
+    if (is.numeric(sheet) && sheet > length(sheet_names)) {
+        stop(paste0("File contains only ", length(sheet_names), " sheets. Sheet index out of range.",
                     call. = FALSE))
     }
     if (!is.numeric(sheet)) {
@@ -211,8 +211,8 @@
     }
     ## Get cell range info
     limits <- .standardise_limits(range, skip)
-    sheet_index <- .standardise_sheet(sheet = sheet, sheets = .get_sheet_names_func(file = path, include_external_data = TRUE),
-                                      limits = limits, range = range)
+    sheet_index <- .standardise_sheet(sheet = sheet, sheet_names = .get_sheet_names_func(file = path, include_external_data = TRUE),
+                                      range = range)
     strings <- .read_ods_func(file = path,
                               start_row = limits["min_row"],
                               stop_row = limits["max_row"],
