@@ -35,12 +35,9 @@ test_that("Return blank/error if mangled FODS", {
 
 ## V2.0.0 behavior: backward compatibility
 
-ori_option <- getOption("readODS.v200") ## probably NULL
-options("readODS.v200" = TRUE)
-
 test_that("Return blank/error if mangled FODS v2.0.0", {
-    expect_warning(read_fods("../testdata/norows.fods"))
-    expect_warning(read_fods("../testdata/nocells.fods"))
+    withr::with_options(list(readODS.v200 = TRUE), {
+        expect_warning(read_fods("../testdata/norows.fods"))
+        expect_warning(read_fods("../testdata/nocells.fods"))
+    })
 })
-
-options("readODS.v200" = ori_option)
