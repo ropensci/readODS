@@ -1,9 +1,9 @@
 #include "read_ods_internals.h"
 
 std::string parse_p(rapidxml::xml_node<>* node){
-    /*Deal with text inside cells. Cells can contain just text (node_data), or a 
+    /*Deal with text inside cells. Cells can contain just text (node_data), or a
     mixture of text and other nodes (node_element). We usually just want the text
-    from these nodes (e.g. if there's a link), but we also need to consider the 
+    from these nodes (e.g. if there's a link), but we also need to consider the
     text:s node, which saves repeated spaces*/
     std::string out;
     char* name;
@@ -53,13 +53,13 @@ std::string parse_textp(rapidxml::xml_node<>* cell){
 
 std::string parse_single_cell(rapidxml::xml_node<>* cell, bool formula_as_formula, bool use_office_value){
     std::string cell_value;
-    char* value_type = (cell->first_attribute("office:value-type") != 0) ? 
+    char* value_type = (cell->first_attribute("office:value-type") != 0) ?
         cell->first_attribute("office:value-type")->value() : NULL;
     if(formula_as_formula && cell->first_attribute("table:formula")){
         cell_value = cell->first_attribute("table:formula")->value();
     } else {
         cell_value = (cell->first_node("text:p") != 0) ? parse_textp(cell) : "";
-        if((value_type) && 
+        if((value_type) &&
             ((cell_value.length() == 0 && use_office_value && cell->first_attribute("office:value") != 0) ||
             ((strcmp(value_type, "float") == 0 ||
              strcmp(value_type, "currency") == 0||
@@ -71,12 +71,12 @@ std::string parse_single_cell(rapidxml::xml_node<>* cell, bool formula_as_formul
 }
 
 // Make an array of pointers to each cell
-std::vector<std::vector<rapidxml::xml_node<>*>> find_rows(rapidxml::xml_node<>* sheet, 
+std::vector<std::vector<rapidxml::xml_node<>*>> find_rows(rapidxml::xml_node<>* sheet,
                 int start_row,
                 const int stop_row,
                 int start_col,
                 const int stop_col){
-    
+
     /*Rows and columns are 1-based because both Excel and R treat arrays
     this way*/
     int row_repeat_count;
@@ -91,9 +91,9 @@ std::vector<std::vector<rapidxml::xml_node<>*>> find_rows(rapidxml::xml_node<>* 
         start_col = 1;
     }
     int nrows = stop_row - start_row + 1;
-    
+
     std::vector<std::vector<rapidxml::xml_node<>*>> rows((nrows < 1) ? 1 : nrows);
-    
+
     rapidxml::xml_node<>* row = sheet->first_node("table:table-row");
 
     // If table has no rows or cells, return blank
@@ -107,7 +107,7 @@ std::vector<std::vector<rapidxml::xml_node<>*>> find_rows(rapidxml::xml_node<>* 
 
         // Check for row repeats
         if (row->first_attribute("table:number-rows-repeated") == nullptr){
-            row_repeat_count = 1;    
+            row_repeat_count = 1;
         } else {
             row_repeat_count = std::atoi(row->first_attribute("table:number-rows-repeated")->value());
         }
@@ -132,7 +132,7 @@ std::vector<std::vector<rapidxml::xml_node<>*>> find_rows(rapidxml::xml_node<>* 
                 cell = row->first_node();
                 for (int j = 1; j <= stop_col || stop_col < 1; ){
                     // find first cell or covered cell
-                    while(cell != 0){   
+                    while(cell != 0){
                         if (strcmp(cell->name(),"table:table-cell")==0 || strcmp(cell->name(), "table:covered-table-cell")==0){
                             break;
                         } else {
@@ -177,7 +177,7 @@ std::vector<std::vector<rapidxml::xml_node<>*>> find_rows(rapidxml::xml_node<>* 
                 }
                 // Remove trailing blank cells
                 rows[i - start_row].resize(last_non_blank);
-                
+
             }
             i++;
         }
@@ -197,4 +197,56 @@ std::vector<std::vector<rapidxml::xml_node<>*>> find_rows(rapidxml::xml_node<>* 
     }
     rows.resize(rowsize + 1);
     return rows;
+}
+
+// read cell_values (an R character vector) out of the rootNode of the XML document
+cpp11::strings read_cell_values_(rapidxml::xml_node<>* rootNode,
+                                           int start_row,
+                                           int stop_row,
+                                           int start_col,
+                                           int stop_col,
+                                           const int sheet_index,
+                                           const bool formula_as_formula) {
+    unsigned int out_width = 0;
+    unsigned int out_length;
+    for (int i = 1; i < sheet_index; i++){
+        rootNode = rootNode->next_sibling("table:table");
+    }
+    std::vector<std::vector<rapidxml::xml_node<>*>> contents;
+    contents = find_rows(rootNode, start_row,stop_row,start_col,stop_col);
+    // Get dimensions of output
+    out_length = contents.size();
+    for (unsigned int i = 0; i < contents.size(); i++){
+        if (contents[i].size() > out_width){
+            out_width = contents[i].size();
+        }
+    }
+    // If there is no content
+    if (out_width * out_length == 0){
+        cpp11::writable::strings cell_values(2);
+        cell_values[0] = "0";
+        cell_values[1] = "0";
+        return cell_values;
+    }
+    cpp11::writable::strings cell_values(out_width*out_length + 2);
+    cell_values[0] = std::to_string(out_width);
+    cell_values[1] = std::to_string(out_length);
+
+    int t = 2;
+    for (unsigned int i = 0; i < contents.size(); i++){
+        for (unsigned int j = 0; j < contents[i].size(); j++){
+            cell_values[t] = (contents[i][j] != 0) ?
+                Rf_mkCharCE(parse_single_cell(contents[i][j], formula_as_formula, true).c_str(), CE_UTF8) : NA_STRING;
+            t++;
+        }
+        // Pad rows to even width
+        if(contents[i].size() < out_width){
+            unsigned int row_width = contents[i].size();
+            for (unsigned int j = 0; j + row_width < out_width; j++){
+                cell_values[t] = "";
+                t++;
+            }
+        }
+    }
+    return cell_values;
 }
