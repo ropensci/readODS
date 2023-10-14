@@ -19,3 +19,11 @@ std::vector<std::vector<rapidxml::xml_node<>*>> find_rows(rapidxml::xml_node<>* 
                 const int stop_row,
                 int start_col,
                 const int stop_col);
+
+cpp11::strings read_cell_values_(rapidxml::xml_node<>* rootNode,
+                                 int start_row,
+                                 int stop_row,
+                                 int start_col,
+                                 int stop_col,
+                                 const int sheet_index,
+                                 const bool formula_as_formula);

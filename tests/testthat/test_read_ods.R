@@ -10,6 +10,13 @@ test_that("Incorrect Argument", {
     expect_error(read_ods(path = "../testdata/sum.ods", row_names = TRUE), "Tibbles do not support")
 })
 
+test_that("exceptions in C++ (hard to test)", {
+    tempzip <- tempfile(fileext = ".zip")
+    suppressWarnings(zip::zip(tempzip, "../testthat/test_read_ods.R"))
+    expect_error(read_ods(tempzip), "is not a correct ODS file")
+    expect_error(read_ods(path = "../testdata/sum.ods", sheet = -1), "Cannot have sheet index less than 1")
+})
+
 test_that("Single column range", {
       expect_error(read_ods("../testdata/starwars.ods", range="A1:A5"), NA)
 })

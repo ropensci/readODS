@@ -10,6 +10,14 @@ test_that("Error when not correct", {
   expect_error(read_fods("../testdata/notreal.ods"))
 })
 
+test_that("exceptions in C++ (hard to test)", {
+    tempfods <- tempfile(fileext = ".fods")
+    x <- writeLines("<html><a></a></html>", tempfods)
+    expect_error(read_fods(tempfods), "is not a correct FODS file")
+    expect_error(read_fods(path = "../testdata/flat.fods", sheet = -1), "Cannot have sheet index less than 1")
+    expect_error(read_fods("alkfjlkasd/daslkff/dsaahsg"), "file does not exist")
+})
+
 test_that("fix #157", {
     skip_if(file.access("~/", 2) != 0)
     file.copy("../testdata/flat.fods", "~/flat_you_must_not_use_this_path.fods")
