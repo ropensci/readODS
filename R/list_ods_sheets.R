@@ -1,3 +1,10 @@
+.list_ods_sheets <- function(path, include_external_data = FALSE, .list_function) {
+    if (!file.exists(path)) {
+        stop(path, " does not exist", call. = FALSE)
+    }
+    return(.list_function(file = normalizePath(path, mustWork = FALSE), include_external_data = include_external_data))
+}
+
 #' Get information in an (F)ODS File
 #'
 #' `list_(f)ods_sheets` lists all sheets in an (f)ods file.
@@ -17,15 +24,14 @@
 #' use \code{\link{read_ods}} to read the data
 #' @export
 list_ods_sheets <- function(path, include_external_data = FALSE) {
-    return(get_sheet_names_(file = normalizePath(path, mustWork = FALSE), include_external_data = include_external_data))
+    .list_ods_sheets(path, include_external_data = include_external_data, .list_function = get_sheet_names_)
 }
 
 #' @rdname list_ods_sheets
 #' @export
 list_fods_sheets <- function(path, include_external_data = FALSE) {
-    return(get_flat_sheet_names_(file = normalizePath(path, mustWork = FALSE), include_external_data = include_external_data))
+    .list_ods_sheets(path, include_external_data = include_external_data, .list_function = get_flat_sheet_names_)
 }
-
 
 #' @rdname list_ods_sheets
 #' @export
