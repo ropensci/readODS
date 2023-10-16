@@ -34,3 +34,8 @@ test_that("fix #163", {
     writeLines("<ul><li>hello</li></ul>", rubbish_file)
     expect_error(list_fods_sheets(rubbish_file)) ## won't stat in infinite loop
 })
+
+test_that("fix #169", {
+    expect_error(list_ods_sheets("this_surely_not_exists.ods"), "does not exist")
+    expect_error(list_fods_sheets("this_surely_not_exists.fods"), "does not exist")
+})
