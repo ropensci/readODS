@@ -3,6 +3,7 @@
 ## Bug fixes
 
 * Fix #170 - .name_repair is correctly passed.
+* Fix #180 - specify the minimum `cpp11` version
 
 # readODS 2.1.0
 
