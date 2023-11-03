@@ -31,7 +31,7 @@ Imports:
     vctrs (>= 0.4.2),
     zip
 LinkingTo: 
-    cpp11
+    cpp11 (>= 0.4.6)
 Suggests:
     spelling, 
     testthat,

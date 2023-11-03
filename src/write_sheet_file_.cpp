@@ -155,7 +155,9 @@ cpp11::r_string write_sheet_file_list_(const std::string& filename,
     xml_file << header;
     cpp11::strings sheet_names = x.names();
     for (int i = 0; i < sheet_names.size(); i++) {
-        write_df(x[i], sheet_names[i], row_names, col_names, na_as_string, padding, xml_file);
+        cpp11::data_frame current_df = x[i];
+        cpp11::r_string current_sheet_name = sheet_names[i];
+        write_df(current_df, current_sheet_name, row_names, col_names, na_as_string, padding, xml_file);
     }
     xml_file << footer;
     xml_file << "\n";
