@@ -83,9 +83,6 @@
                         strings_as_factors = FALSE,
                         verbose = FALSE,
                         as_tibble = TRUE) {
-    if (missing(path) || !is.character(path)) {
-        stop("No file path was provided for the 'path' argument. Please provide a path to a file to import.", call. = FALSE)
-    }
     if (!file.exists(path)) {
         stop("file does not exist", call. = FALSE)
     }
@@ -246,6 +243,30 @@
     return(res)
 }
 
+.determine_ods_format <- function(path, guess = FALSE) {
+    ext <- tolower(tools::file_ext(path))
+    formats <- c(
+        ods = "ods",
+        fods = "fods",
+        xml = "fods"
+    )
+    if (!isTRUE(guess)) {
+        ext <- unname(formats[ext])
+        if (is.na(ext)) {
+            return("ods")
+        }
+        return(ext)
+    }
+    zip_sig <- as.raw(c(
+        "0x50", "0x4B", "0x03", "0x04"
+    ))
+    if (identical(zip_sig, readBin(path, n = 4, what = "raw"))) {
+        return("ods")
+    } else {
+        return("fods")
+    }
+}
+
 #' Read Data From (F)ODS File
 #'
 #' read_ods is a function to read a single sheet from an (f)ods file and return a data frame. For flat ods files (.fods or .xml),
@@ -273,6 +294,10 @@
 #'
 #'  Default is `"unique"`.
 #'
+#' @param ods_format character, must be "auto", "ods" or "fods". The default "auto" is to determine the format automatically. By default, the format is determined by file extension, unless `guess` is `FALSE`.
+#' @param guess logical. If the file extension is absent or not recognized, this
+#'   controls whether we attempt to guess format based on the file signature or
+#'   "magic number".
 #' @return A tibble (\code{tibble}) or data frame (\code{data.frame}) containing a representation of data in the (f)ods file.
 #' @author Peter Brohan <peter.brohan+cran@@gmail.com>, Chung-hong Chan <chainsawtiney@@gmail.com>, Gerrit-Jan Schutten <phonixor@@gmail.com>
 #' @examples
@@ -309,7 +334,16 @@ read_ods <- function(path,
                      strings_as_factors = FALSE,
                      verbose = FALSE,
                      as_tibble = TRUE,
-                     .name_repair = "unique") {
+                     .name_repair = "unique",
+                     ods_format = c("auto", "ods", "fods"),
+                     guess = FALSE) {
+    ods_format <- match.arg(ods_format)
+    if (missing(path) || !is.character(path)) {
+        stop("No file path was provided for the 'path' argument. Please provide a path to a file to import.", call. = FALSE)
+    }
+    if (ods_format == "auto") {
+        ods_format <- .determine_ods_format(path, guess = guess)
+    }
     ## Should use match.call but there's a weird bug if one of the variable names is 'file'
     .read_ods(path = path,
         sheet = sheet,
@@ -324,7 +358,7 @@ read_ods <- function(path,
         verbose = verbose,
         as_tibble = as_tibble,
         .name_repair = .name_repair,
-        flat = FALSE)
+        flat = ods_format == "fods")
 }
 
 #' @rdname read_ods
