@@ -1,3 +1,7 @@
+# readODS 2.2.0
+
+* Fix #151 - Now `read_ods()` and `list_ods_sheets()` can also be used to process flat ods files. `read_fods()` and `list_fods_sheets()` are still available, but not as the so-called "common interface."
+
 # readODS 2.1.1
 
 ## Bug fixes

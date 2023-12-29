@@ -18,7 +18,9 @@ read_ods(
   strings_as_factors = FALSE,
   verbose = FALSE,
   as_tibble = TRUE,
-  .name_repair = "unique"
+  .name_repair = "unique",
+  ods_format = c("auto", "ods", "fods"),
+  guess = FALSE
 )
 
 read_fods(
@@ -73,13 +75,19 @@ NULL, so that empty cells are treated as NA.}
 }
 
 Default is \code{"unique"}.}
+
+\item{ods_format}{character, must be "auto", "ods" or "fods". The default "auto" is to determine the format automatically. By default, the format is determined by file extension, unless \code{guess} is \code{FALSE}.}
+
+\item{guess}{logical. If the file extension is absent or not recognized, this
+controls whether we attempt to guess format based on the file signature or
+"magic number".}
 }
 \value{
 A tibble (\code{tibble}) or data frame (\code{data.frame}) containing a representation of data in the (f)ods file.
 }
 \description{
-read_ods is a function to read a single sheet from an (f)ods file and return a data frame. For flat ods files (.fods or .xml),
-use (\code{read_fods}).
+read_ods is a function to read a single sheet from an (f)ods file and return a data frame. The function can be used for reading both ods and flat ods files.
+(\code{read_fods}) is also available, which can only read flat ods files.
 }
 \examples{
 \dontrun{
@@ -90,17 +98,19 @@ read_ods("starwars.ods", sheet = 2)
 # Read a specific range, e.g. A1:C11
 read_ods("starwars.ods", sheet = 2, range = "A1:C11")
 # Read an FODS file
-read_fods("starwars.fods")
+read_ods("starwars.fods")
 # Read a specific sheet, e.g. the 2nd sheet
-read_fods("starwars.fods", sheet = 2)
+read_ods("starwars.fods", sheet = 2)
 # Read a specific range, e.g. A1:C11
-read_fods("starwars.fods", sheet = 2, range = "A1:C11")
+read_ods("starwars.fods", sheet = 2, range = "A1:C11")
 # Give a warning and read from Sheet1 (not 2)
-read_fods("starwars.fods", sheet = 2, range = "Sheet1!A1:C11")
+read_ods("starwars.fods", sheet = 2, range = "Sheet1!A1:C11")
 # Specifying col_types as shorthand, the third column as factor; other by guessing
 read_ods("starwars.ods", col_types = "??f")
 # Specifying col_types as list
 read_ods("starwars.ods", col_types = list(species = "f"))
+# Using read_fods, although you don't have to
+read_ods("starwars.fods")
 }
 }
 \author{
