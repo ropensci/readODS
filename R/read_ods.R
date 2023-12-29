@@ -243,7 +243,13 @@
     return(res)
 }
 
-.determine_ods_format <- function(path, guess = FALSE) {
+.determine_ods_format <- function(path, guess = FALSE, ods_format = "auto") {
+    if (missing(path) || !is.character(path)) {
+        stop("No file path was provided for the 'path' argument. Please provide a path to a file to import.", call. = FALSE)
+    }
+    if (ods_format != "auto") {
+        return(ods_format)
+    }
     ext <- tolower(tools::file_ext(path))
     formats <- c(
         ods = "ods",
@@ -262,15 +268,14 @@
     ))
     if (identical(zip_sig, readBin(path, n = 4, what = "raw"))) {
         return("ods")
-    } else {
-        return("fods")
     }
+    return("fods")
 }
 
 #' Read Data From (F)ODS File
 #'
-#' read_ods is a function to read a single sheet from an (f)ods file and return a data frame. For flat ods files (.fods or .xml),
-#' use (\code{read_fods}).
+#' read_ods is a function to read a single sheet from an (f)ods file and return a data frame. The function can be used for reading both ods and flat ods files.
+#' (\code{read_fods}) is also available, which can only read flat ods files.
 #'
 #' @param path path to the (f)ods file.
 #' @param sheet sheet to read. Either a string (the sheet name), or an integer sheet number. The default is 1.
@@ -309,17 +314,19 @@
 #' # Read a specific range, e.g. A1:C11
 #' read_ods("starwars.ods", sheet = 2, range = "A1:C11")
 #' # Read an FODS file
-#' read_fods("starwars.fods")
+#' read_ods("starwars.fods")
 #' # Read a specific sheet, e.g. the 2nd sheet
-#' read_fods("starwars.fods", sheet = 2)
+#' read_ods("starwars.fods", sheet = 2)
 #' # Read a specific range, e.g. A1:C11
-#' read_fods("starwars.fods", sheet = 2, range = "A1:C11")
+#' read_ods("starwars.fods", sheet = 2, range = "A1:C11")
 #' # Give a warning and read from Sheet1 (not 2)
-#' read_fods("starwars.fods", sheet = 2, range = "Sheet1!A1:C11")
+#' read_ods("starwars.fods", sheet = 2, range = "Sheet1!A1:C11")
 #' # Specifying col_types as shorthand, the third column as factor; other by guessing
 #' read_ods("starwars.ods", col_types = "??f")
 #' # Specifying col_types as list
 #' read_ods("starwars.ods", col_types = list(species = "f"))
+#' # Using read_fods, although you don't have to
+#' read_ods("starwars.fods")
 #' }
 #' @export
 read_ods <- function(path,
@@ -337,13 +344,7 @@ read_ods <- function(path,
                      .name_repair = "unique",
                      ods_format = c("auto", "ods", "fods"),
                      guess = FALSE) {
-    ods_format <- match.arg(ods_format)
-    if (missing(path) || !is.character(path)) {
-        stop("No file path was provided for the 'path' argument. Please provide a path to a file to import.", call. = FALSE)
-    }
-    if (ods_format == "auto") {
-        ods_format <- .determine_ods_format(path, guess = guess)
-    }
+    ods_format <- .determine_ods_format(path = path, guess = guess, ods_format = match.arg(ods_format))
     ## Should use match.call but there's a weird bug if one of the variable names is 'file'
     .read_ods(path = path,
         sheet = sheet,

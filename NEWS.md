@@ -1,3 +1,7 @@
+# readODS 2.2.0
+
+* Fix #151 - Now `read_ods()` can also be used to read flat ods file.
+
 # readODS 2.1.1
 
 ## Bug fixes
