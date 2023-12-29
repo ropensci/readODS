@@ -7,4 +7,5 @@ test_that(".determine_ods_format works", {
     expect_equal(.determine_ods_format(readODS::write_ods(iris, tempfile(fileext = ".fods")), guess = TRUE), "ods")
     expect_equal(.determine_ods_format(readODS::write_ods(iris, tempfile(fileext = ".xml"))), "fods")
     expect_equal(.determine_ods_format(readODS::write_ods(iris, tempfile(fileext = ".xml")), guess = TRUE), "ods")
+    expect_equal(.determine_ods_format(readODS::write_fods(iris, tempfile(fileext = ".ods")), guess = TRUE), "fods")
 })
