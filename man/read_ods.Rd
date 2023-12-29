@@ -20,7 +20,9 @@ read_ods(
   as_tibble = TRUE,
   .name_repair = "unique",
   ods_format = c("auto", "ods", "fods"),
-  guess = FALSE
+  guess = FALSE,
+  trim_ws = TRUE,
+  n_max = Inf
 )
 
 read_fods(
@@ -78,9 +80,11 @@ Default is \code{"unique"}.}
 
 \item{ods_format}{character, must be "auto", "ods" or "fods". The default "auto" is to determine the format automatically. By default, the format is determined by file extension, unless \code{guess} is \code{FALSE}.}
 
-\item{guess}{logical. If the file extension is absent or not recognized, this
+\item{guess}{logical, If the file extension is absent or not recognized, this
 controls whether we attempt to guess format based on the file signature or
 "magic number".}
+
+\item{trim_ws}{logical, should leading and trailing whitespace be trimmed?}
 }
 \value{
 A tibble (\code{tibble}) or data frame (\code{data.frame}) containing a representation of data in the (f)ods file.
