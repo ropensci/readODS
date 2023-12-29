@@ -86,7 +86,9 @@
                         row_names = FALSE,
                         strings_as_factors = FALSE,
                         verbose = FALSE,
-                        as_tibble = TRUE) {
+                        as_tibble = TRUE,
+                        trim_ws = TRUE,
+                        n_max = Inf) {
     if (!file.exists(path)) {
         stop("file does not exist", call. = FALSE)
     }
@@ -108,6 +110,9 @@
     if (!is.logical(as_tibble)) {
         stop("as_tibble must be of type `boolean", call. = FALSE)
     }
+    if (!is.logical(trim_ws)) {
+        stop("trim_ws must be of type `boolean", call. = FALSE)
+    }
     if (row_names && as_tibble) {
         stop("Tibbles do not support row names. To use row names, set as_tibble to false", call. = FALSE)
     }
@@ -118,6 +123,9 @@
         isFALSE(is.list(col_types))) {
         stop("Unknown col_types. Can either be a class col_spec, list, character, NULL or NA.",
              call. = FALSE)
+    }
+    if (!is.numeric(n_max)) {
+        stop("`n_max` must be numeric.", call. = FALSE)
     }
 }
 
@@ -203,7 +211,9 @@
         row_names,
         strings_as_factors,
         verbose,
-        as_tibble)
+        as_tibble,
+        trim_ws,
+        n_max)
     path <- normalizePath(path)
     if (flat) {
         .get_sheet_names_func <- get_flat_sheet_names_
@@ -310,6 +320,7 @@
 #'   controls whether we attempt to guess format based on the file signature or
 #'   "magic number".
 #' @param trim_ws logical, should leading and trailing whitespace be trimmed?
+#' @param n_max numeric, Maximum number of data rows to read. Ignored if `range` is given.
 #' @return A tibble (\code{tibble}) or data frame (\code{data.frame}) containing a representation of data in the (f)ods file.
 #' @author Peter Brohan <peter.brohan+cran@@gmail.com>, Chung-hong Chan <chainsawtiney@@gmail.com>, Gerrit-Jan Schutten <phonixor@@gmail.com>
 #' @examples
@@ -376,18 +387,20 @@ read_ods <- function(path,
 #' @rdname read_ods
 #' @export
 read_fods <- function(path,
-                        sheet = 1,
-                        col_names = TRUE,
-                        col_types = NULL,
-                        na = "",
-                        skip = 0,
-                        formula_as_formula = FALSE,
-                        range = NULL,
-                        row_names = FALSE,
-                        strings_as_factors = FALSE,
-                        verbose = FALSE,
-                        as_tibble = TRUE,
-                        .name_repair = "unique") {
+                      sheet = 1,
+                      col_names = TRUE,
+                      col_types = NULL,
+                      na = "",
+                      skip = 0,
+                      formula_as_formula = FALSE,
+                      range = NULL,
+                      row_names = FALSE,
+                      strings_as_factors = FALSE,
+                      verbose = FALSE,
+                      as_tibble = TRUE,
+                      .name_repair = "unique",
+                      trim_ws = TRUE,
+                      n_max = Inf) {
     ## Should use match.call but there's a weird bug if one of the variable names is 'file'
     .read_ods(path = normalizePath(path, mustWork = FALSE),
               sheet = sheet,
@@ -402,5 +415,7 @@ read_fods <- function(path,
               verbose = verbose,
               as_tibble = as_tibble,
               .name_repair = .name_repair,
-              flat = TRUE)
+              flat = TRUE,
+              trim_ws = trim_ws,
+              n_max = n_max)
 }

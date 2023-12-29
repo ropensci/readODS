@@ -38,7 +38,9 @@ read_fods(
   strings_as_factors = FALSE,
   verbose = FALSE,
   as_tibble = TRUE,
-  .name_repair = "unique"
+  .name_repair = "unique",
+  trim_ws = TRUE,
+  n_max = Inf
 )
 }
 \arguments{
@@ -85,6 +87,8 @@ controls whether we attempt to guess format based on the file signature or
 "magic number".}
 
 \item{trim_ws}{logical, should leading and trailing whitespace be trimmed?}
+
+\item{n_max}{numeric, Maximum number of data rows to read. Ignored if \code{range} is given.}
 }
 \value{
 A tibble (\code{tibble}) or data frame (\code{data.frame}) containing a representation of data in the (f)ods file.
