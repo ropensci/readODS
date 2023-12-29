@@ -95,22 +95,22 @@ read_ods("plant_multi.ods", sheet = "plant")
 
 ## Flat ODS files (`.xml` or `.fods`)
 
-Can be read with `read_fods()` (note that the same function is used to read flat files, no matter the extension).
+Can be read with `read_ods()` [^1] (note that the same function is used to read flat files, no matter the extension).
 This has the same behaviour and arguments as `read_ods()`
 
 ```{r read fods, eval = file.exists("plant.fods")}
 read_fods("plant.fods")
 ```
 
-`write_fods()` can be used to write Flat ODS files
+`write_ods()` can be used to write Flat ODS files
 
 ```{r write_fods}
-write_fods(PlantGrowth, "plant.fods")
+write_ods(PlantGrowth, "plant.fods")
 ```
 
 ## Misc.
 
-Use the function `list_ods_sheets()` or `list_fods_sheets()` to list out all sheets in an (F)ODS file.
+Use the function `list_ods_sheets()` to list out all sheets in an (F)ODS file.
 
 ```{r, list_ods_sheets}
 list_ods_sheets("plant.ods")
@@ -186,3 +186,7 @@ unlink("plant.ods")
 unlink("plant.fods")
 unlink("plant_multi.ods")
 ```
+
+---
+
+[^1]: `read_fods()` and `list_fods_sheets()` are also available. But since version 2.2.0 `read_ods()` and `list_ods_sheets()` can determine whether the file at the `path` argument is flat or not.

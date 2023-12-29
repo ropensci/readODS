@@ -6,7 +6,12 @@
 \alias{ods_sheets}
 \title{Get information in an (F)ODS File}
 \usage{
-list_ods_sheets(path, include_external_data = FALSE)
+list_ods_sheets(
+  path,
+  include_external_data = FALSE,
+  ods_format = c("auto", "ods", "fods"),
+  guess = FALSE
+)
 
 list_fods_sheets(path, include_external_data = FALSE)
 
@@ -16,12 +21,18 @@ ods_sheets(path)
 \item{path}{Path to the (f)ods file}
 
 \item{include_external_data}{A boolean value to show or hide sheets containing archived linked data (default false)}
+
+\item{ods_format}{character, must be "auto", "ods" or "fods". The default "auto" is to determine the format automatically. By default, the format is determined by file extension, unless \code{guess} is \code{FALSE}.}
+
+\item{guess}{logical. If the file extension is absent or not recognized, this
+controls whether we attempt to guess format based on the file signature or
+"magic number".}
 }
 \value{
 A character vector of sheet names
 }
 \description{
-\verb{list_(f)ods_sheets} lists all sheets in an (f)ods file.
+\code{list_ods_sheets} lists all sheets in an (f)ods file. The function can be used for listing sheets in both ods and flat ods files. (\code{list_fods_sheets}) is also available, which can only list sheets in flat ods files.
 }
 \details{
 The default "include_external_data" for \code{ods_sheets} is TRUE to maintain compatibility with version 1 of readODS. It will change to \code{TRUE} in version 3.
@@ -30,6 +41,8 @@ The default "include_external_data" for \code{ods_sheets} is TRUE to maintain co
 \dontrun{
 # Get the list of names of sheets
 list_ods_sheets("starwars.ods")
+list_ods_sheets("starwars.fods")
+# Using list_fods_sheets, although you don't have to
 list_fods_sheets("starwars.fods")
 }
 }
