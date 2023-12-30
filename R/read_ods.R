@@ -125,7 +125,7 @@
              call. = FALSE)
     }
     if (!is.numeric(n_max)) {
-        stop("`n_max` must be numeric.", call. = FALSE)
+        stop("n_max must be numeric.", call. = FALSE)
     }
 }
 

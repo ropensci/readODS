@@ -8,6 +8,9 @@ test_that("Incorrect Argument", {
     expect_error(read_ods(path = "../testdata/sum.ods", strings_as_factors = "a"), "strings_as_factors must be of type `boolean`")
     expect_error(read_ods(path = "../testdata/sum.ods", verbose = "a"), "verbose must be of type `boolean`")
     expect_error(read_ods(path = "../testdata/sum.ods", row_names = TRUE), "Tibbles do not support")
+    expect_error(read_ods(path = "../testdata/sum.ods", n_max = "abc"), "n_max must be numeric")
+    expect_error(read_ods(path = "../testdata/sum.ods", n_max = -1), "n_max must be a positive integer")
+    expect_error(read_ods(path = "../testdata/sum.ods", trim_ws = "a"), "trim_ws must be")
 })
 
 test_that("exceptions in C++ (hard to test)", {
