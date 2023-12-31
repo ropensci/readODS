@@ -24,7 +24,7 @@ ods_sheets(path)
 
 \item{ods_format}{character, must be "auto", "ods" or "fods". The default "auto" is to determine the format automatically. By default, the format is determined by file extension, unless \code{guess} is \code{FALSE}.}
 
-\item{guess}{logical. If the file extension is absent or not recognized, this
+\item{guess}{logical, If the file extension is absent or not recognized, this
 controls whether we attempt to guess format based on the file signature or
 "magic number".}
 }

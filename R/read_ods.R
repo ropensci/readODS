@@ -32,26 +32,30 @@
     return(g)
 }
 
-
-
 ## Based on readxl, although the implementation is different.
 ## If max row is -1, read to end of row.
 ## Row and column-numbers are 1-based
-.standardise_limits <- function(range, skip) {
+.standardise_limits <- function(range, skip, n_max) {
     if(is.null(range)) {
         skip <- check_nonnegative_integer(x = skip, argument = "skip")
+        n_max <- check_nonnegative_integer(x = n_max, argument = "n_max")
+        if (n_max == Inf) {
+            max_row <- -1
+        } else {
+            max_row <- n_max + 1
+        }
         limits <- c(
             min_row = skip + 1,
-            max_row = -1,
+            max_row = max_row,
             min_col = 1,
             max_col = -1
         )
     } else {
-        if(skip != 0) {
-            warning("Range and non-zero value for skip given. Defaulting to range.", call. = FALSE)
+        if(skip != 0 || n_max != Inf) {
+            warning("Range and non-default value for skip or n_max given. Defaulting to range.", call. = FALSE)
         }
         tryCatch({
-        limits <- cellranger::as.cell_limits(range)
+            limits <- cellranger::as.cell_limits(range)
         }, error = function(e) {
             stop("Invalid `range`")
         })
@@ -82,7 +86,9 @@
                         row_names = FALSE,
                         strings_as_factors = FALSE,
                         verbose = FALSE,
-                        as_tibble = TRUE) {
+                        as_tibble = TRUE,
+                        trim_ws = TRUE,
+                        n_max = Inf) {
     if (!file.exists(path)) {
         stop("file does not exist", call. = FALSE)
     }
@@ -104,6 +110,9 @@
     if (!is.logical(as_tibble)) {
         stop("as_tibble must be of type `boolean", call. = FALSE)
     }
+    if (!is.logical(trim_ws)) {
+        stop("trim_ws must be of type `boolean", call. = FALSE)
+    }
     if (row_names && as_tibble) {
         stop("Tibbles do not support row names. To use row names, set as_tibble to false", call. = FALSE)
     }
@@ -114,6 +123,9 @@
         isFALSE(is.list(col_types))) {
         stop("Unknown col_types. Can either be a class col_spec, list, character, NULL or NA.",
              call. = FALSE)
+    }
+    if (!is.numeric(n_max)) {
+        stop("n_max must be numeric.", call. = FALSE)
     }
 }
 
@@ -127,22 +139,22 @@
     return(data.frame())
 }
 
-.type_convert <- function(df, col_types = NULL, verbose = TRUE, na = c("", "NA")) {
+.type_convert <- function(df, col_types = NULL, verbose = TRUE, na = c("", "NA"), trim_ws = TRUE) {
     if (verbose) {
         res <- readr::type_convert(df = df, col_types, na = na)
     } else {
         suppressMessages({
-            res <- readr::type_convert(df = df, col_types, na = na)
+            res <- readr::type_convert(df = df, col_types, na = na, trim_ws = trim_ws)
         })
     }
     return(res)
 }
 
-.handle_col_types <- function(res, col_types, verbose, na) {
+.handle_col_types <- function(res, col_types, verbose, na, trim_ws) {
     if (isTRUE(is.na(col_types)) || nrow(res) == 0) {
         return(res)
     }
-    .type_convert(df = res, col_types = col_types, verbose = verbose, na = na)
+    .type_convert(df = res, col_types = col_types, verbose = verbose, na = na, trim_ws = trim_ws)
 }
 
 ## standardise `sheet` parameter as a number, i.e. sheet_index
@@ -173,19 +185,21 @@
 }
 
 .read_ods <- function(path,
-                        sheet = 1,
-                        col_names = TRUE,
-                        col_types = NULL,
-                        na = "",
-                        skip = 0,
-                        formula_as_formula = FALSE,
-                        range = NULL,
-                        row_names = FALSE,
-                        strings_as_factors = FALSE,
-                        verbose = FALSE,
-                        as_tibble = TRUE,
-                        .name_repair = "unique",
-                        flat = FALSE) {
+                      sheet = 1,
+                      col_names = TRUE,
+                      col_types = NULL,
+                      na = "",
+                      skip = 0,
+                      formula_as_formula = FALSE,
+                      range = NULL,
+                      row_names = FALSE,
+                      strings_as_factors = FALSE,
+                      verbose = FALSE,
+                      as_tibble = TRUE,
+                      .name_repair = "unique",
+                      flat = FALSE,
+                      trim_ws = TRUE,
+                      n_max = Inf) {
     .check_read_args(path,
         sheet,
         col_names,
@@ -197,7 +211,9 @@
         row_names,
         strings_as_factors,
         verbose,
-        as_tibble)
+        as_tibble,
+        trim_ws,
+        n_max)
     path <- normalizePath(path)
     if (flat) {
         .get_sheet_names_func <- get_flat_sheet_names_
@@ -207,7 +223,7 @@
         .read_ods_func <- read_ods_
     }
     ## Get cell range info
-    limits <- .standardise_limits(range, skip)
+    limits <- .standardise_limits(range, skip, n_max)
     sheet_index <- .standardise_sheet(sheet = sheet, sheet_names = .get_sheet_names_func(file = path, include_external_data = TRUE),
                                       range = range)
     strings <- .read_ods_func(file = path,
@@ -233,7 +249,7 @@
             byrow = TRUE),
         stringsAsFactors = FALSE)
     res <- .change_df_with_col_row_header(x = res, col_header = col_names, row_header = row_names, .name_repair = .name_repair)
-    res <- .handle_col_types(res, col_types = col_types, verbose = verbose, na = na)
+    res <- .handle_col_types(res, col_types = col_types, verbose = verbose, na = na, trim_ws = trim_ws)
     if (strings_as_factors) {
         res <- .convert_strings_to_factors(df = res)
     }
@@ -300,9 +316,11 @@
 #'  Default is `"unique"`.
 #'
 #' @param ods_format character, must be "auto", "ods" or "fods". The default "auto" is to determine the format automatically. By default, the format is determined by file extension, unless `guess` is `FALSE`.
-#' @param guess logical. If the file extension is absent or not recognized, this
+#' @param guess logical, If the file extension is absent or not recognized, this
 #'   controls whether we attempt to guess format based on the file signature or
 #'   "magic number".
+#' @param trim_ws logical, should leading and trailing whitespace be trimmed?
+#' @param n_max numeric, Maximum number of data rows to read. Ignored if `range` is given.
 #' @return A tibble (\code{tibble}) or data frame (\code{data.frame}) containing a representation of data in the (f)ods file.
 #' @author Peter Brohan <peter.brohan+cran@@gmail.com>, Chung-hong Chan <chainsawtiney@@gmail.com>, Gerrit-Jan Schutten <phonixor@@gmail.com>
 #' @examples
@@ -343,7 +361,9 @@ read_ods <- function(path,
                      as_tibble = TRUE,
                      .name_repair = "unique",
                      ods_format = c("auto", "ods", "fods"),
-                     guess = FALSE) {
+                     guess = FALSE,
+                     trim_ws = TRUE,
+                     n_max = Inf) {
     ods_format <- .determine_ods_format(path = path, guess = guess, ods_format = match.arg(ods_format))
     ## Should use match.call but there's a weird bug if one of the variable names is 'file'
     .read_ods(path = path,
@@ -359,24 +379,28 @@ read_ods <- function(path,
         verbose = verbose,
         as_tibble = as_tibble,
         .name_repair = .name_repair,
-        flat = ods_format == "fods")
+        flat = ods_format == "fods",
+        trim_ws = trim_ws,
+        n_max = n_max)
 }
 
 #' @rdname read_ods
 #' @export
 read_fods <- function(path,
-                        sheet = 1,
-                        col_names = TRUE,
-                        col_types = NULL,
-                        na = "",
-                        skip = 0,
-                        formula_as_formula = FALSE,
-                        range = NULL,
-                        row_names = FALSE,
-                        strings_as_factors = FALSE,
-                        verbose = FALSE,
-                        as_tibble = TRUE,
-                        .name_repair = "unique") {
+                      sheet = 1,
+                      col_names = TRUE,
+                      col_types = NULL,
+                      na = "",
+                      skip = 0,
+                      formula_as_formula = FALSE,
+                      range = NULL,
+                      row_names = FALSE,
+                      strings_as_factors = FALSE,
+                      verbose = FALSE,
+                      as_tibble = TRUE,
+                      .name_repair = "unique",
+                      trim_ws = TRUE,
+                      n_max = Inf) {
     ## Should use match.call but there's a weird bug if one of the variable names is 'file'
     .read_ods(path = normalizePath(path, mustWork = FALSE),
               sheet = sheet,
@@ -391,5 +415,7 @@ read_fods <- function(path,
               verbose = verbose,
               as_tibble = as_tibble,
               .name_repair = .name_repair,
-              flat = TRUE)
+              flat = TRUE,
+              trim_ws = trim_ws,
+              n_max = n_max)
 }
