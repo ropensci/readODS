@@ -61,6 +61,8 @@ test_that("Parses range inputs correctly", {
     expect_equal(x[[2,2]], 2)
     expect_message(x <- read_ods("../testdata/multisheet.ods", range = "Sheet3!D2:E4"))
     expect_equal(x[[1,1]], 3)
+    expect_warning(x <- read_ods("../testdata/multisheet.ods", n_max = 10, range = "Sheet2!B4:D9"), "Range and non-default")
+    expect_equal(x[[2,2]], 2)
 })
 
 test_that("Deals with repeated spaces correctly when fetching only part of sheet",{
@@ -106,6 +108,20 @@ test_that("skip", {
 test_that("No Warning of empty sheet", {
     expect_silent(read_ods("../testdata/empty.ods"))
     expect_silent(read_fods("../testdata/empty.fods"))
+})
+
+test_that("n_max", {
+    expect_silent(x <- read_ods("../testdata/starwars.ods", n_max = Inf))
+    expect_equal(nrow(x), 10)
+    expect_silent(x <- read_ods("../testdata/starwars.ods", n_max = 5))
+    expect_equal(nrow(x), 5)
+    expect_silent(x <- read_ods("../testdata/starwars.ods", n_max = 100))
+    expect_equal(nrow(x), 10)
+})
+
+test_that("trim_ws", {
+    expect_equal(read_ods("../testdata/leadingspaces.ods", trim_ws = FALSE)[1,1, drop = TRUE], "     abc")
+    expect_equal(read_ods("../testdata/leadingspaces.ods", trim_ws = TRUE)[1,1, drop = TRUE], "abc")
 })
 
 ## V2.0.0 behavior: backward compatibility
