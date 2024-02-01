@@ -21,7 +21,7 @@ Authors@R:
     person("Till", "Straube", role = c("ctb"), email = "straube@geo.uni-frankfurt.de"),
     person("Marcin", "Kalicinski", role = c("ctb", "cph"), comment = "Author of included RapidXML code"))
 Description: Read ODS (OpenDocument Spreadsheet) into R as data frame. Also support writing data frame into ODS file.
-URL: https://github.com/ropensci/readODS
+URL: https://docs.ropensci.org/readODS/, https://github.com/ropensci/readODS
 BugReports: https://github.com/ropensci/readODS/issues
 Imports:
     cellranger,
