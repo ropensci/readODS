@@ -1,3 +1,7 @@
+# readODS 2.3.3
+
+* Fix #213, prevent error when `set.seed` for `write_ods()`
+
 # readODS 2.3.2
 
 * Fix #207, trim off large or unused test files

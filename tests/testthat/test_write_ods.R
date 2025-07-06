@@ -180,3 +180,17 @@ test_that("list of dataframes, edge cases #56", {
     expect_error(path <- write_fods(list("iris" = iris), sheet = "whatever"), NA)
     expect_equal(list_fods_sheets(path), c("iris")) ## sheet is ignored
 })
+
+withr::with_seed(123, {
+    test_that("fix 213 run 1", {
+        mydata <- data.frame(a=1:3, b=2:4)
+        expect_warning(write_ods(mydata), NA)
+    })
+})
+
+withr::with_seed(123, {
+    test_that("fix 213 run 2", {
+        mydata <- data.frame(a=1:3, b=2:4)
+        expect_warning(write_ods(mydata), NA)
+    })
+})
