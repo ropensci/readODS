@@ -92,7 +92,7 @@
     if (isFALSE(flat)) {
         temp_ods_dir <- file.path(tempdir(), stringi::stri_rand_strings(1, 30, pattern = "[A-Za-z0-9]"))
         dir.create(temp_ods_dir)
-        on.exit(unlink(temp_ods_dir))
+        on.exit(unlink(temp_ods_dir, recursive = TRUE))
     }
     if (append || update) {
         .update_ods(x = .preprocess_x(x), path = path, sheet = sheet, append = append, update = update, row_names = row_names,
