@@ -22,7 +22,9 @@ read_ods(
   ods_format = c("auto", "ods", "fods"),
   guess = FALSE,
   trim_ws = TRUE,
-  n_max = Inf
+  n_max = Inf,
+  guess_max = min(1000, n_max),
+  progress = readODS_progress()
 )
 
 read_fods(
@@ -40,7 +42,9 @@ read_fods(
   as_tibble = TRUE,
   .name_repair = "unique",
   trim_ws = TRUE,
-  n_max = Inf
+  n_max = Inf,
+  guess_max = min(1000, n_max),
+  progress = readODS_progress()
 )
 }
 \arguments{
@@ -89,6 +93,10 @@ controls whether we attempt to guess format based on the file signature or
 \item{trim_ws}{logical, should leading and trailing whitespace be trimmed?}
 
 \item{n_max}{numeric, Maximum number of data rows to read. Ignored if \code{range} is given.}
+
+\item{guess_max}{numeric, Maximum number of data rows to use for guessing column types. Defaults to min(1000, n_max).}
+
+\item{progress}{logical, Display a progress bar? By default, shows a progress bar in interactive sessions unless disabled. See \code{\link{readODS_progress}} for more details.}
 }
 \value{
 A tibble (\code{tibble}) or data frame (\code{data.frame}) containing a representation of data in the (f)ods file.
