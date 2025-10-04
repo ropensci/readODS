@@ -1,3 +1,111 @@
+#' Determine whether to show progress bar
+#'
+#' By default, readODS displays a progress bar unless one of the following is TRUE:
+#' - The progress is explicitly disabled by setting options(readODS.show_progress = FALSE).
+#' - The code is run in a non-interactive session (interactive() is FALSE).
+#' - The code is run by knitr / rmarkdown.
+#'
+#' @return logical indicating whether to show progress
+#' @export
+readODS_progress <- function() {
+    # Check if explicitly disabled
+    if (isFALSE(getOption("readODS.show_progress", TRUE))) {
+        return(FALSE)
+    }
+    
+    # Don't show in non-interactive sessions
+    if (!interactive()) {
+        return(FALSE)
+    }
+    
+    # Don't show when knitting
+    if (isTRUE(getOption("knitr.in.progress", FALSE))) {
+        return(FALSE)
+    }
+    
+    # Don't show in RStudio notebook chunks
+    if (Sys.getenv("RSTUDIO_NOTEBOOK") != "") {
+        return(FALSE)
+    }
+    
+    return(TRUE)
+}
+
+.create_progress_bar <- function(progress, total_work = 100) {
+    if (!isTRUE(progress)) {
+        # Return a no-op progress bar with zero overhead
+        noop <- function(...) invisible(NULL)
+        return(list(tick = noop, terminate = noop, update = noop))
+    }
+    
+    # Efficient progress bar with minimal overhead
+    start_time <- Sys.time()
+    current_progress <- 0L
+    last_displayed_percent <- -1L
+    
+    list(
+        tick = function() {
+            current_progress <<- current_progress + 1L
+            percent <- as.integer((current_progress / total_work) * 100)
+            if (percent != last_displayed_percent && (percent %% 10L == 0L || percent >= 100L)) {
+                last_displayed_percent <<- percent
+                .update_progress_display(current_progress, total_work, start_time)
+            }
+        },
+        terminate = function() {
+            if (current_progress > 0L) {
+                .update_progress_display(total_work, total_work, start_time)
+                cat("
+")
+            }
+        },
+        update = function(current = NULL) {
+            if (!is.null(current)) {
+                current_progress <<- as.integer(current)
+                percent <- as.integer((current_progress / total_work) * 100)
+                if (percent != last_displayed_percent) {
+                    last_displayed_percent <<- percent
+                    .update_progress_display(current_progress, total_work, start_time)
+                }
+            }
+        }
+    )
+}
+
+.update_progress_display <- function(current, total, start_time) {
+    percent <- min(100L, as.integer((current / total) * 100))
+    bar_width <- 50L
+    filled_width <- as.integer((percent / 100) * bar_width)
+    
+    # Pre-allocate strings for efficiency
+    equals <- strrep("=", filled_width)
+    spaces <- strrep(" ", bar_width - filled_width)
+    
+    elapsed <- as.numeric(difftime(Sys.time(), start_time, units = "secs"))
+    if (elapsed > 0 && current > 0) {
+        rate <- current / elapsed
+        if (rate > 0) {
+            eta <- (total - current) / rate
+            eta_str <- if (eta < 60) {
+                sprintf("ETA: %ds", round(eta))
+            } else {
+                sprintf("ETA: %dm", round(eta / 60))
+            }
+        } else {
+            eta_str <- ""
+        }
+    } else {
+        eta_str <- ""
+    }
+    
+    # Construct progress bar display
+    bar <- sprintf("[%s%s]", equals, spaces)
+    
+    # Use carriage return to overwrite the same line
+    cat(sprintf("\r%s %3d%% %s", bar, percent, eta_str))
+    flush.console()
+}
+
 .return_zerorow <- function(x, row_header, .name_repair) {
     jcol <- ifelse(row_header, 2, 1)
     col_n <- vctrs::vec_as_names(as.character(x[1,jcol:ncol(x)]), repair = .name_repair)
@@ -80,7 +188,9 @@
                         verbose = FALSE,
                         as_tibble = TRUE,
                         trim_ws = TRUE,
-                        n_max = Inf) {
+                        n_max = Inf,
+                        guess_max = min(1000, n_max),
+                        progress = readODS_progress()) {
     if (!file.exists(path)) {
         stop("file does not exist", call. = FALSE)
     }
@@ -119,6 +229,12 @@
     if (!is.numeric(n_max)) {
         stop("n_max must be numeric.", call. = FALSE)
     }
+    if (!is.numeric(guess_max)) {
+        stop("guess_max must be numeric.", call. = FALSE)
+    }
+    if (!is.logical(progress)) {
+        stop("progress must be of type `boolean`", call. = FALSE)
+    }
 }
 
 .return_empty <- function(as_tibble = FALSE) {
@@ -131,11 +247,11 @@
     return(data.frame())
 }
 
-.handle_col_types <- function(res, col_types, verbose, na, trim_ws) {
+.handle_col_types <- function(res, col_types, verbose, na, trim_ws, guess_max = NA) {
     if (isTRUE(is.na(col_types)) || nrow(res) == 0) {
         return(res)
     }
-    minty::type_convert(df = res, col_types = col_types, verbose = verbose, na = na, trim_ws = trim_ws)
+    minty::type_convert(df = res, col_types = col_types, verbose = verbose, na = na, trim_ws = trim_ws, guess_max = guess_max)
 }
 
 ## standardise `sheet` parameter as a number, i.e. sheet_index
@@ -180,7 +296,9 @@
                       .name_repair = "unique",
                       flat = FALSE,
                       trim_ws = TRUE,
-                      n_max = Inf) {
+                      n_max = Inf,
+                      guess_max = min(1000, n_max),
+                      progress = readODS_progress()) {
     .check_read_args(path,
         sheet,
         col_names,
@@ -194,8 +312,14 @@
         verbose,
         as_tibble,
         trim_ws,
-        n_max)
+        n_max,
+        guess_max,
+        progress)
     path <- normalizePath(path)
+    
+    # Initialize progress bar
+    pb <- .create_progress_bar(progress, total_work = 5)
+    
     if (flat) {
         .get_sheet_names_func <- get_flat_sheet_names_
         .read_ods_func <- read_flat_ods_
@@ -203,10 +327,16 @@
         .get_sheet_names_func <- get_sheet_names_
         .read_ods_func <- read_ods_
     }
+    
+    pb$tick() # Step 1: Setup complete
     ## Get cell range info
     limits <- .standardise_limits(range, skip, n_max)
+    pb$tick() # Step 2: Range calculated
+    
     sheet_index <- .standardise_sheet(sheet = sheet, sheet_names = .get_sheet_names_func(file = path, include_external_data = TRUE),
                                       range = range)
+    pb$tick() # Step 3: Sheet identified
+    
     strings <- .read_ods_func(file = path,
                               start_row = limits["min_row"],
                               stop_row = limits["max_row"],
@@ -214,13 +344,16 @@
                               stop_col = limits["max_col"],
                               sheet_index = sheet_index,
                               formula_as_formula = formula_as_formula)
+    pb$tick() # Step 4: Raw data read
 
     if (((strings[1] == 0 || strings[2] == 0)) &&
         isTRUE(getOption("readODS.v200", FALSE))) {
+        pb$terminate()
         return(.return_empty(as_tibble = as_tibble))
     }
     if (((strings[1] == 0 || strings[2] == 0) || (strings[1] == 1 && row_names)) &&
         isFALSE(getOption("readODS.v200", FALSE))) {
+        pb$terminate()
         return(.return_empty(as_tibble = as_tibble))
     }
     res <- as.data.frame(
@@ -230,7 +363,7 @@
             byrow = TRUE),
         stringsAsFactors = FALSE)
     res <- .change_df_with_col_row_header(x = res, col_header = col_names, row_header = row_names, .name_repair = .name_repair)
-    res <- .handle_col_types(res, col_types = col_types, verbose = verbose, na = na, trim_ws = trim_ws)
+    res <- .handle_col_types(res, col_types = col_types, verbose = verbose, na = na, trim_ws = trim_ws, guess_max = guess_max)
     if (strings_as_factors) {
         res <- .convert_strings_to_factors(df = res)
     }
@@ -240,6 +373,10 @@
     if (as_tibble) {
         res <- tibble::as_tibble(x = res, .name_repair = .name_repair)
     }
+    
+    pb$tick() # Step 5: Data processed
+    pb$terminate() # Finish progress bar
+    
     return(res)
 }
 
@@ -305,6 +442,8 @@
 #'   "magic number".
 #' @param trim_ws logical, should leading and trailing whitespace be trimmed?
 #' @param n_max numeric, Maximum number of data rows to read. Ignored if `range` is given.
+#' @param guess_max numeric, Maximum number of data rows to use for guessing column types. Defaults to min(1000, n_max).
+#' @param progress logical, Display a progress bar? By default, shows a progress bar in interactive sessions unless disabled. See \code{\link{readODS_progress}} for more details.
 #' @return A tibble (\code{tibble}) or data frame (\code{data.frame}) containing a representation of data in the (f)ods file.
 #' @author Peter Brohan <peter.brohan+cran@@gmail.com>, Chung-hong Chan <chainsawtiney@@gmail.com>, Gerrit-Jan Schutten <phonixor@@gmail.com>
 #' @examples
@@ -347,7 +486,9 @@ read_ods <- function(path,
                      ods_format = c("auto", "ods", "fods"),
                      guess = FALSE,
                      trim_ws = TRUE,
-                     n_max = Inf) {
+                     n_max = Inf,
+                     guess_max = min(1000, n_max),
+                     progress = readODS_progress()) {
     ods_format <- .determine_ods_format(path = path, guess = guess, ods_format = match.arg(ods_format))
     ## Should use match.call but there's a weird bug if one of the variable names is 'file'
     .read_ods(path = path,
@@ -365,7 +506,9 @@ read_ods <- function(path,
         .name_repair = .name_repair,
         flat = ods_format == "fods",
         trim_ws = trim_ws,
-        n_max = n_max)
+        n_max = n_max,
+        guess_max = guess_max,
+        progress = progress)
 }
 
 #' @rdname read_ods
@@ -384,7 +527,9 @@ read_fods <- function(path,
                       as_tibble = TRUE,
                       .name_repair = "unique",
                       trim_ws = TRUE,
-                      n_max = Inf) {
+                      n_max = Inf,
+                      guess_max = min(1000, n_max),
+                      progress = readODS_progress()) {
     ## Should use match.call but there's a weird bug if one of the variable names is 'file'
     .read_ods(path = normalizePath(path, mustWork = FALSE),
               sheet = sheet,
@@ -401,5 +546,7 @@ read_fods <- function(path,
               .name_repair = .name_repair,
               flat = TRUE,
               trim_ws = trim_ws,
-              n_max = n_max)
+              n_max = n_max,
+              guess_max = guess_max,
+              progress = progress)
 }

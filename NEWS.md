@@ -1,3 +1,10 @@
+# readODS 2.3.4
+
+* Matches `readxl` parameters
+* Adds progress bar for reading functions
+* Rewritten C+ parts for large files
+* Implements #154
+
 # readODS 2.3.3
 
 * Fix #213, prevent error when `set.seed` for `write_ods()`

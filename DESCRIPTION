@@ -1,7 +1,7 @@
 Package: readODS
 Type: Package
 Title: Read and Write ODS Files
-Version: 2.3.3
+Version: 2.3.4
 Authors@R: 
     c(person("Gerrit-Jan", "Schutten", role = c("aut"), email = "phonixor@gmail.com"),
     person("Chung-hong", "Chan", role = c("aut", "cre"), email = "chainsawtiney@gmail.com", comment = c(ORCID = "0000-0002-6232-7530")),
@@ -19,6 +19,7 @@ Authors@R:
     person("Matt", "Kerlogue", role = c("ctb")),
     person("Michal", "Lauer", role = c("ctb"), email = "michal.lauer.25@gmail.com"),
     person("Till", "Straube", role = c("ctb"), email = "straube@geo.uni-frankfurt.de"),
+    person("Mauricio", "Vargas Sepulveda", role = c("ctb"), email = "m.vargas.sepulveda@gmail.com"),
     person("Marcin", "Kalicinski", role = c("ctb", "cph"), comment = "Author of included RapidXML code"))
 Description: Read ODS (OpenDocument Spreadsheet) into R as data frame. Also support writing data frame into ODS file.
 URL: https://docs.ropensci.org/readODS/, https://github.com/ropensci/readODS

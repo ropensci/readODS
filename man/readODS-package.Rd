@@ -41,6 +41,7 @@ Other contributors:
   \item Matt Kerlogue [contributor]
   \item Michal Lauer \email{michal.lauer.25@gmail.com} [contributor]
   \item Till Straube \email{straube@geo.uni-frankfurt.de} [contributor]
+  \item Mauricio Vargas Sepulveda \email{m.vargas.sepulveda@gmail.com} [contributor]
   \item Marcin Kalicinski (Author of included RapidXML code) [contributor, copyright holder]
 }
 

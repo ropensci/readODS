@@ -1,6 +1,5 @@
 #' @useDynLib readODS, .registration = TRUE
-NULL
-
+#' @importFrom utils flush.console
 #' @keywords internal
 "_PACKAGE"
 
