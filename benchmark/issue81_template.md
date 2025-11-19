@@ -5,7 +5,7 @@
 date()
 ```
 
-    [1] "Tue Jun  4 18:39:24 2024"
+    [1] "Wed Nov 19 20:06:47 2025"
 
 ``` r
 devtools::load_all()
@@ -19,7 +19,7 @@ system.time(x <- read_ods(file, sheet = 2, skip = 4))
 ```
 
        user  system elapsed 
-      0.407   0.051   0.462 
+      0.428   0.059   0.488 
 
 ``` r
 dim(x)
@@ -31,13 +31,13 @@ dim(x)
 sessionInfo()
 ```
 
-    R version 4.4.0 (2024-04-24)
+    R version 4.5.2 (2025-10-31)
     Platform: x86_64-pc-linux-gnu
-    Running under: Ubuntu 22.04.4 LTS
+    Running under: Ubuntu 22.04.5 LTS
 
     Matrix products: default
-    BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0 
-    LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0
+    BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
+    LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so;  LAPACK version 3.10.0
 
     locale:
      [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -54,21 +54,20 @@ sessionInfo()
     [1] stats     graphics  grDevices utils     datasets  methods   base     
 
     other attached packages:
-    [1] readODS_2.3.1  testthat_3.2.1
+    [1] readODS_2.3.4  testthat_3.2.3
 
     loaded via a namespace (and not attached):
-     [1] utf8_1.2.4        stringi_1.8.4     digest_0.6.35     magrittr_2.0.3   
-     [5] evaluate_0.23     pkgload_1.3.4     fastmap_1.1.1     cellranger_1.1.0 
-     [9] rprojroot_2.0.4   jsonlite_1.8.8    zip_2.3.1         pkgbuild_1.4.4   
-    [13] sessioninfo_1.2.2 brio_1.1.4        urlchecker_1.0.1  promises_1.3.0   
-    [17] purrr_1.0.2       fansi_1.0.6       cli_3.6.2         shiny_1.8.1.1    
-    [21] rlang_1.1.4       ellipsis_0.3.2    remotes_2.5.0     withr_3.0.0      
-    [25] cachem_1.0.8      yaml_2.3.8        devtools_2.4.5    tools_4.4.0      
-    [29] tzdb_0.4.0        memoise_2.0.1     httpuv_1.6.15     here_1.0.1       
-    [33] vctrs_0.6.5       R6_2.5.1          mime_0.12         lifecycle_1.0.4  
-    [37] minty_0.0.1       stringr_1.5.1     fs_1.6.3          htmlwidgets_1.6.4
-    [41] usethis_2.2.3     miniUI_0.1.1.1    pkgconfig_2.0.3   desc_1.4.3       
-    [45] pillar_1.9.0      later_1.3.2       glue_1.7.0        profvis_0.3.8    
-    [49] Rcpp_1.0.12       xfun_0.43         tibble_3.2.1      rstudioapi_0.16.0
-    [53] knitr_1.46        xtable_1.8-4      htmltools_0.5.8.1 rmarkdown_2.26   
-    [57] compiler_4.4.0   
+     [1] miniUI_0.1.2      jsonlite_2.0.0    compiler_4.5.2    brio_1.1.5       
+     [5] promises_1.3.3    zip_2.3.3         Rcpp_1.1.0        later_1.4.4      
+     [9] yaml_2.3.10       fastmap_1.2.0     here_1.0.1        mime_0.13        
+    [13] R6_2.5.1          knitr_1.50        htmlwidgets_1.6.4 tibble_3.2.1     
+    [17] desc_1.4.3        profvis_0.4.0     rprojroot_2.1.1   shiny_1.11.1     
+    [21] tzdb_0.4.0        pillar_1.11.1     rlang_1.1.4       stringi_1.8.4    
+    [25] cachem_1.1.0      httpuv_1.6.16     xfun_0.53         fs_1.6.6         
+    [29] pkgload_1.4.0     memoise_2.0.1     cli_3.6.3         withr_3.0.1      
+    [33] magrittr_2.0.3    digest_0.6.37     rstudioapi_0.17.1 xtable_1.8-4     
+    [37] remotes_2.5.0     devtools_2.4.5    lifecycle_1.0.4   vctrs_0.6.5      
+    [41] minty_0.0.5       evaluate_1.0.5    glue_1.8.0        cellranger_1.1.0 
+    [45] urlchecker_1.0.1  sessioninfo_1.2.3 pkgbuild_1.4.8    rmarkdown_2.29   
+    [49] purrr_1.0.2       pkgconfig_2.0.3   tools_4.5.2       usethis_3.1.0    
+    [53] ellipsis_0.3.2    htmltools_0.5.8.1
