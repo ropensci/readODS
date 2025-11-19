@@ -35,3 +35,7 @@ check_nonnegative_integer <- function(x, argument) {
     ## if ncol == 0, without as.character would return `logical(0)`
     as.character(ifelse(unlist(lapply(x, function(x) class(x)[1])) %in% c("integer", "numeric"), "float", "string"))
 }
+
+.is_interactive <- function(...) {
+    interactive()
+}

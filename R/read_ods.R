@@ -12,22 +12,23 @@ readODS_progress <- function() {
     if (isFALSE(getOption("readODS.show_progress", TRUE))) {
         return(FALSE)
     }
-    
+
     # Don't show in non-interactive sessions
-    if (!interactive()) {
+    # make mockable (see utils.R)
+    if (!.is_interactive()) {
         return(FALSE)
     }
-    
+
     # Don't show when knitting
     if (isTRUE(getOption("knitr.in.progress", FALSE))) {
         return(FALSE)
     }
-    
+
     # Don't show in RStudio notebook chunks
     if (Sys.getenv("RSTUDIO_NOTEBOOK") != "") {
         return(FALSE)
     }
-    
+
     return(TRUE)
 }
 
@@ -37,12 +38,12 @@ readODS_progress <- function() {
         noop <- function(...) invisible(NULL)
         return(list(tick = noop, terminate = noop, update = noop))
     }
-    
+
     # Efficient progress bar with minimal overhead
     start_time <- Sys.time()
     current_progress <- 0L
     last_displayed_percent <- -1L
-    
+
     list(
         tick = function() {
             current_progress <<- current_progress + 1L
@@ -76,11 +77,11 @@ readODS_progress <- function() {
     percent <- min(100L, as.integer((current / total) * 100))
     bar_width <- 50L
     filled_width <- as.integer((percent / 100) * bar_width)
-    
+
     # Pre-allocate strings for efficiency
     equals <- strrep("=", filled_width)
     spaces <- strrep(" ", bar_width - filled_width)
-    
+
     elapsed <- as.numeric(difftime(Sys.time(), start_time, units = "secs"))
     if (elapsed > 0 && current > 0) {
         rate <- current / elapsed
@@ -97,10 +98,10 @@ readODS_progress <- function() {
     } else {
         eta_str <- ""
     }
-    
+
     # Construct progress bar display
     bar <- sprintf("[%s%s]", equals, spaces)
-    
+
     # Use carriage return to overwrite the same line
     cat(sprintf("\r%s %3d%% %s", bar, percent, eta_str))
     flush.console()
@@ -316,10 +317,10 @@ readODS_progress <- function() {
         guess_max,
         progress)
     path <- normalizePath(path)
-    
+
     # Initialize progress bar
     pb <- .create_progress_bar(progress, total_work = 5)
-    
+
     if (flat) {
         .get_sheet_names_func <- get_flat_sheet_names_
         .read_ods_func <- read_flat_ods_
@@ -327,16 +328,16 @@ readODS_progress <- function() {
         .get_sheet_names_func <- get_sheet_names_
         .read_ods_func <- read_ods_
     }
-    
+
     pb$tick() # Step 1: Setup complete
     ## Get cell range info
     limits <- .standardise_limits(range, skip, n_max)
     pb$tick() # Step 2: Range calculated
-    
+
     sheet_index <- .standardise_sheet(sheet = sheet, sheet_names = .get_sheet_names_func(file = path, include_external_data = TRUE),
                                       range = range)
     pb$tick() # Step 3: Sheet identified
-    
+
     strings <- .read_ods_func(file = path,
                               start_row = limits["min_row"],
                               stop_row = limits["max_row"],
@@ -373,10 +374,10 @@ readODS_progress <- function() {
     if (as_tibble) {
         res <- tibble::as_tibble(x = res, .name_repair = .name_repair)
     }
-    
+
     pb$tick() # Step 5: Data processed
     pb$terminate() # Finish progress bar
-    
+
     return(res)
 }
 
