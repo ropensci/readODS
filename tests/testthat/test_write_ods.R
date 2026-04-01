@@ -194,3 +194,18 @@ withr::with_seed(123, {
         expect_warning(write_ods(mydata), NA)
     })
 })
+
+test_that("fix 224 OutDec option is ignored", {
+    withr::local_options(list(OutDec = ","))
+    expect_equal(as.character(1.2), "1,2")
+    expect_equal(.sanitize(1.2), "1.2")
+    expect_equal(.sanitize(1.21212121212121), "1.21212121212121")
+    ## integration test
+    example_data <- data.frame(x = c(0.5, 1, 1.5))
+    path <- write_fods(example_data)
+    fods_content <- readLines(path)
+    expect_false(any(grepl("office:value=\"0,5\"", fods_content, fixed = TRUE)))
+    expect_true(any(grepl("office:value=\"0.5\"", fods_content, fixed = TRUE)))
+    ## (fake) global option doesn't change
+    expect_equal(getOption("OutDec"), ",")
+})
