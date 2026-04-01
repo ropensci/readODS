@@ -4,6 +4,7 @@
 * Adds progress bar for reading functions
 * Rewritten C+ parts for large files
 * Implements #154
+* Fix #224 "OutDec" option is ignored
 
 # readODS 2.3.3
 

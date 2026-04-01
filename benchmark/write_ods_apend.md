@@ -5,7 +5,7 @@
 date()
 ```
 
-    [1] "Wed Nov 19 20:06:27 2025"
+    [1] "Wed Apr  1 12:07:08 2026"
 
 ``` r
 devtools::load_all()
@@ -30,27 +30,27 @@ system.time(write_ods(df1, path = path, sheet = "aaaa", append = TRUE))
 ```
 
        user  system elapsed 
-      0.324   0.019   0.344 
+      0.315   0.028   0.343 
 
 ``` r
 system.time(write_ods(df1, path = path, sheet = "aaaa", update = TRUE))
 ```
 
        user  system elapsed 
-      0.338   0.027   0.366 
+      0.332   0.039   0.370 
 
 ``` r
 system.time(write_ods(mtcars, path = path, sheet = "aaaa", update = TRUE))
 ```
 
        user  system elapsed 
-      0.215   0.024   0.239 
+      0.220   0.022   0.242 
 
 ``` r
 sessionInfo()
 ```
 
-    R version 4.5.2 (2025-10-31)
+    R version 4.5.3 (2026-03-11)
     Platform: x86_64-pc-linux-gnu
     Running under: Ubuntu 22.04.5 LTS
 
@@ -76,16 +76,16 @@ sessionInfo()
     [1] readODS_2.3.4  testthat_3.2.3
 
     loaded via a namespace (and not attached):
-     [1] miniUI_0.1.2      jsonlite_2.0.0    compiler_4.5.2    brio_1.1.5       
+     [1] miniUI_0.1.2      jsonlite_2.0.0    compiler_4.5.3    brio_1.1.5       
      [5] promises_1.3.3    zip_2.3.3         Rcpp_1.1.0        later_1.4.4      
      [9] yaml_2.3.10       fastmap_1.2.0     mime_0.13         R6_2.5.1         
-    [13] knitr_1.50        htmlwidgets_1.6.4 tibble_3.2.1      desc_1.4.3       
+    [13] knitr_1.50        htmlwidgets_1.6.4 tibble_3.3.1      desc_1.4.3       
     [17] profvis_0.4.0     rprojroot_2.1.1   shiny_1.11.1      pillar_1.11.1    
-    [21] rlang_1.1.4       stringi_1.8.4     cachem_1.1.0      httpuv_1.6.16    
-    [25] xfun_0.53         fs_1.6.6          pkgload_1.4.0     memoise_2.0.1    
-    [29] cli_3.6.3         withr_3.0.1       magrittr_2.0.3    digest_0.6.37    
+    [21] rlang_1.1.7       stringi_1.8.4     cachem_1.1.0      httpuv_1.6.16    
+    [25] xfun_0.56         fs_1.6.6          pkgload_1.4.0     memoise_2.0.1    
+    [29] cli_3.6.3         withr_3.0.1       magrittr_2.0.4    digest_0.6.37    
     [33] rstudioapi_0.17.1 xtable_1.8-4      remotes_2.5.0     devtools_2.4.5   
-    [37] lifecycle_1.0.4   vctrs_0.6.5       minty_0.0.5       evaluate_1.0.5   
+    [37] lifecycle_1.0.5   vctrs_0.7.1       minty_0.0.5       evaluate_1.0.5   
     [41] glue_1.8.0        cellranger_1.1.0  urlchecker_1.0.1  sessioninfo_1.2.3
-    [45] pkgbuild_1.4.8    rmarkdown_2.29    purrr_1.0.2       pkgconfig_2.0.3  
-    [49] tools_4.5.2       usethis_3.1.0     ellipsis_0.3.2    htmltools_0.5.8.1
+    [45] pkgbuild_1.4.8    rmarkdown_2.30    purrr_1.2.1       pkgconfig_2.0.3  
+    [49] tools_4.5.3       usethis_3.1.0     ellipsis_0.3.2    htmltools_0.5.8.1
