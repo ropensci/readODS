@@ -2,7 +2,7 @@
 
 * Matches `readxl` parameters
 * Adds progress bar for reading functions
-* Rewritten C+ parts for large files
+* Rewritten C++ parts for large files
 * Implements #154
 * Fix #224 "OutDec" option is ignored
 
