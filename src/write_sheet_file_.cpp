@@ -173,6 +173,28 @@ write_sheet_file_(const std::string &filename, const cpp11::data_frame &x,
 }
 
 [[cpp11::register]]
+cpp11::r_string
+write_sheet_file_clean_(const std::string &filename, const cpp11::data_frame &x,
+                  const std::string &sheet_name, const bool row_names,
+                  const bool col_names, const bool na_as_string,
+                  const bool padding, const std::string &header,
+                  const std::string &footer) {
+
+  std::ofstream xml_file(filename, std::ios::out | std::ios::trunc);
+  if (!xml_file) {
+    throw std::runtime_error("Cannot open file for writing: " + filename);
+  }
+
+  xml_file << header;
+  write_df(x, sheet_name, row_names, col_names, na_as_string, padding,
+           xml_file);
+  xml_file << footer << "\n";
+
+  return filename;
+}
+
+
+[[cpp11::register]]
 cpp11::r_string write_sheet_file_list_(
     const std::string &filename, const cpp11::list_of<cpp11::data_frame> &x,
     const std::string

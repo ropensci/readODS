@@ -28,6 +28,10 @@ write_sheet_file_ <- function(filename, x, sheet_name, row_names, col_names, na_
   .Call(`_readODS_write_sheet_file_`, filename, x, sheet_name, row_names, col_names, na_as_string, padding, header, footer)
 }
 
+write_sheet_file_clean_ <- function(filename, x, sheet_name, row_names, col_names, na_as_string, padding, header, footer) {
+  .Call(`_readODS_write_sheet_file_clean_`, filename, x, sheet_name, row_names, col_names, na_as_string, padding, header, footer)
+}
+
 write_sheet_file_list_ <- function(filename, x, sheet_name, row_names, col_names, na_as_string, padding, header, footer) {
   .Call(`_readODS_write_sheet_file_list_`, filename, x, sheet_name, row_names, col_names, na_as_string, padding, header, footer)
 }
