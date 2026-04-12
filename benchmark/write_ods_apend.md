@@ -5,15 +5,10 @@
 date()
 ```
 
-    [1] "Wed Apr  1 12:07:08 2026"
+    [1] "Sun Apr 12 20:49:26 2026"
 
 ``` r
-devtools::load_all()
-```
-
-    ℹ Loading readODS
-
-``` r
+library(readODS)
 ## generate a 3000 x 8 data.frame
 set.seed(721831)
 df1 <- data.frame(a1 = sample(c(1:100), size = 3000, replace = TRUE),
@@ -30,21 +25,21 @@ system.time(write_ods(df1, path = path, sheet = "aaaa", append = TRUE))
 ```
 
        user  system elapsed 
-      0.315   0.028   0.343 
+      0.206   0.037   0.243 
 
 ``` r
 system.time(write_ods(df1, path = path, sheet = "aaaa", update = TRUE))
 ```
 
        user  system elapsed 
-      0.332   0.039   0.370 
+      0.180   0.026   0.205 
 
 ``` r
 system.time(write_ods(mtcars, path = path, sheet = "aaaa", update = TRUE))
 ```
 
        user  system elapsed 
-      0.220   0.022   0.242 
+      0.112   0.006   0.118 
 
 ``` r
 sessionInfo()
@@ -73,19 +68,11 @@ sessionInfo()
     [1] stats     graphics  grDevices utils     datasets  methods   base     
 
     other attached packages:
-    [1] readODS_2.3.4  testthat_3.2.3
+    [1] readODS_2.3.5
 
     loaded via a namespace (and not attached):
-     [1] miniUI_0.1.2      jsonlite_2.0.0    compiler_4.5.3    brio_1.1.5       
-     [5] promises_1.3.3    zip_2.3.3         Rcpp_1.1.0        later_1.4.4      
-     [9] yaml_2.3.10       fastmap_1.2.0     mime_0.13         R6_2.5.1         
-    [13] knitr_1.50        htmlwidgets_1.6.4 tibble_3.3.1      desc_1.4.3       
-    [17] profvis_0.4.0     rprojroot_2.1.1   shiny_1.11.1      pillar_1.11.1    
-    [21] rlang_1.1.7       stringi_1.8.4     cachem_1.1.0      httpuv_1.6.16    
-    [25] xfun_0.56         fs_1.6.6          pkgload_1.4.0     memoise_2.0.1    
-    [29] cli_3.6.3         withr_3.0.1       magrittr_2.0.4    digest_0.6.37    
-    [33] rstudioapi_0.17.1 xtable_1.8-4      remotes_2.5.0     devtools_2.4.5   
-    [37] lifecycle_1.0.5   vctrs_0.7.1       minty_0.0.5       evaluate_1.0.5   
-    [41] glue_1.8.0        cellranger_1.1.0  urlchecker_1.0.1  sessioninfo_1.2.3
-    [45] pkgbuild_1.4.8    rmarkdown_2.30    purrr_1.2.1       pkgconfig_2.0.3  
-    [49] tools_4.5.3       usethis_3.1.0     ellipsis_0.3.2    htmltools_0.5.8.1
+     [1] digest_0.6.37     fastmap_1.2.0     xfun_0.56         glue_1.8.0       
+     [5] knitr_1.50        htmltools_0.5.8.1 rmarkdown_2.30    lifecycle_1.0.5  
+     [9] cli_3.6.6         zip_2.3.3         vctrs_0.7.3       withr_3.0.2      
+    [13] compiler_4.5.3    tools_4.5.3       evaluate_1.0.5    pillar_1.11.1    
+    [17] yaml_2.3.10       rlang_1.2.0       jsonlite_2.0.0    stringi_1.8.7    

@@ -6,7 +6,7 @@ format: gfm
 
 ```{r basicexample}
 date()
-devtools::load_all()
+library(readODS)
 file <- here::here("benchmark/basic_example.ods")
 ## it was 50.4ms
 bench::mark("readODS" = read_ods(file, sheet = 2), check = FALSE, filter_gc = FALSE, iterations = 20) |>
