@@ -160,10 +160,6 @@ write_sheet_file_(const std::string &filename, const cpp11::data_frame &x,
     throw std::runtime_error("Cannot open file for writing: " + filename);
   }
 
-  // Set a larger buffer for better I/O performance
-  char buffer[8192];
-  xml_file.rdbuf()->pubsetbuf(buffer, sizeof(buffer));
-
   xml_file << header;
   write_df(x, sheet_name, row_names, col_names, na_as_string, padding,
            xml_file);
@@ -184,10 +180,6 @@ cpp11::r_string write_sheet_file_list_(
   if (!xml_file) {
     throw std::runtime_error("Cannot open file for writing: " + filename);
   }
-
-  // Set a larger buffer for better I/O performance
-  char buffer[8192];
-  xml_file.rdbuf()->pubsetbuf(buffer, sizeof(buffer));
 
   xml_file << header;
   cpp11::strings sheet_names = x.names();
