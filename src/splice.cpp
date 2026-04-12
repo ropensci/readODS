@@ -1,6 +1,6 @@
 #include "splice.h"
 
-[[cpp11::register]]
+[[cpp4r::register]]
 std::string splice_sheet_(const std::string &original_xml,
                           const std::string &sheet_file, const bool flat) {
   try {
@@ -72,7 +72,7 @@ std::string splice_sheet_(const std::string &original_xml,
   }
 }
 
-[[cpp11::register]]
+[[cpp4r::register]]
 std::string update_sheet_(const std::string &original_xml,
                           const std::string &sheet_file, const bool flat,
                           const int sheet_index) {

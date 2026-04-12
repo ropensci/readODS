@@ -1,6 +1,6 @@
 #include "write_sheet_file_.h"
 
-void cell_out(const cpp11::r_string &value_type, const cpp11::r_string &value,
+void cell_out(const cpp4r::r_string &value_type, const cpp4r::r_string &value,
               std::ofstream &xml_file) {
   const char *value_type_c = Rf_translateCharUTF8(value_type);
   const char *value_c = Rf_translateCharUTF8(value);
@@ -36,30 +36,30 @@ void pad_rows(const bool &padding, const int &cols, const int &cmax,
   }
 }
 
-cpp11::strings dimnames(const cpp11::data_frame &x, bool cols) {
+cpp4r::strings dimnames(const cpp4r::data_frame &x, bool cols) {
   // Is there a better way?
-  cpp11::function dimnames_rfun =
-      cpp11::package("readODS")[".get_sanitized_dimnames"];
-  return cpp11::writable::strings(static_cast<SEXP>(dimnames_rfun(x, cols)));
+  cpp4r::function dimnames_rfun =
+      cpp4r::package("readODS")[".get_sanitized_dimnames"];
+  return cpp4r::writable::strings(static_cast<SEXP>(dimnames_rfun(x, cols)));
 }
 
-cpp11::list_of<cpp11::strings> sanitize(const cpp11::data_frame &x,
-                                        const cpp11::strings column_types) {
-  cpp11::function sanitize_rfun = cpp11::package("readODS")[".sanitize_df"];
-  return cpp11::writable::list_of<cpp11::strings>(
+cpp4r::list_of<cpp4r::strings> sanitize(const cpp4r::data_frame &x,
+                                        const cpp4r::strings column_types) {
+  cpp4r::function sanitize_rfun = cpp4r::package("readODS")[".sanitize_df"];
+  return cpp4r::writable::list_of<cpp4r::strings>(
       static_cast<SEXP>(sanitize_rfun(x, column_types)));
 }
 
-cpp11::strings get_column_types(const cpp11::data_frame &x) {
-  cpp11::function get_column_types_rfun =
-      cpp11::package("readODS")[".get_column_types"];
-  return cpp11::writable::strings(static_cast<SEXP>(get_column_types_rfun(x)));
+cpp4r::strings get_column_types(const cpp4r::data_frame &x) {
+  cpp4r::function get_column_types_rfun =
+      cpp4r::package("readODS")[".get_column_types"];
+  return cpp4r::writable::strings(static_cast<SEXP>(get_column_types_rfun(x)));
 }
 
 std::string escape_xml(const std::string &input) {
-  cpp11::sexp input_sexp = cpp11::as_sexp(input);
-  cpp11::function escape_xml_rfun = cpp11::package("readODS")[".escape_xml"];
-  return cpp11::as_cpp<std::string>(escape_xml_rfun(input_sexp));
+  cpp4r::sexp input_sexp = cpp4r::as_sexp(input);
+  cpp4r::function escape_xml_rfun = cpp4r::package("readODS")[".escape_xml"];
+  return cpp4r::as_cpp<std::string>(escape_xml_rfun(input_sexp));
 }
 
 void write_empty(std::ofstream &xml_file,
@@ -70,7 +70,7 @@ void write_empty(std::ofstream &xml_file,
   xml_file << empty_table;
 }
 
-void write_df(const cpp11::data_frame &x, const std::string &sheet_name,
+void write_df(const cpp4r::data_frame &x, const std::string &sheet_name,
               const bool row_names, const bool col_names,
               const bool na_as_string, const bool padding,
               std::ofstream &xml_file) {
@@ -79,9 +79,9 @@ void write_df(const cpp11::data_frame &x, const std::string &sheet_name,
     write_empty(xml_file, escaped_sheet_name);
     return;
   }
-  cpp11::strings column_types = get_column_types(x);
-  cpp11::strings rownames_x, colnames_x;
-  cpp11::list_of<cpp11::strings> x_list = sanitize(x, column_types);
+  cpp4r::strings column_types = get_column_types(x);
+  cpp4r::strings rownames_x, colnames_x;
+  cpp4r::list_of<cpp4r::strings> x_list = sanitize(x, column_types);
   if (row_names) {
     rownames_x = dimnames(x, false);
   }
@@ -106,7 +106,7 @@ void write_df(const cpp11::data_frame &x, const std::string &sheet_name,
       cell_out("string", "", xml_file);
     }
     // Cache string literal for performance
-    static const cpp11::r_string string_type_r("string");
+    static const cpp4r::r_string string_type_r("string");
     for (int j = 0; j < colnames_x.size(); j++) {
       cell_out(string_type_r, colnames_x[j], xml_file);
     }
@@ -116,7 +116,7 @@ void write_df(const cpp11::data_frame &x, const std::string &sheet_name,
   for (int i = 0; i < x_list[0].size(); i++) {
     xml_file << "<table:table-row table:style-name=\"ro1\">\n";
     if (row_names) {
-      static const cpp11::r_string string_type_r("string");
+      static const cpp4r::r_string string_type_r("string");
       cell_out(string_type_r, rownames_x[i], xml_file);
     }
     for (int j = 0; j < column_types.size(); j++) {
@@ -128,8 +128,8 @@ void write_df(const cpp11::data_frame &x, const std::string &sheet_name,
         xml_file << "<table:table-cell/>\n";
         continue;
       }
-      static const cpp11::r_string string_type_r("string");
-      static const cpp11::r_string na_value("NA");
+      static const cpp4r::r_string string_type_r("string");
+      static const cpp4r::r_string na_value("NA");
       cell_out(string_type_r, na_value, xml_file);
     }
     pad_rows(padding, cols, cmax, xml_file);
@@ -147,22 +147,17 @@ void write_df(const cpp11::data_frame &x, const std::string &sheet_name,
   xml_file << "</table:table>\n";
 }
 
-[[cpp11::register]]
-cpp11::r_string
-write_sheet_file_(const std::string &filename, const cpp11::data_frame &x,
+[[cpp4r::register]]
+cpp4r::r_string
+write_sheet_file_(const std::string &filename, const cpp4r::data_frame &x,
                   const std::string &sheet_name, const bool row_names,
                   const bool col_names, const bool na_as_string,
                   const bool padding, const std::string &header,
                   const std::string &footer) {
-  // Use buffered output for better performance
   std::ofstream xml_file(filename, std::ios::out | std::ios::trunc);
   if (!xml_file) {
     throw std::runtime_error("Cannot open file for writing: " + filename);
   }
-
-  // Set a larger buffer for better I/O performance
-  char buffer[8192];
-  xml_file.rdbuf()->pubsetbuf(buffer, sizeof(buffer));
 
   xml_file << header;
   write_df(x, sheet_name, row_names, col_names, na_as_string, padding,
@@ -172,28 +167,23 @@ write_sheet_file_(const std::string &filename, const cpp11::data_frame &x,
   return filename;
 }
 
-[[cpp11::register]]
-cpp11::r_string write_sheet_file_list_(
-    const std::string &filename, const cpp11::list_of<cpp11::data_frame> &x,
+[[cpp4r::register]]
+cpp4r::r_string write_sheet_file_list_(
+    const std::string &filename, const cpp4r::list_of<cpp4r::data_frame> &x,
     const std::string
         &sheet_name, // wont use; just for maintain the same interface
     const bool row_names, const bool col_names, const bool na_as_string,
     const bool padding, const std::string &header, const std::string &footer) {
-  // Use buffered output for better performance
   std::ofstream xml_file(filename, std::ios::out | std::ios::trunc);
   if (!xml_file) {
     throw std::runtime_error("Cannot open file for writing: " + filename);
   }
 
-  // Set a larger buffer for better I/O performance
-  char buffer[8192];
-  xml_file.rdbuf()->pubsetbuf(buffer, sizeof(buffer));
-
   xml_file << header;
-  cpp11::strings sheet_names = x.names();
+  cpp4r::strings sheet_names = x.names();
   for (int i = 0; i < sheet_names.size(); i++) {
-    const cpp11::data_frame &current_df = x[i]; // Use const reference
-    const cpp11::r_string &current_sheet_name =
+    const cpp4r::data_frame &current_df = x[i]; // Use const reference
+    const cpp4r::r_string &current_sheet_name =
         sheet_names[i]; // Use const reference
     write_df(current_df, current_sheet_name, row_names, col_names, na_as_string,
              padding, xml_file);

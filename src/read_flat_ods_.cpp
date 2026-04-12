@@ -1,8 +1,8 @@
 #include "is_ods.h"
 #include "read_ods_internals.h"
 
-[[cpp11::register]]
-cpp11::strings read_flat_ods_(const std::string &file, int start_row,
+[[cpp4r::register]]
+cpp4r::strings read_flat_ods_(const std::string &file, int start_row,
                               int stop_row, int start_col, int stop_col,
                               const int sheet_index,
                               const bool formula_as_formula) {

@@ -2,7 +2,7 @@
 #include "read_ods_internals.h"
 #include "readxl/zip.cpp"
 
-cpp11::strings get_sheet_names_from_content(rapidxml::xml_node<> *rootNode,
+cpp4r::strings get_sheet_names_from_content(rapidxml::xml_node<> *rootNode,
                                             const bool include_external_data) {
 
   // Cache string literals to avoid repeated comparisons
@@ -21,7 +21,7 @@ cpp11::strings get_sheet_names_from_content(rapidxml::xml_node<> *rootNode,
   }
 
   // Pre-allocate with exact size
-  cpp11::writable::strings sheetNames(sheet_count);
+  cpp4r::writable::strings sheetNames(sheet_count);
 
   // Second pass: collect sheet names
   int i = 0;
@@ -42,8 +42,8 @@ cpp11::strings get_sheet_names_from_content(rapidxml::xml_node<> *rootNode,
   return sheetNames;
 }
 
-[[cpp11::register]]
-cpp11::strings get_sheet_names_(const std::string &file,
+[[cpp4r::register]]
+cpp4r::strings get_sheet_names_(const std::string &file,
                                 const bool include_external_data) {
   if (!is_ods(file)) {
     throw std::invalid_argument(file + " is not a correct ODS file");
@@ -81,8 +81,8 @@ cpp11::strings get_sheet_names_(const std::string &file,
   return get_sheet_names_from_content(rootNode, include_external_data);
 }
 
-[[cpp11::register]]
-cpp11::strings get_flat_sheet_names_(const std::string &file,
+[[cpp4r::register]]
+cpp4r::strings get_flat_sheet_names_(const std::string &file,
                                      const bool include_external_data) {
   if (!is_flat_ods(file)) {
     throw std::invalid_argument(file + " is not a correct FODS file");

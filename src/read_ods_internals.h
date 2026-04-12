@@ -1,6 +1,6 @@
 #pragma once
 
-#include "cpp11.hpp"
+#include "cpp4r.hpp"
 
 #include "rapidxml/rapidxml.hpp"
 
@@ -23,7 +23,7 @@ std::vector<std::vector<rapidxml::xml_node<> *>>
 find_rows(rapidxml::xml_node<> *sheet, const int start_row, const int stop_row,
           const int start_col, const int stop_col);
 
-cpp11::strings read_cell_values_(rapidxml::xml_node<> *rootNode,
+cpp4r::strings read_cell_values_(rapidxml::xml_node<> *rootNode,
                                  const int start_row, const int stop_row,
                                  const int start_col, const int stop_col,
                                  const int sheet_index,

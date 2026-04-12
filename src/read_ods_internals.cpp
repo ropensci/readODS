@@ -257,7 +257,7 @@ find_rows(rapidxml::xml_node<> *sheet, const int start_row, const int stop_row,
 
 // read cell_values (an R character vector) out of the rootNode of the XML
 // document
-cpp11::strings read_cell_values_(rapidxml::xml_node<> *rootNode,
+cpp4r::strings read_cell_values_(rapidxml::xml_node<> *rootNode,
                                  const int start_row, const int stop_row,
                                  const int start_col, const int stop_col,
                                  const int sheet_index,
@@ -278,12 +278,12 @@ cpp11::strings read_cell_values_(rapidxml::xml_node<> *rootNode,
   }
   // If there is no content
   if (out_width * out_length == 0) {
-    cpp11::writable::strings cell_values(2);
+    cpp4r::writable::strings cell_values(2);
     cell_values[0] = "0";
     cell_values[1] = "0";
     return cell_values;
   }
-  cpp11::writable::strings cell_values(out_width * out_length + 2);
+  cpp4r::writable::strings cell_values(out_width * out_length + 2);
   cell_values[0] = std::to_string(out_width);
   cell_values[1] = std::to_string(out_length);
 

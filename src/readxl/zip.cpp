@@ -1,14 +1,14 @@
 #pragma once
 #include "zip.h"
 
-#include "cpp11/function.hpp"
-#include "cpp11/raws.hpp"
+#include "cpp4r/function.hpp"
+#include "cpp4r/raws.hpp"
 
 std::string zip_buffer(const std::string &zip_path,
                        const std::string &file_path) {
-  cpp11::function zip_buffer = cpp11::package("readODS")["zip_buffer"];
+  cpp4r::function zip_buffer = cpp4r::package("readODS")["zip_buffer"];
 
-  cpp11::raws xml(zip_buffer(zip_path, file_path));
+  cpp4r::raws xml(zip_buffer(zip_path, file_path));
   std::string buffer(RAW(xml), RAW(xml) + xml.size());
   buffer.push_back('\0');
 
@@ -16,6 +16,6 @@ std::string zip_buffer(const std::string &zip_path,
 }
 
 bool zip_has_file(const std::string &zip_path, const std::string &file_path) {
-  cpp11::function zip_has_file = cpp11::package("readODS")["zip_has_file"];
+  cpp4r::function zip_has_file = cpp4r::package("readODS")["zip_has_file"];
   return zip_has_file(zip_path, file_path);
 }
