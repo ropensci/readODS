@@ -1,3 +1,7 @@
+# readODS 2.3.5
+
+* Remove manual allocation of buffer to prevent stack-use-after-scope problem reported by BDR (see #288, ref #215)
+
 # readODS 2.3.4
 
 * Matches `readxl` parameters

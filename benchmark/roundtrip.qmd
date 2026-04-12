@@ -26,7 +26,7 @@ The ODS version
 
 ```{r}
 #| label: readODS
-devtools::load_all()
+library(readODS)
 system.time(path <- readODS::write_ods(flights))
 system.time(out <- readODS::read_ods(path))
 all.equal(out, flights)

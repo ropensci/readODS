@@ -5,7 +5,7 @@ format: gfm
 
 ```{r}
 date()
-devtools::load_all()
+library(readODS)
 ## generate a 3000 x 8 data.frame
 set.seed(721831)
 df1 <- data.frame(a1 = sample(c(1:100), size = 3000, replace = TRUE),

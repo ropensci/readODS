@@ -5,7 +5,7 @@ format: gfm
 
 ```{r}
 date()
-devtools::load_all()
+library(readODS)
 file <- here::here("tests/testdata/issue81.ods")
 system.time(x <- read_ods(file, sheet = 2, skip = 4))
 ```
