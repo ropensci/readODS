@@ -10,7 +10,7 @@ status](https://www.r-pkg.org/badges/version/readODS)](https://CRAN.R-project.or
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![Codecov test
-coverage](https://codecov.io/gh/ropensci/readODS/branch/v2.4/graph/badge.svg)](https://app.codecov.io/gh/ropensci/readODS?branch=v2.4)
+coverage](https://codecov.io/gh/ropensci/readODS/branch/v2.4/graph/badge.svg)](https://app.codecov.io/gh/ropensci/readODS/tree/v2.4)
 [![rOpenSci](https://badges.ropensci.org/302_status.svg)](https://github.com/ropensci/software-review/issues/386)
 [![R-CMD-check](https://github.com/ropensci/readODS/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ropensci/readODS/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
@@ -194,10 +194,10 @@ Unported License](https://creativecommons.org/licenses/by-sa/3.0/).
 
 The creator of this package is Gerrit-Jan Schutten. The current
 maintainer is Chung-hong Chan. This package benefits from contributions
-by Peter Brohan, Thomas J. Leeper, John Foster, Sergio Oller, Jim
-Hester, Stephen Watts, Arthur Katossky, Stas Malavin, Duncan Garmonsway,
-Mehrad Mahmoudian, Matt Kerlogue, Detlef Steuer, Michal Lauer, and Till
-Straube.
+by Peter Brohan, Detlef Steuer, Thomas J. Leeper, John Foster, Sergio
+Oller, Jim Hester, Stephen Watts, Arthur Katossky, Stas Malavin, Duncan
+Garmonsway, Mehrad Mahmoudian, Matt Kerlogue, Michal Lauer, Till
+Straube, Mauricio Vargas Sepulveda, Marcin Kalicinski.
 
 This package emulates the behaviours of `readxl::read_xlsx`,
 `writexl::write_xlsx` and `xlsx::write.xlsx`.
