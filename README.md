@@ -194,10 +194,10 @@ Unported License](https://creativecommons.org/licenses/by-sa/3.0/).
 
 The creator of this package is Gerrit-Jan Schutten. The current
 maintainer is Chung-hong Chan. This package benefits from contributions
-by Peter Brohan, Thomas J. Leeper, John Foster, Sergio Oller, Jim
-Hester, Stephen Watts, Arthur Katossky, Stas Malavin, Duncan Garmonsway,
-Mehrad Mahmoudian, Matt Kerlogue, Detlef Steuer, Michal Lauer, and Till
-Straube.
+by Peter Brohan, Detlef Steuer, Thomas J. Leeper, John Foster, Sergio
+Oller, Jim Hester, Stephen Watts, Arthur Katossky, Stas Malavin, Duncan
+Garmonsway, Mehrad Mahmoudian, Matt Kerlogue, Michal Lauer, Till
+Straube, Mauricio Vargas Sepulveda, Marcin Kalicinski.
 
 This package emulates the behaviours of `readxl::read_xlsx`,
 `writexl::write_xlsx` and `xlsx::write.xlsx`.

@@ -42,7 +42,8 @@ Suggests:
     covr,
     knitr,
     rmarkdown,
-    readr (>= 1.2.1)
+    readr (>= 1.2.1),
+    desc
 License: GPL-3
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
