@@ -10,7 +10,7 @@ status](https://www.r-pkg.org/badges/version/readODS)](https://CRAN.R-project.or
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![Codecov test
-coverage](https://codecov.io/gh/ropensci/readODS/branch/v2.4/graph/badge.svg)](https://app.codecov.io/gh/ropensci/readODS?branch=v2.4)
+coverage](https://codecov.io/gh/ropensci/readODS/branch/v2.4/graph/badge.svg)](https://app.codecov.io/gh/ropensci/readODS/tree/v2.4)
 [![rOpenSci](https://badges.ropensci.org/302_status.svg)](https://github.com/ropensci/software-review/issues/386)
 [![R-CMD-check](https://github.com/ropensci/readODS/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ropensci/readODS/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
