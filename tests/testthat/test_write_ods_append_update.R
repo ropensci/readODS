@@ -125,14 +125,14 @@ test_that("edge cases", {
 })
 
 test_that("Issue 233 on escaping, appending", {
-    test_data <- data.frame(test = c('<', '>', '<head>', '3 + 1 > 2', 'this is < 333 << >>'))
+    test_data <- data.frame(test = c('<', '>', '<head>', '3 + 1 > 2', 'this is < 333 << >>', '&&&><>', '\\\ 123 $$$', "'123'"))
     ods_file <- readODS::write_ods(test_data)
     readODS::write_ods(test_data, ods_file, append = TRUE, sheet = 'sheet2')
     expect_equal(test_data$test, readODS::read_ods(ods_file)$test)
 })
 
 test_that("Issue 233 on escaping, updating", {
-    test_data <- data.frame(test = c('<', '>', '<head>', '3 + 1 > 2', 'this is < 333 << >>'))
+    test_data <- data.frame(test = c('<', '>', '<head>', '3 + 1 > 2', 'this is < 333 << >>', '&&&><>', '\\\ 123 $$$', "'123'"))
     ods_file <- readODS::write_ods(test_data, sheet = "TEST")
     readODS::write_ods(test_data, ods_file, update = TRUE, sheet = "TEST")
     expect_equal(test_data$test, readODS::read_ods(ods_file, sheet = "TEST")$test)
