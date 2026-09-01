@@ -1,3 +1,7 @@
+# readODS 2.3.6
+
+* Fix an important bug introduced in 2.3.4: appending and updating content with XML content is functional again (see #233)
+
 # readODS 2.3.5
 
 * Remove manual allocation of buffer to prevent stack-use-after-scope problem reported by BDR (see #288, ref #215)
