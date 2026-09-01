@@ -34,17 +34,17 @@ extern "C" SEXP _readODS_read_ods_(SEXP file, SEXP start_row, SEXP stop_row, SEX
   END_CPP11
 }
 // splice.cpp
-std::string splice_sheet_(const std::string & original_xml, const std::string & sheet_file, const bool flat);
+std::string splice_sheet_(const std::string original_xml, const std::string sheet_file, const bool flat);
 extern "C" SEXP _readODS_splice_sheet_(SEXP original_xml, SEXP sheet_file, SEXP flat) {
   BEGIN_CPP11
-    return cpp11::as_sexp(splice_sheet_(cpp11::as_cpp<cpp11::decay_t<const std::string &>>(original_xml), cpp11::as_cpp<cpp11::decay_t<const std::string &>>(sheet_file), cpp11::as_cpp<cpp11::decay_t<const bool>>(flat)));
+    return cpp11::as_sexp(splice_sheet_(cpp11::as_cpp<cpp11::decay_t<const std::string>>(original_xml), cpp11::as_cpp<cpp11::decay_t<const std::string>>(sheet_file), cpp11::as_cpp<cpp11::decay_t<const bool>>(flat)));
   END_CPP11
 }
 // splice.cpp
-std::string update_sheet_(const std::string & original_xml, const std::string & sheet_file, const bool flat, const int sheet_index);
+std::string update_sheet_(const std::string original_xml, const std::string sheet_file, const bool flat, const int sheet_index);
 extern "C" SEXP _readODS_update_sheet_(SEXP original_xml, SEXP sheet_file, SEXP flat, SEXP sheet_index) {
   BEGIN_CPP11
-    return cpp11::as_sexp(update_sheet_(cpp11::as_cpp<cpp11::decay_t<const std::string &>>(original_xml), cpp11::as_cpp<cpp11::decay_t<const std::string &>>(sheet_file), cpp11::as_cpp<cpp11::decay_t<const bool>>(flat), cpp11::as_cpp<cpp11::decay_t<const int>>(sheet_index)));
+    return cpp11::as_sexp(update_sheet_(cpp11::as_cpp<cpp11::decay_t<const std::string>>(original_xml), cpp11::as_cpp<cpp11::decay_t<const std::string>>(sheet_file), cpp11::as_cpp<cpp11::decay_t<const bool>>(flat), cpp11::as_cpp<cpp11::decay_t<const int>>(sheet_index)));
   END_CPP11
 }
 // write_sheet_file_.cpp

@@ -147,8 +147,7 @@ void write_df(const cpp11::data_frame &x, const std::string &sheet_name,
   xml_file << "</table:table>\n";
 }
 
-[[cpp11::register]]
-cpp11::r_string
+[[cpp11::register]] cpp11::r_string
 write_sheet_file_(const std::string &filename, const cpp11::data_frame &x,
                   const std::string &sheet_name, const bool row_names,
                   const bool col_names, const bool na_as_string,
@@ -168,8 +167,7 @@ write_sheet_file_(const std::string &filename, const cpp11::data_frame &x,
   return filename;
 }
 
-[[cpp11::register]]
-cpp11::r_string write_sheet_file_list_(
+[[cpp11::register]] cpp11::r_string write_sheet_file_list_(
     const std::string &filename, const cpp11::list_of<cpp11::data_frame> &x,
     const std::string
         &sheet_name, // wont use; just for maintain the same interface
