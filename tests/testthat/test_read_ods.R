@@ -31,9 +31,7 @@ test_that("read_ods works with all kind of character encodings", {
 
 test_that("read_ods reads decimals properly with comma", {
     df <- read_ods('../testdata/decimal_comma.ods', as_tibble = FALSE)
-    df_expected <- structure(list(A = 3.4, B = 2.3, C = 0.03),
-                           .Names = c("A", "B", "C"),
-                           row.names = 1L, class = "data.frame")
+    df_expected <- structure(list(A = 3.4, B = 2.3, C = 0.03), row.names = 1L, class = "data.frame")
     expect_equal(df, df_expected)
 })
 
