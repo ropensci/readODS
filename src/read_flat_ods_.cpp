@@ -1,11 +1,10 @@
 #include "is_ods.h"
 #include "read_ods_internals.h"
 
-[[cpp11::register]]
-cpp11::strings read_flat_ods_(const std::string &file, int start_row,
-                              int stop_row, int start_col, int stop_col,
-                              const int sheet_index,
-                              const bool formula_as_formula) {
+[[cpp11::register]] cpp11::strings
+read_flat_ods_(const std::string &file, int start_row, int stop_row,
+               int start_col, int stop_col, const int sheet_index,
+               const bool formula_as_formula) {
   // Validate inputs early
   if (sheet_index < 1) {
     throw std::invalid_argument("Cannot have sheet index less than 1");

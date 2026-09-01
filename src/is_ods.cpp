@@ -31,7 +31,8 @@ bool is_ods(const std::string &file) {
     workbook.parse<0>(&xmlFile[0]);
   } catch (const rapidxml::parse_error &e) {
     if (strcmp(e.what(), "expected <")) {
-      throw std::invalid_argument(file + " does not contain a valid content.xml");
+      throw std::invalid_argument(file +
+                                  " does not contain a valid content.xml");
     } else {
       throw std::invalid_argument("XML parse error");
     }
